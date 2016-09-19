@@ -15,13 +15,14 @@ const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin
 const HtmlElementsPlugin = require('./html-elements-plugin');
 const AssetsPlugin = require('assets-webpack-plugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin'); 
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 /*
  * Webpack Constants
  */
 const HMR = helpers.hasProcessFlag('hot');
 const METADATA = {
-  title: 'Angular2 Webpack Starter by @gdi2290 from @AngularClass',
+  title: 'Tellur Operations',
   baseUrl: '/',
   isDevServer: helpers.isWebpackDevServer()
 };
@@ -170,7 +171,15 @@ module.exports = function(options) {
           loader: 'raw-loader',
           exclude: [helpers.root('src/index.html')]
         },
-
+        { test: /\.scss$/, loaders: [
+              "style-loader",
+              ExtractTextPlugin.loader(),
+              "css-loader",
+              "autoprefixer-loader?browsers=last 2 version",
+              "resolve-url",
+              "sass?sourceMap"
+            ]
+         },  
         /* File loader for supporting images, for example, in CSS files.
         */
         {
@@ -287,7 +296,7 @@ module.exports = function(options) {
       new HtmlElementsPlugin({
         headTags: require('./head-config.common')
       }),
-
+      new ExtractTextPlugin({allChunks: true,filename:'[name].css?hash=[contenthash]'})
     ],
 
     /*
