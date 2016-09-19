@@ -183,9 +183,9 @@ module.exports = function(options) {
         /* File loader for supporting images, for example, in CSS files.
         */
         {
-          test: /\.(jpg|png|gif)$/,
+          test: /\.(png|jpg|svg|ttf|eot|woff|woff2|gif)$/,
           loader: 'file'
-        }
+        }                     
       ],
 
       postLoaders: [
