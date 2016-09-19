@@ -3,7 +3,7 @@
  */
 
 module.exports = function(config) {
-  var testWebpackConfig = require('./webpack.test.js');
+  var testWebpackConfig = require('./webpack.test.js')({env: 'test'});
 
   var configuration = {
 
@@ -80,7 +80,7 @@ module.exports = function(config) {
     ],
 
     customLaunchers: {
-    ChromeTravisCi: {
+      ChromeTravisCi: {
         base: 'Chrome',
         flags: ['--no-sandbox']
       }
@@ -95,7 +95,6 @@ module.exports = function(config) {
 
   if (process.env.TRAVIS){
     configuration.browsers = ['ChromeTravisCi'];
-
   }
 
   config.set(configuration);

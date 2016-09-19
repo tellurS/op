@@ -52,7 +52,6 @@ function stripTrailing(str, char) {
 function safeUrl(url) {
   const stripped = stripTrailing(url || '', '/');
   return stripped ? stripped + '/' : '';
-
 }
 
 exports.getWebpackConfigModule = getWebpackConfigModule;
