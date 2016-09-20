@@ -14,10 +14,8 @@ import { ROUTES } from './app.routes';
 import { App } from './app.component';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
 import { AppState, InteralStateType } from './app.service';
-import { Home } from './home';
-import { About } from './about';
+import { KanbanDesk } from './kanbanDesk';
 import { NoContent } from './no-content';
-import { XLarge } from './home/x-large';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -38,10 +36,8 @@ type StoreType = {
   bootstrap: [ App ],
   declarations: [
     App,
-    About,
-    Home,
-    NoContent,
-    XLarge
+    KanbanDesk,
+    NoContent
   ],
   imports: [ // import Angular's modules
     BrowserModule,
