@@ -7,13 +7,20 @@
 
 <div class="ui-g">
     <div [ngClass]="colWidth"  *ngFor="let col of columns">
-        <i class="fa"  [ngClass]="col.icon" aria-hidden="true"></i> {{col.caption}}          
-        <p-panel header="Title" [toggleable]="true">
-                col1
-        </p-panel>             
-        <p-panel header="Title2" [toggleable]="true">
-                col2
-        </p-panel>                     
+        <div>
+            <i class="fa"  [ngClass]="col.icon" aria-hidden="true"></i>
+            {{col.caption}}          
+        </div>
+        <template ngFor let-rec [ngForOf]="records[col.id]">
+            <br>
+            <p-panel [toggleable]="true">
+                <header class="ov-inline">
+                    {{rec.caption}} {{rec.priority}}
+                    <i class="fa"  [ngClass]="tag2icon(tag)" aria-hidden="true" *ngFor="let tag of rec.tags" [pTooltip]="tag2text(tag)"></i>
+                </header>
+                {{rec.description}}
+            </p-panel>     
+        </template>         
     </div>
 </div>
 

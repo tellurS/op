@@ -28,12 +28,16 @@ export const ROUTES: Routes = [
             source: {
                 type: 'inner',
                 data: [
-                    {columnId:"1",caption:"super job",description:"No text"},
-                    {columnId:"2",caption:"super job2",description:"super"},
-                    {columnId:"1",caption:"super job3",description:"No description"},
-                ]
+                    {columnId:"1",caption:"super job",description:"No text",tags:["1","2"],priority:50},
+                    {columnId:"2",caption:"super job2",description:"super",tags:["2"]},
+                    {columnId:"1",caption:"super job3",description:"No description",priority:20},
+                ]                
             },
-            feture: {
+            tags:[
+                { id:"1", caption: "Simple", icon:"fa-file" },
+                { id:"2", caption: "Hard"  , icon:"fa-font-awesome"}               
+            ],
+            future: {
                 simple: true
             }
             /*resolve?: ResolveData          children?: Route[]          loadChildren?: LoadChildren          */

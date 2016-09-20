@@ -46,6 +46,7 @@ type StoreType = {
     FormsModule,
     HttpModule,
     Primeng.PanelModule,
+    Primeng.TooltipModule,
     RouterModule.forRoot(ROUTES, { useHash: true })
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
