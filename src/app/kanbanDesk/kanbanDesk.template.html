@@ -1,6 +1,20 @@
 <div>  
-  <div>
-      Hello! 
-      This is kanban desk!
-  </div>
+    <div>
+        Hello! 
+        This is kanban desk!
+    </div>
 </div>
+
+<div class="ui-g">
+    <div [ngClass]="colWidth"  *ngFor="let col of columns">
+        <i class="fa"  [ngClass]="col.icon" aria-hidden="true"></i> {{col.caption}}          
+        <p-panel header="Title" [toggleable]="true">
+                col1
+        </p-panel>             
+        <p-panel header="Title2" [toggleable]="true">
+                col2
+        </p-panel>                     
+    </div>
+</div>
+
+

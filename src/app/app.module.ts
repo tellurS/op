@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
+import  * as Primeng from 'primeng/primeng';
 
 /*
  * Platform and Environment providers/directives/pipes
@@ -15,6 +16,7 @@ import { App } from './app.component';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
 import { AppState, InteralStateType } from './app.service';
 import { KanbanDesk } from './kanbanDesk';
+import { DataManager } from './dataManager';
 import { NoContent } from './no-content';
 
 // Application wide providers
@@ -43,11 +45,13 @@ type StoreType = {
     BrowserModule,
     FormsModule,
     HttpModule,
+    Primeng.PanelModule,
     RouterModule.forRoot(ROUTES, { useHash: true })
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
-    APP_PROVIDERS
+    APP_PROVIDERS,
+    DataManager
   ]
 })
 export class AppModule {

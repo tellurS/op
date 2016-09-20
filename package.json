@@ -76,8 +76,7 @@
     
     "font-awesome": "^4.5.0",
     "http-server": "^0.9.0",
-    "primeng":"v1.0.0-beta.16",
-    "primeui": "^4.1.15"    
+    "primeng":"v1.0.0-beta.16"
     
   },
   "devDependencies": {
