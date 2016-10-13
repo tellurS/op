@@ -1,20 +1,26 @@
 <div>  
     <div>
         Hello! 
-        This is kanban desk!
+        This is kanban desk! {{records|json}}
     </div>
 </div>
-
-<div class="ui-g">
-    <div [ngClass]="colWidth"  *ngFor="let col of columns">
+<p-tree [value]="items">
+    <template let-node  pTemplate type="default" >
+        <span pDroppable="rec" (onDrop)="drop($event,node,'linked')">
+            {{node.label}}
+        </span>
+    </template>
+</p-tree>
+<div class="ui-g" >
+    <div [ngClass]="colWidth"  *ngFor="let col of columns"  pDroppable="rec" (onDrop)="drop($event,col,'column')">
         <div>
             <i class="fa"  [ngClass]="col.icon" aria-hidden="true"></i>
             {{col.caption}}          
         </div>
-        <template ngFor let-rec [ngForOf]="records[col.id]">
+        <template ngFor let-rec [ngForOf]="records|byColumns:col.id">
             <br>
-            <p-panel [toggleable]="true">
-                <header class="ov-inline">
+            <p-panel [toggleable]="true" pDraggable="rec" pDroppable="rec" dragEffect="move" (onDragStart)="dragStart($event,rec)" (onDragEnd)="dragEnd($event)" (onDrop)="drop($event,rec,'rec')">
+                <header class="ov-inline" >
                     {{rec.caption}} {{rec.priority}}
                     <i class="fa"  [ngClass]="tag2icon(tag)" aria-hidden="true" *ngFor="let tag of rec.tags" [pTooltip]="tag2text(tag)"></i>
                 </header>
@@ -23,5 +29,7 @@
         </template>         
     </div>
 </div>
+<p-growl [value]="msgs" sticky="true"></p-growl>
+
 
 

@@ -53,14 +53,14 @@
     "webpack": "webpack"
   },
   "dependencies": {
-    "@angular/common": "2.0.0",
-    "@angular/compiler": "2.0.0",
-    "@angular/core": "2.0.0",
-    "@angular/forms": "^2.0.0",
-    "@angular/http": "2.0.0",
-    "@angular/platform-browser": "2.0.0",
-    "@angular/platform-browser-dynamic": "2.0.0",
-    "@angular/platform-server": "2.0.0",
+    "@angular/common": "2.1.0",
+    "@angular/compiler": "2.1.0",
+    "@angular/core": "2.1.0",
+    "@angular/forms": "^2.1.0",
+    "@angular/http": "2.1.0",
+    "@angular/platform-browser": "2.1.0",
+    "@angular/platform-browser-dynamic": "2.1.0",
+    "@angular/platform-server": "2.1.0",
     "@angular/router": "3.0.0",
     "@angularclass/conventions-loader": "^1.0.2",
     "@angularclass/hmr": "~1.2.0",
@@ -75,8 +75,7 @@
     "zone.js": "~0.6.17",
     
     "font-awesome": "^4.5.0",
-    "http-server": "^0.9.0",
-    "primeng":"v1.0.0-beta.16"
+    "primeng":"v1.0.0-beta.17"
     
   },
   "devDependencies": {
@@ -135,7 +134,8 @@
     "extract-text-webpack-plugin": "2.0.0-beta.3",
     "sass-loader": "^3.1.2",   
     "node-sass": "^3.4.2",
-    "autoprefixer-loader": "^3.2.0"   
+    "autoprefixer-loader": "^3.2.0",
+    "http-server": "^0.9.0"
   },
   "repository": {
     "type": "git",

@@ -15,7 +15,7 @@ import { ROUTES } from './app.routes';
 import { App } from './app.component';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
 import { AppState, InteralStateType } from './app.service';
-import { KanbanDesk } from './kanbanDesk';
+import { KanbanDesk,byColumns } from './kanbanDesk';
 import { DataManager } from './dataManager';
 import { NoContent } from './no-content';
 
@@ -39,6 +39,7 @@ type StoreType = {
   declarations: [
     App,
     KanbanDesk,
+    byColumns,
     NoContent
   ],
   imports: [ // import Angular's modules
@@ -47,6 +48,9 @@ type StoreType = {
     HttpModule,
     Primeng.PanelModule,
     Primeng.TooltipModule,
+    Primeng.DragDropModule,
+    Primeng.TreeModule,
+    Primeng.GrowlModule,
     RouterModule.forRoot(ROUTES, { useHash: true })
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
