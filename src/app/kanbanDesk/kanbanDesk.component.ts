@@ -34,7 +34,7 @@ export class KanbanDesk {
                             .forEach(el=> this.records[el.columnId].push(el));*/
             //priority;
             this.tags = this.array2index(data.tags, "id");
-            console.log("tags",this.tags);
+            console.log("data",data);
         });
         
         

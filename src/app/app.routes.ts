@@ -11,6 +11,8 @@ export const ROUTES: Routes = [
     {
         path: 'kanban_desk',
         component: KanbanDesk, 
+        resolve: {resolve: DataResolver},
+        
         /*    canActivate?: any[];
             canActivateChild?: any[];
             canDeactivate?: any[];
@@ -19,6 +21,14 @@ export const ROUTES: Routes = [
             caption: 'Desk',
             enable: true,
             role: ['root', 'admin'],
+            future: {
+                simple: true
+            },
+            datasets:[
+                {name:"tags", src:"/api/tags",api:"rest",format:"json",preload:"tags"},
+                {name:"issues", src:"/api/issues",api:"rest",format:"json",pooling:'60000',preload:"issues"},
+                {name:"columns", src:"/api/columns",api:"rest",format:"json",preload:"columns"},
+            ],
             columns: [
                 { id:"1",caption: "New" , icon:"fa-file" },
                 { id:"2",caption: "Progress", icon:"fa-font-awesome" },
@@ -37,11 +47,8 @@ export const ROUTES: Routes = [
             tags:[
                 { id:"1", caption: "Simple", icon:"fa-file" },
                 { id:"2", caption: "Hard"  , icon:"fa-font-awesome"}               
-            ],
-            future: {
-                simple: true
-            }
-            /*resolve?: ResolveData          children?: Route[]          loadChildren?: LoadChildren          */
+            ],           
+            /*          children?: Route[]          loadChildren?: LoadChildren          */
 
         }
     },

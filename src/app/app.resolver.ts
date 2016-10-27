@@ -2,14 +2,20 @@ import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/r
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/combineLatest';
+import 'rxjs/add/operator/take';
+import { DataManager } from './dataManager';
 
 @Injectable()
 export class DataResolver implements Resolve<any> {
-  constructor() {
-
-  }
+  constructor(private dataManager:DataManager) {}
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    return Observable.of({ res: 'I am data'});
+    console.log("Resolve!!",route.data.datasets);
+    this.dataManager.setDataset(route.data.datasets);
+    //return this.dataManager.load('tag');
+    let preload=route.data.datasets.filter(el => el.preload != null)
+                       .map(el => this.dataManager.load(el.name,el.preload));
+    return Observable.combineLatest(...preload,(...a)=>"ok");    
   }
 }
 
