@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response,Headers,RequestOptions,URLSearchParams } from '@angular/http';
 import {Utils} from './utils';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
@@ -8,27 +8,16 @@ import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/throw';
-
+import 'rxjs/add/operator/share'
 
 @Injectable()
 export class DataManager {
     constructor(private http: Http) {
     }
-    getData() {
-
-    }
     setDataset(data: Dataset[]) {
         Object.assign(this.datasets, Utils.array2index(data));     
+        data.forEach(el => this.load(el.name));
     }             
-    preload(data: Dataset[]){
-        data.filter(el => el.preload != null).forEach(el => this.load(el.name,el.preload))
-    }
-    loadSimple(name:string,dst:string=name){
-        return this.http.get(this.datasets[name].src)
-                        .retry(this.datasets[name].retry||3)                        
-                        .map(this.extractData)
-                        .catch(this.handleError);      
-    }
     loadPooling(name:string,time:number){
         return Observable
            .interval(time)
@@ -36,21 +25,46 @@ export class DataManager {
            .flatMap(() => {
              return this.loadSimple(name);
            }).distinctUntilChanged();
-    }    
+    }
     loadRun(name:string) {
         if(this.datasets[name].pooling)
-            return this.loadPooling(name,this.datasets[name].pooling)
+            return this.loadPooling(name,this.datasets[name].pooling)            
         else
             return this.loadSimple(name);
     }
     load(name:string) {
-        let data =this.loadRun(name);
-        data.subscribe(d=>{this.db[name]=d;console.log('db',this.db);});
-        
-        return 's'//data;
+        //let data =this.loadRun(name);
+       // data.subscribe(d=>{this.db[name]=d;console.log('db',this.db);});
+        this.db[name]=this.loadRun(name).share();
+        return this.db[name];
+    }    
+    getData(name: string){
+        return this.db[name];
+    }
+    loadSimple(name:string,dst:string=name){
+        return this.http.get(this.datasets[name].src)
+                        .retry(this.datasets[name].retry||3)                        
+                        .map(this.extractData)
+                        .catch(this.handleError);      
+    }    
+    saveRecord(name: string,record:any){
+        console.log("save",record);
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+        return this.http.post(this.datasets[name].src,  record, options)        
+                        .map(this.extractData)
+                        .catch(this.handleError);        
+    }    
+    deleteRecord(name: string,record:any){
+        console.log("save",record);
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers});
+        return this.http.delete(this.datasets[name].src+'/'+record.id, options)        
+                        .map(this.extractData)
+                        .catch(this.handleError);        
     }    
     private datasets: { [name: string]: Dataset } = {};
-    private db: { [name: string]: Array<any> } = {};        
+    private db: { [name: string]: any} = {};        
     private extractData(res: Response) {
       console.log("body",res);
         return JSON.parse(res._body);

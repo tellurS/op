@@ -1,8 +1,9 @@
 <div>  
     <div>
         Hello! 
-        This is kanban desk! {{records|json}}
+        This is kanban desk! 
     </div>
+    <div  pDroppable="rec" (onDrop)="drop($event,col,'remove')"><i class="kanban-recycle" aria-hidden="true"></i></div>
 </div>
 <p-tree [value]="items">
     <template let-node  pTemplate type="default" >

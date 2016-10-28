@@ -5,3 +5,9 @@
 .ov-inline{
     display:inline-block;
 }
+
+.kanban-recycle{
+    @extend .fa;
+    @extend .fa-recycle;
+    @extend .fa-3x;
+}

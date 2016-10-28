@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import {Message} from 'primeng/primeng';
+import { DataManager } from '../dataManager';
+import 'rxjs/add/observable/combineLatest';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
     selector: 'kanbanDesk',  // <home></home>
@@ -16,28 +19,21 @@ export class KanbanDesk {
     msgs: Message[] = [];
     
     constructor(private route: ActivatedRoute,
-        private router: Router) {
+        private router: Router,private dm:DataManager) {
 
     }
 
     ngOnInit() {
         console.log('hello `kanbanDesk` component');
-        this.route.data.subscribe(data => {
-            this.columns = data.columns;
-            this.colWidth = 'ui-g-' + (12 / this.columns.length).toFixed();
-            //init
-            this.records = data.source.data.sort((a,b)=>a.priority>b.priority);
-            //this.columns.forEach(el=> this.records[el.id] = []);
-            //load        
-            /*
-            data.source.data.sort((a,b)=>a.priority>b.priority)
-                            .forEach(el=> this.records[el.columnId].push(el));*/
-            //priority;
-            this.tags = this.array2index(data.tags, "id");
-            console.log("data",data);
+        Observable.combineLatest([this.dm.getData('columns'),this.dm.getData('issues'),this.dm.getData('tags')])
+               .subscribe(([c,i,t])=>{
+                   this.columns = c;
+                   this.colWidth = 'ui-g-' + (12 / this.columns.length).toFixed();
+                   this.records = i.sort((a,b)=>a.priority>b.priority);
+                   this.tags = this.array2index(t, "id");
+                   console.log('datachanged!!!');
         });
-        
-        
+              
         this.items = [{
             "label": "Documents",
             "data": "Documents Folder",
@@ -91,12 +87,6 @@ export class KanbanDesk {
     drop(event,dst,type) {        
         console.log("drop",event,dst,type);
         this.dropArr.push([dst,type]);        
-        /*
-        if(this.draggedCar) {
-            this.selectedCars.push(this.draggedCar);
-            this.availableCars.splice(this.findIndex(this.draggedCar), 1);
-            this.draggedCar = null;
-        }*/
     }
     dropedMenu(event,dst) {        
         console.log("dropedMenu",this.dst,this.draggedRec);
@@ -108,11 +98,16 @@ export class KanbanDesk {
         if (this.dropArr && this.dropArr.length>0){
             dst=this.dropArr.sort((a,b)=> (a[1] === 'column')?1:-1);
             console.log("dragEnd dst",dst[0]);
+            if(dst[0][1]==='remove'){
+                this.remove(this.draggedRec);
+            }                         
             if(dst[0][1]==='column'){
                 this.changeColumn(this.draggedRec,dst[0][0]);
-            }else{                
-                
-            }
+            }             
+            if(dst[0][1]==='clone'){
+                this.clone(this.draggedRec);
+            }                         
+            
             if(dst[0][1]!=='menu'){
                 this.clearDroped();
             }            
@@ -124,15 +119,18 @@ export class KanbanDesk {
                 console.log('clear')        
     }
     changeColumn(rec,dst){
-        if(rec.columnId!=dst.id){
+        if(rec.columnId!=dst.id){//changeColumn
            console.log("changeColumn",rec,dst.id);
            rec.columnId=dst.id; 
-           //this.records.push(Object.assign({},rec,{columnId:dst.id}));
-        }else{
-            
+           this.dm.saveRecord("issues", rec).subscribe((d)=>rec=d);
+        }else{ //clone
+           this.dm.saveRecord("issues",Object.assign({},rec,{id:null})).subscribe((d)=>this.records.push(d));           
         }
     }
-
+    remove(rec){
+           console.log("remove",rec); 
+           this.dm.deleteRecord("issues", rec).subscribe((d)=>this.records=this.records.filter(item => item !== rec));
+    }           
 }
 
 

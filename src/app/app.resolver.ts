@@ -12,10 +12,7 @@ export class DataResolver implements Resolve<any> {
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     console.log("Resolve!!",route.data.datasets);
     this.dataManager.setDataset(route.data.datasets);
-    //return this.dataManager.load('tag');
-    let preload=route.data.datasets.filter(el => el.preload != null)
-                       .map(el => this.dataManager.load(el.name,el.preload));
-    return Observable.combineLatest(...preload,(...a)=>"ok");    
+    return "Ok"    
   }
 }
 

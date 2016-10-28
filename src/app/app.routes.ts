@@ -28,26 +28,8 @@ export const ROUTES: Routes = [
                 {name:"tags", src:"/api/tags",api:"rest",format:"json",preload:"tags"},
                 {name:"issues", src:"/api/issues",api:"rest",format:"json",pooling:'60000',preload:"issues"},
                 {name:"columns", src:"/api/columns",api:"rest",format:"json",preload:"columns"},
-            ],
-            columns: [
-                { id:"1",caption: "New" , icon:"fa-file" },
-                { id:"2",caption: "Progress", icon:"fa-font-awesome" },
-                { id:"3",caption: "Checked", icon:"fa-adjust" },
-                { id:"4",caption: "Closed", icon:"fa-archive" }
-            ],
-            source: {
-                type: 'inner',
-                data: [
-                    {columnId:"1",caption:"super job4",description:"No text4",tags:["2"]},
-                    {columnId:"1",caption:"super job",description:"No text",tags:["1","2"],priority:50},
-                    {columnId:"2",caption:"super job2",description:"super",tags:["2"],priority:10},
-                    {columnId:"1",caption:"super job3",description:"No description",priority:20},
-                ]                
-            },
-            tags:[
-                { id:"1", caption: "Simple", icon:"fa-file" },
-                { id:"2", caption: "Hard"  , icon:"fa-font-awesome"}               
-            ],           
+                {bags:"tags", src:"/api/bags",api:"rest",format:"json",preload:"bags"},
+            ]      
             /*          children?: Route[]          loadChildren?: LoadChildren          */
 
         }

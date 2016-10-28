@@ -1,18 +1,87 @@
 {
-    "columns": [
-            { "id":"1", "caption": "New", "icon":"fa-file" },
-            { "id":"2", "caption": "Progress", "icon":"fa-font-awesome" },
-            { "id":"3", "caption": "Checked", "icon":"fa-adjust" },
-            { "id":"4", "caption": "Closed", "icon":"fa-archive" }
-    ],
-    "issues": [
-            {"id":"1", "columnId":"1", "caption":"super job4", "description":"No text4", "tags":["2"]},
-            {"id":"2", "columnId":"1", "caption":"super job", "description":"No text", "tags":["1", "2"], "priority":50},
-            {"id":"3", "columnId":"2", "caption":"super job2", "description":"super", "tags":["2"], "priority":10},
-            {"id":"4", "columnId":"1", "caption":"super job3", "description":"No description", "priority":20}
-    ],
-    "tags":[
-            { "id":"1", "caption": "Simple", "icon":"fa-file" },
-            { "id":"2", "caption": "Hard", "icon":"fa-font-awesome"}
-    ]
+  "columns": [
+    {
+      "id": 1,
+      "caption": "New",
+      "icon": "fa-file"
+    },
+    {
+      "id": 2,
+      "caption": "Progress",
+      "icon": "fa-font-awesome"
+    },
+    {
+      "id": 3,
+      "caption": "Checked",
+      "icon": "fa-adjust"
+    },
+    {
+      "id": 4,
+      "caption": "Closed",
+      "icon": "fa-archive"
+    }
+  ],
+  "issues": [
+    {
+      "id": 1,
+      "columnId": 1,
+      "caption": "super job4",
+      "description": "No text4",
+      "tags": [
+        2
+      ]
+    },
+    {
+      "id": 2,
+      "columnId": 2,
+      "caption": "super job",
+      "description": "No text",
+      "tags": [
+        1,
+        2
+      ],
+      "priority": 50
+    },
+    {
+      "id": 3,
+      "columnId": 2,
+      "caption": "super job2",
+      "description": "super",
+      "tags": [
+        2
+      ],
+      "priority": 10
+    },
+    {
+      "id": 4,
+      "columnId": 3,
+      "caption": "super job3",
+      "description": "No description",
+      "priority": 20
+    }
+  ],
+  "tags": [
+    {
+      "id": 1,
+      "caption": "Simple",
+      "icon": "fa-file"
+    },
+    {
+      "id": 2,
+      "caption": "Hard",
+      "icon": "fa-font-awesome"
+    }
+  ],
+  "bags": [
+    {
+      "id": 1,
+      "caption": "v1Simple",
+      "icon": "fa-file"
+    },
+    {
+      "id": 2,
+      "caption": "v2Hard",
+      "icon": "fa-font-awesome"
+    }
+  ]
 }
