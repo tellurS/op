@@ -25,10 +25,10 @@ export const ROUTES: Routes = [
                 simple: true
             },
             datasets:[
-                {name:"tags", src:"/api/tags",api:"rest",format:"json",preload:"tags"},
-                {name:"issues", src:"/api/issues",api:"rest",format:"json",pooling:'6000',preload:"issues"},
-                {name:"columns", src:"/api/columns",api:"rest",format:"json",preload:"columns"},
-                {bags:"tags", src:"/api/bags",api:"rest",format:"json",preload:"bags"},
+                {name:"tags", src:"/api/tags",api:"rest",format:"json"},
+                {name:"issues", src:"/api/issues",api:"rest",format:"json",pooling:'6000'},
+                {name:"columns", src:"/api/columns",api:"rest",format:"json"},
+                {bags:"tags", src:"/api/bags",api:"rest",format:"json"},
             ]      
             /*          children?: Route[]          loadChildren?: LoadChildren          */
 

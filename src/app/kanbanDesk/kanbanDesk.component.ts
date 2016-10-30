@@ -28,10 +28,11 @@ export class KanbanDesk {
 
     ngOnInit() {
         console.log('hello `kanbanDesk` component');
-        Observable.combineLatest([this.dm.getDataExtra('columns'),
-                                  this.dm.getDataExtra('issues',this.paramsIssuesListChange),
-                                  this.dm.getDataExtra('tags'),
-                                  this.dm.getDataExtra('issues',{},1)])
+        Observable.combineLatest([this.dm.getRecords('columns'),
+                                  this.dm.getRecords('issues',this.paramsIssuesListChange),
+                                  this.dm.getRecords('tags'),
+                                  this.dm.getRecords('issues',{},1)
+                                  ])
                .subscribe(([c,i,t])=>{
                    this.columns = c;
                    this.colWidth = 'ui-g-' + (12 / this.columns.length).toFixed();

@@ -16,7 +16,7 @@ import { App } from './app.component';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
 import { AppState, InteralStateType } from './app.service';
 import { KanbanDesk,byColumns } from './kanbanDesk';
-import { DataManager } from './dataManager';
+import { DataManager,RestClient } from './dataManager';
 import { NoContent } from './no-content';
 
 // Application wide providers
@@ -56,7 +56,8 @@ type StoreType = {
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
     APP_PROVIDERS,
-    DataManager    
+    DataManager,
+    RestClient    
   ]
 })
 export class AppModule {
