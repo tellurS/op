@@ -4,6 +4,7 @@
         This is kanban desk! 
     </div>
     <div  pDroppable="rec" (onDrop)="drop($event,col,'remove')"><i class="kanban-recycle" aria-hidden="true"></i></div>
+    <div (click)="togglePriority()">High priority {{paramsIssuesList|json}}</div>
 </div>
 <p-tree [value]="items">
     <template let-node  pTemplate type="default" >

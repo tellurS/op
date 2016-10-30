@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,Input,Output, EventEmitter} from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import {Message} from 'primeng/primeng';
 import { DataManager } from '../dataManager';
@@ -17,7 +17,10 @@ export class KanbanDesk {
     draggedRec:any;
     dropArr:Array<any>;
     msgs: Message[] = [];
-    
+
+    @Input() paramsIssuesList = {};
+    @Output() paramsIssuesListChange = new EventEmitter();
+        
     constructor(private route: ActivatedRoute,
         private router: Router,private dm:DataManager) {
 
@@ -25,7 +28,10 @@ export class KanbanDesk {
 
     ngOnInit() {
         console.log('hello `kanbanDesk` component');
-        Observable.combineLatest([this.dm.getData('columns'),this.dm.getData('issues'),this.dm.getData('tags')])
+        Observable.combineLatest([this.dm.getDataExtra('columns'),
+                                  this.dm.getDataExtra('issues',this.paramsIssuesListChange),
+                                  this.dm.getDataExtra('tags'),
+                                  this.dm.getDataExtra('issues',{},1)])
                .subscribe(([c,i,t])=>{
                    this.columns = c;
                    this.colWidth = 'ui-g-' + (12 / this.columns.length).toFixed();
@@ -33,6 +39,7 @@ export class KanbanDesk {
                    this.tags = this.array2index(t, "id");
                    console.log('datachanged!!!');
         });
+        this.applyParams();
               
         this.items = [{
             "label": "Documents",
@@ -130,10 +137,15 @@ export class KanbanDesk {
     remove(rec){
            console.log("remove",rec); 
            this.dm.deleteRecord("issues", rec).subscribe((d)=>this.records=this.records.filter(item => item !== rec));
-    }           
+    }     
+    togglePriority(){
+        this.applyParams({priority_gte:'10'});
+    }
+    applyParams(change={}){
+        this.paramsIssuesList=Object.assign(this.paramsIssuesList,change);
+        this.paramsIssuesListChange.emit(this.paramsIssuesList);           
+    }
 }
-
-
 
 import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({name: 'byColumns',

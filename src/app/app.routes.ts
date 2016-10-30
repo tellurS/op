@@ -26,7 +26,7 @@ export const ROUTES: Routes = [
             },
             datasets:[
                 {name:"tags", src:"/api/tags",api:"rest",format:"json",preload:"tags"},
-                {name:"issues", src:"/api/issues",api:"rest",format:"json",pooling:'60000',preload:"issues"},
+                {name:"issues", src:"/api/issues",api:"rest",format:"json",pooling:'6000',preload:"issues"},
                 {name:"columns", src:"/api/columns",api:"rest",format:"json",preload:"columns"},
                 {bags:"tags", src:"/api/bags",api:"rest",format:"json",preload:"bags"},
             ]      

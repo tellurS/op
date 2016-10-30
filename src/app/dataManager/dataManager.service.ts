@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/retry';
 import 'rxjs/add/observable/interval';
+import 'rxjs/add/operator/retry';
+import 'rxjs/add/observable/combineLatest';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/throw';
@@ -41,8 +43,33 @@ export class DataManager {
     getData(name: string){
         return this.db[name];
     }
-    loadSimple(name:string,dst:string=name){
-        return this.http.get(this.datasets[name].src)
+    getDataExtra(name: string,param:Object={},id=""){
+        let source=[];
+        if(param.flatMap){ //param - Observable
+            source.push(param);
+        }else{             //param - simple 
+            source.push(Observable.of(param));
+        }     
+        if(this.datasets[name].pooling){ //repeat
+            source.push(Observable.interval(this.datasets[name].pooling).startWith(0));
+        }   
+        
+        return Observable.combineLatest(...source)
+                .flatMap((paramPlusTimer) =>this.loadSimple(name,paramPlusTimer[0],id))
+                .distinctUntilChanged();
+    }
+    loadSimple(name:string,data={},id=""){
+        console.log("simple",data,id);
+        let params = new URLSearchParams();
+            for(let p in data){
+                params.set(p, data[p]);
+                console.log(p, params[p]);
+            }
+        if(id!=""){
+            id='/'+id;
+        }
+        let headers = new Headers({ 'Content-Type': 'application/json' });   
+        return this.http.get(this.datasets[name].src+id,{search: params, headers: headers})
                         .retry(this.datasets[name].retry||3)                        
                         .map(this.extractData)
                         .catch(this.handleError);      
@@ -51,7 +78,8 @@ export class DataManager {
         console.log("save",record);
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
-        return this.http.post(this.datasets[name].src,  record, options)        
+        return this.http.post(this.datasets[name].src,  record, options)
+                        .retry(this.datasets[name].retry||3)        
                         .map(this.extractData)
                         .catch(this.handleError);        
     }    
@@ -59,7 +87,8 @@ export class DataManager {
         console.log("save",record);
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers});
-        return this.http.delete(this.datasets[name].src+'/'+record.id, options)        
+            return this.http.delete(this.datasets[name].src+'/'+record.id, options)
+                        .retry(this.datasets[name].retry||3)        
                         .map(this.extractData)
                         .catch(this.handleError);        
     }    
