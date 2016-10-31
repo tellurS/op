@@ -5,12 +5,13 @@ import { DataManager } from '../dataManager';
 import 'rxjs/add/observable/combineLatest';
 import { Observable } from 'rxjs/Observable';
 
+
 @Component({
     selector: 'kanbanDesk',  // <home></home>
     templateUrl: './kanbanDesk.template.html'
 })
 export class KanbanDesk {
-    columns: Array<any>;
+    columns: any;
     records: any;
     colWidth: any;
     tags: any;
@@ -29,9 +30,11 @@ export class KanbanDesk {
     ngOnInit() {
         console.log('hello `kanbanDesk` component');
         Observable.combineLatest([this.dm.getRecords('columns'),
-                                  this.dm.getRecords('issues',this.paramsIssuesListChange),
+                                  this.dm.getRecords('issues', 
+                                                    this.paramsIssuesListChange, 
+                                                    {pooling:this.dm.getCurrentData("future.pooling",false)}),
                                   this.dm.getRecords('tags'),
-                                  this.dm.getRecords('issues',{},1)
+                                  this.dm.getRecords('issues',{id:"1"}),                                  
                                   ])
                .subscribe(([c,i,t])=>{
                    this.columns = c;

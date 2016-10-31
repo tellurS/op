@@ -12,6 +12,7 @@ export class DataResolver implements Resolve<any> {
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     console.log("Resolve!!",route.data.datasets);
     this.dataManager.setDataset(route.data.datasets);
+    this.dataManager.setCurrentData(route.data);    
     return "Ok";    
   }
 }

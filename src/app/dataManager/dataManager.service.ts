@@ -12,27 +12,33 @@ export class DataManager {
     setDataset(data: Dataset[]) {
         Object.assign(this.datasets, Utils.array2index(data));     
     }             
-    getRecords(name: string,param={},id?){//.share()
+    setCurrentData(currentData:CurrentData|any) {
+        this.currentData=currentData;
+    }    
+    getCurrentData(expression:string):any {
+        return Utils.parse(this.currentData,expression);        
+    }        
+    getRecords(name: string,param={},options={}){//.share()
         let source=[];
         if(param.flatMap){ //param - Observable
             source.push(param);
         }else{             //param - simple 
             source.push(Observable.of(param));
         }     
-        if(this.datasets[name].pooling){ //repeat
-            source.push(Observable.interval(this.datasets[name].pooling).startWith(0));
+        if(options.pooling){ //repeat
+            source.push(Observable.interval(options.pooling).startWith(0));
         }   
         
         return Observable.combineLatest(...source)
-                .flatMap((paramPlusTimer) =>this.getRecordsSimple(name,paramPlusTimer[0],id))
-                .distinctUntilChanged();
+                .flatMap((paramPlusTimer) =>this.getRecordsSimple(name,paramPlusTimer[0],param))
+                .distinctUntilChanged(null,(a,b)=> (JSON.stringify(a)!==JSON.stringify(b)));
     }
-    getRecordsSimple(name:string,params={},id:any=""){
-        console.log("get",params,id);
+    getRecordsSimple(name:string,params={}){
+        console.log("get",params);
        if(this.datasets[name].api==="rest"&&this.datasets[name].format==="json")
             return this.rest.getRecords(this.datasets[name].src,params,{ 
                                         retry: this.datasets[name].retry,
-                                        id: id})
+                                        id: params.id})
                 .share();
         throw {name : "NotImplementedError", message : "api"};           
     }
@@ -48,6 +54,7 @@ export class DataManager {
         throw {name : "NotImplementedError", message : "api"};         
     }
     private datasets: { [name: string]: Dataset } = {};
+    private currentData:CurrentData;
 }
 
 
@@ -56,7 +63,13 @@ interface Dataset {
     src: string,
     api: string,
     format: string,
-    retry?:number,
-    pooling?:number
+    retry?:number
 }
 
+interface CurrentData {
+    caption: string,
+    enable:  boolean,
+    role:    Array<string>,
+    future:  Object,
+    datasets:Object
+}

@@ -22,11 +22,11 @@ export const ROUTES: Routes = [
             enable: true,
             role: ['root', 'admin'],
             future: {
-                simple: true
+                pooling: "6000"
             },
             datasets:[
                 {name:"tags", src:"/api/tags",api:"rest",format:"json"},
-                {name:"issues", src:"/api/issues",api:"rest",format:"json",pooling:'6000'},
+                {name:"issues", src:"/api/issues",api:"rest",format:"json"},
                 {name:"columns", src:"/api/columns",api:"rest",format:"json"},
                 {bags:"tags", src:"/api/bags",api:"rest",format:"json"},
             ]      
@@ -34,6 +34,7 @@ export const ROUTES: Routes = [
 
         }
     },
+    
     /*
     { path: 'home',  component: Home },
     { path: 'about', component: About },

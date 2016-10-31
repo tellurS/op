@@ -15,8 +15,7 @@ export class RestClient {
             }
         return params;
     }
-    id2url(baseurl:string,id=""){
-        console.log("url",baseurl,baseurl+((id!="")?(id='/'+id):""));
+    id2url(baseurl:string,id=""){       
         return baseurl+((id!="")?(id='/'+id):"");
     }
     createOptions(data?):RequestOptions{
