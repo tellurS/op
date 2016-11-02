@@ -33,7 +33,7 @@
     },
     {
       "id": 2,
-      "columnId": 2,
+      "columnId": 1,
       "caption": "super job",
       "description": "No text",
       "tags": [
@@ -58,6 +58,59 @@
       "caption": "super job3",
       "description": "No description",
       "priority": 20
+    },
+    {
+      "id": 6,
+      "columnId": 2,
+      "caption": "super job",
+      "description": "No text",
+      "tags": [
+        1,
+        2
+      ],
+      "priority": 50
+    },
+    {
+      "id": 7,
+      "columnId": 3,
+      "caption": "super job",
+      "description": "No text",
+      "tags": [
+        1,
+        2
+      ],
+      "priority": 50
+    },
+    {
+      "id": 8,
+      "columnId": 2,
+      "caption": "super job",
+      "description": "No text",
+      "tags": [
+        1,
+        2
+      ],
+      "priority": 50
+    },
+    {
+      "id": 9,
+      "columnId": 2,
+      "caption": "super job",
+      "description": "No text",
+      "tags": [
+        1,
+        2
+      ],
+      "priority": 50
+    },
+    {
+      "id": 10,
+      "columnId": 1,
+      "caption": "super job4",
+      "description": "No text4",
+      "tags": [
+        2
+      ]
     }
   ],
   "tags": [

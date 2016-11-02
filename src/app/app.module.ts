@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
-import  * as Primeng from 'primeng/primeng';
+import  * as Primeng from 'primeng';
 
 /*
  * Platform and Environment providers/directives/pipes

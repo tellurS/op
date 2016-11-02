@@ -3,19 +3,18 @@
         Hello! 
         This is kanban desk! 
     </div>
-    <div  pDroppable="rec" (onDrop)="drop($event,col,'remove')"><i class="kanban-recycle" aria-hidden="true"></i></div>
+    <div  pDroppable="rec" (onDrop)="drop($event,col,'remove')"  (onDragEnter)="onDragEnter($event, node)" (onDragLeave)="onDragLeave($event, node)"><i class="kanban-recycle" aria-hidden="true"></i></div>
     <div (click)="togglePriority()">High priority {{paramsIssuesList|json}}</div>
 </div>
-<p-tree [value]="items">
-    <template let-node  pTemplate type="default" >
-        <span pDroppable="rec" (onDrop)="drop($event,node,'linked')">
-            {{node.label}}
-        </span>
+
+<p-tree [value]="items" pTemplate type="default">
+    <template let-node>
+        s<input [(ngModel)]="node.label" type="text" style="width:100%">
     </template>
-</p-tree>
+</p-tree>bb
 <div class="ui-g" >
     <div [ngClass]="colWidth"  *ngFor="let col of columns"  pDroppable="rec" (onDrop)="drop($event,col,'column')">
-        <div>
+        <div class="kanban-header-columns">
             <i class="fa"  [ngClass]="col.icon" aria-hidden="true"></i>
             {{col.caption}}          
         </div>

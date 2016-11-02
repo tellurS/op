@@ -22,7 +22,7 @@ export const ROUTES: Routes = [
             enable: true,
             role: ['root', 'admin'],
             future: {
-                pooling: "6000"
+                poolingNone: "6000"
             },
             datasets:[
                 {name:"tags", src:"/api/tags",api:"rest",format:"json"},

@@ -50,6 +50,7 @@ export class KanbanDesk {
             "data": "Documents Folder",
             "expandedIcon": "fa-folder-open",
             "collapsedIcon": "fa-folder",
+            "icon": "fa-file-word-o",
             "children": [{
                     "label": "Work",
                     "data": "Work Folder",
@@ -120,7 +121,7 @@ export class KanbanDesk {
             }                         
             
             if(dst[0][1]!=='menu'){
-                this.clearDroped();
+                //this.clearDroped();
             }            
         }        
     }    
@@ -149,6 +150,16 @@ export class KanbanDesk {
         this.paramsIssuesList=Object.assign(this.paramsIssuesList,change);
         this.paramsIssuesListChange.emit(this.paramsIssuesList);           
     }
+    onDragEnter($event, node){
+        console.log("onDragEnter",$event, node);
+    }
+    onDragLeave($event, node){
+        console.log("onDragLeave",$event, node);
+    }    
+    select(node){
+        console.log("select",node);
+    }
+    
 }
 
 import { Pipe, PipeTransform } from '@angular/core';
