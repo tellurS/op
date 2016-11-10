@@ -18,6 +18,7 @@ import { AppState, InteralStateType } from './app.service';
 import { KanbanDesk,byColumns } from './kanbanDesk';
 import { DataManager,RestClient } from './dataManager';
 import { NoContent } from './no-content';
+import { MenuCommand } from './menuCommand/menuCommand';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -40,7 +41,8 @@ type StoreType = {
     App,
     KanbanDesk,
     byColumns,
-    NoContent
+    MenuCommand,
+    NoContent    
   ],
   imports: [ // import Angular's modules
     BrowserModule,
@@ -51,7 +53,8 @@ type StoreType = {
     Primeng.DragDropModule,
     Primeng.TreeModule,
     Primeng.GrowlModule,
-    RouterModule.forRoot(ROUTES, { useHash: true })
+    Primeng.MenuModule,
+    RouterModule.forRoot(ROUTES, { useHash: true })    
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,

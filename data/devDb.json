@@ -82,17 +82,6 @@
       "priority": 50
     },
     {
-      "id": 8,
-      "columnId": 2,
-      "caption": "super job",
-      "description": "No text",
-      "tags": [
-        1,
-        2
-      ],
-      "priority": 50
-    },
-    {
       "id": 9,
       "columnId": 2,
       "caption": "super job",
@@ -105,12 +94,14 @@
     },
     {
       "id": 10,
-      "columnId": 1,
-      "caption": "super job4",
-      "description": "No text4",
+      "columnId": 2,
+      "caption": "super job",
+      "description": "No text",
       "tags": [
+        1,
         2
-      ]
+      ],
+      "priority": 50
     }
   ],
   "tags": [

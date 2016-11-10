@@ -18,10 +18,19 @@ export class KanbanDesk {
     draggedRec:any;
     dropArr:Array<any>;
     msgs: Message[] = [];
-
-    @Input() paramsIssuesList = {};
+    features={
+        pooling: false,
+        bin:     false,
+        peoples: false,
+        resourse:false,
+        priority:false        
+    };
+    items=[];
+    itemsDrop = new EventEmitter();
+    
+    @Input()  paramsIssuesList = {};
     @Output() paramsIssuesListChange = new EventEmitter();
-        
+paramsIssuesListChange = new EventEmitter();        
     constructor(private route: ActivatedRoute,
         private router: Router,private dm:DataManager) {
 
@@ -29,53 +38,30 @@ export class KanbanDesk {
 
     ngOnInit() {
         console.log('hello `kanbanDesk` component');
+        this.features=this.dm.getCurrentData("feature",this.features);
+            
         Observable.combineLatest([this.dm.getRecords('columns'),
                                   this.dm.getRecords('issues', 
                                                     this.paramsIssuesListChange, 
-                                                    {pooling:this.dm.getCurrentData("future.pooling",false)}),
+                                                    {pooling:this.features.pooling}),
                                   this.dm.getRecords('tags'),
                                   this.dm.getRecords('issues',{id:"1"}),                                  
                                   ])
                .subscribe(([c,i,t])=>{
                    this.columns = c;
-                   this.colWidth = 'ui-g-' + (12 / this.columns.length).toFixed();
+                   this.colWidth = 'ui-g-' + (11 / this.columns.length).toFixed();
                    this.records = i.sort((a,b)=>a.priority>b.priority);
                    this.tags = this.array2index(t, "id");
                    console.log('datachanged!!!');
         });
-        this.applyParams();
-              
-        this.items = [{
-            "label": "Documents",
-            "data": "Documents Folder",
-            "expandedIcon": "fa-folder-open",
-            "collapsedIcon": "fa-folder",
-            "icon": "fa-file-word-o",
-            "children": [{
-                    "label": "Work",
-                    "data": "Work Folder",
-                    "expandedIcon": "fa-folder-open",
-                    "collapsedIcon": "fa-folder",
-                    "children": [{"label": "Expenses.doc", "icon": "fa-file-word-o", "data": "Expenses Document"}, {"label": "Resume.doc", "icon": "fa-file-word-o", "data": "Resume Document"}]
-                },
-                {
-                    "label": "Home",
-                    "data": "Home Folder",
-                    "expandedIcon": "fa-folder-open",
-                    "collapsedIcon": "fa-folder",
-                    "children": [{"label": "Invoices.txt", "icon": "fa-file-word-o", "data": "Invoices for this month"}]
-                }]
-        },
-        {
-            "label": "Pictures",
-            "data": "Pictures Folder",
-            "expandedIcon": "fa-folder-open",
-            "collapsedIcon": "fa-folder",
-            "children": [
-                {"label": "barcelona.jpg", "icon": "fa-file-image-o", "data": "Barcelona Photo"},
-                {"label": "logo.jpg", "icon": "fa-file-image-o", "data": "PrimeFaces Logo"},
-                {"label": "primeui.png", "icon": "fa-file-image-o", "data": "PrimeUI Logo"}]
-        }];
+        this.applyParams();              
+        this.items = [
+                       {label: 'Remove' , icon: 'kanban-recycle',dropCommand:e=>this.drop(e,e.itemDrop,'remove')},
+                       {label: 'Open', icon: 'fa-download',dataItem:"Ogo",dropEventEmitter:this.itemsDrop},
+                       {label: 'clone', icon: 'fa-refresh',dropEventEmitter:this.itemsDrop,run:'remove'}
+        ];        
+        
+        this.itemsDrop.subscribe(e=>this.drop(e,e.item,"menu"))
     }
     tag2icon(tag: string) {
         return this.tags[tag] && this.tags[tag].icon || '';
@@ -100,9 +86,9 @@ export class KanbanDesk {
         console.log("drop",event,dst,type);
         this.dropArr.push([dst,type]);        
     }
-    dropedMenu(event,dst) {        
-        console.log("dropedMenu",this.dst,this.draggedRec);
-        this.clearDroped();
+    dropedMenu(event) {        
+        console.log("dropedMenu",event);
+        this.dropArr.push([event.itemDrop,"menu"]);       
     }    
     dragEnd(event) {
         console.log("dragEnd",event,this.dropArr);
@@ -115,13 +101,14 @@ export class KanbanDesk {
             }                         
             if(dst[0][1]==='column'){
                 this.changeColumn(this.draggedRec,dst[0][0]);
-            }             
-            if(dst[0][1]==='clone'){
-                this.clone(this.draggedRec);
             }                         
-            
-            if(dst[0][1]!=='menu'){
+            if(dst[0][1]==='menu'){
                 //this.clearDroped();
+                console.log("Command:", dst[0][0]), this.draggedRec;
+                if(dst[0][0].run&&this[dst[0][0].run]){
+                   console.log("Run:");
+                   this[dst[0][0].run](this.draggedRec,dst[0][0].dropDataItem);
+                }
             }            
         }        
     }    

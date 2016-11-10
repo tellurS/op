@@ -15,8 +15,8 @@ export class DataManager {
     setCurrentData(currentData:CurrentData|any) {
         this.currentData=currentData;
     }    
-    getCurrentData(expression:string):any {
-        return Utils.parse(this.currentData,expression);        
+    getCurrentData(expression:string,default1:any=null):any {
+        return Utils.parse(this.currentData,expression)||default1;        
     }        
     getRecords(name: string,param={},options={}){//.share()
         let source=[];
