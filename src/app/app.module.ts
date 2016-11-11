@@ -20,6 +20,7 @@ import { DataManager,RestClient } from './dataManager';
 import { NoContent } from './no-content';
 import { MenuCommand } from './menuCommand/menuCommand';
 
+
 // Application wide providers
 const APP_PROVIDERS = [
   ...APP_RESOLVER_PROVIDERS,
@@ -61,7 +62,7 @@ type StoreType = {
     APP_PROVIDERS,
     DataManager,
     RestClient    
-  ]
+    ]
 })
 export class AppModule {
   constructor(public appRef: ApplicationRef, public appState: AppState) {}

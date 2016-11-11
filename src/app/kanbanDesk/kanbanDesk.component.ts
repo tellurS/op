@@ -4,19 +4,19 @@ import {Message} from 'primeng/primeng';
 import { DataManager } from '../dataManager';
 import 'rxjs/add/observable/combineLatest';
 import { Observable } from 'rxjs/Observable';
+import { DragDrop } from '../dragDrop/dragDrop';
 
 
 @Component({
-    selector: 'kanbanDesk',  // <home></home>
-    templateUrl: './kanbanDesk.template.html'
+    selector: 'kanbanDesk',  
+    templateUrl: './kanbanDesk.template.html',
+    providers : [DragDrop]
 })
 export class KanbanDesk {
     columns: any;
     records: any;
     colWidth: any;
     tags: any;
-    draggedRec:any;
-    dropArr:Array<any>;
     msgs: Message[] = [];
     features={
         pooling: false,
@@ -26,14 +26,15 @@ export class KanbanDesk {
         priority:false        
     };
     items=[];
-    itemsDrop = new EventEmitter();
+
     
     @Input()  paramsIssuesList = {};
     @Output() paramsIssuesListChange = new EventEmitter();
-paramsIssuesListChange = new EventEmitter();        
+    
+    
     constructor(private route: ActivatedRoute,
-        private router: Router,private dm:DataManager) {
-
+        private router: Router,private dm:DataManager,private dragDrop:DragDrop) {
+        dragDrop.setParentComponent(this);
     }
 
     ngOnInit() {
@@ -56,12 +57,12 @@ paramsIssuesListChange = new EventEmitter();
         });
         this.applyParams();              
         this.items = [
-                       {label: 'Remove' , icon: 'kanban-recycle',dropCommand:e=>this.drop(e,e.itemDrop,'remove')},
-                       {label: 'Open', icon: 'fa-download',dataItem:"Ogo",dropEventEmitter:this.itemsDrop},
-                       {label: 'clone', icon: 'fa-refresh',dropEventEmitter:this.itemsDrop,run:'remove'}
+                       {label: 'Remove' , icon: 'kanban-recycle',dropCommand:e=>this.dragDrop.drop(e,e.itemDrop,'remove')},
+                       {label: 'Open', icon: 'fa-download',dataItem:"Ogo",dropEventEmitter:this.dragDrop.itemsDrop},
+                       {label: 'clone', icon: 'fa-refresh',dropEventEmitter:this.dragDrop.itemsDrop,run:'remove'}
         ];        
         
-        this.itemsDrop.subscribe(e=>this.drop(e,e.item,"menu"))
+        this.dragDrop.itemsDrop.subscribe(e=>this.dragDrop.drop(e,e.item,"menu"))
     }
     tag2icon(tag: string) {
         return this.tags[tag] && this.tags[tag].icon || '';
@@ -75,48 +76,6 @@ paramsIssuesListChange = new EventEmitter();
         return result;
     }
     
-    dragStart(event,rec) {        
-        console.log("drag",event,rec);
-        this.draggedRec = rec;
-        this.dropArr=[];
-        this.msgs[0]={severity:'info', summary:'Drag', detail:'Change column/set label'};
-    }
-    
-    drop(event,dst,type) {        
-        console.log("drop",event,dst,type);
-        this.dropArr.push([dst,type]);        
-    }
-    dropedMenu(event) {        
-        console.log("dropedMenu",event);
-        this.dropArr.push([event.itemDrop,"menu"]);       
-    }    
-    dragEnd(event) {
-        console.log("dragEnd",event,this.dropArr);
-        let dst;
-        if (this.dropArr && this.dropArr.length>0){
-            dst=this.dropArr.sort((a,b)=> (a[1] === 'column')?1:-1);
-            console.log("dragEnd dst",dst[0]);
-            if(dst[0][1]==='remove'){
-                this.remove(this.draggedRec);
-            }                         
-            if(dst[0][1]==='column'){
-                this.changeColumn(this.draggedRec,dst[0][0]);
-            }                         
-            if(dst[0][1]==='menu'){
-                //this.clearDroped();
-                console.log("Command:", dst[0][0]), this.draggedRec;
-                if(dst[0][0].run&&this[dst[0][0].run]){
-                   console.log("Run:");
-                   this[dst[0][0].run](this.draggedRec,dst[0][0].dropDataItem);
-                }
-            }            
-        }        
-    }    
-    clearDroped(){
-                this.msgs=[];
-                this.draggedRec = null;
-                console.log('clear')        
-    }
     changeColumn(rec,dst){
         if(rec.columnId!=dst.id){//changeColumn
            console.log("changeColumn",rec,dst.id);
@@ -137,12 +96,6 @@ paramsIssuesListChange = new EventEmitter();
         this.paramsIssuesList=Object.assign(this.paramsIssuesList,change);
         this.paramsIssuesListChange.emit(this.paramsIssuesList);           
     }
-    onDragEnter($event, node){
-        console.log("onDragEnter",$event, node);
-    }
-    onDragLeave($event, node){
-        console.log("onDragLeave",$event, node);
-    }    
     select(node){
         console.log("select",node);
     }
@@ -158,3 +111,4 @@ export class byColumns implements PipeTransform {
     return value.filter(a=>(a.columnId===columnId));
   }
 }
+
