@@ -8,6 +8,9 @@ export class DragDrop {
     itemsDrop = new EventEmitter();
     parentComponent: any;
     
+    constructor(){
+        this.itemsDrop.subscribe(e=>this.drop(e,e.item,"menu"));
+    }
     setParentComponent(parent:any){
         this.parentComponent=parent;
     }
@@ -26,7 +29,7 @@ export class DragDrop {
         console.log("drag",event,rec);
         this.draggedRec = rec;
         this.dropArr=[];
-        this.msgs[0]={severity:'info', summary:'Drag', detail:'Change column/set label'};
+        //this.msgs[0]={severity:'info', summary:'Drag', detail:'Change column/set label'};
     }
     
     drop(event,dst,type) {        

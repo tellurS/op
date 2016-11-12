@@ -33,8 +33,8 @@ export class KanbanDesk {
     
     
     constructor(private route: ActivatedRoute,
-        private router: Router,private dm:DataManager,private dragDrop:DragDrop) {
-        dragDrop.setParentComponent(this);
+        private router: Router,private dm:DataManager,public dragDrop:DragDrop) {
+        this.dragDrop.setParentComponent(this);
     }
 
     ngOnInit() {
@@ -61,8 +61,7 @@ export class KanbanDesk {
                        {label: 'Open', icon: 'fa-download',dataItem:"Ogo",dropEventEmitter:this.dragDrop.itemsDrop},
                        {label: 'clone', icon: 'fa-refresh',dropEventEmitter:this.dragDrop.itemsDrop,run:'remove'}
         ];        
-        
-        this.dragDrop.itemsDrop.subscribe(e=>this.dragDrop.drop(e,e.item,"menu"))
+                
     }
     tag2icon(tag: string) {
         return this.tags[tag] && this.tags[tag].icon || '';
@@ -99,6 +98,10 @@ export class KanbanDesk {
     select(node){
         console.log("select",node);
     }
+   drop(event,dst,type) {        
+        console.log("drop",event,dst,type);
+      
+    }    
     
 }
 
