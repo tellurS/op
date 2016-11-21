@@ -43,7 +43,7 @@ type StoreType = {
     KanbanDesk,
     byColumns,
     MenuCommand,
-    NoContent    
+    NoContent
   ],
   imports: [ // import Angular's modules
     BrowserModule,

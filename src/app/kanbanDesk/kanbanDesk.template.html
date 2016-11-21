@@ -19,15 +19,17 @@
                 {{col.caption}}          
             </div>
             <template ngFor let-rec [ngForOf]="records|byColumns:col.id">
-                <br>
-                <p-panel [toggleable]="true" pDraggable="rec" pDroppable="rec" dragEffect="move" (onDragStart)="dragDrop.dragStart($event,rec)" (onDragEnd)="dragDrop.dragEnd($event)" (onDrop)="dragDrop.drop($event,rec,'rec')">
-                    <header class="ov-inline" >
-                        {{rec.caption}} {{rec.priority}}
-                        <i class="fa"  [ngClass]="tag2icon(tag)" aria-hidden="true" *ngFor="let tag of rec.tags" [pTooltip]="tag2text(tag)"></i>
-                    </header>
-                    {{rec.description}}
-                </p-panel>     
-            </template>         
+                <div  pDraggable="rec" pDroppable="rec" dragEffect="move" (onDragStart)="dragDrop.dragStart($event,rec)" (onDragEnd)="dragDrop.dragEnd($event)" (onDrop)="dragDrop.drop($event,rec,'rec')">      
+                    <br>
+                    <p-panel [toggleable]="true">
+                        <header class="ov-inline" >
+                                {{rec.caption}} {{rec.priority}}
+                                <i class="fa"  [ngClass]="tag2icon(tag)" aria-hidden="true" *ngFor="let tag of rec.tags" [pTooltip]="tag2text(tag)"></i>
+                        </header>
+                        {{rec.description}}
+                    </p-panel>  
+                </div>
+            </template>                     
         </div>
     </div>
 </div>

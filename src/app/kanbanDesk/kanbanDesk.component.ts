@@ -10,8 +10,8 @@ import { DragDrop } from '../dragDrop/dragDrop';
 @Component({
     selector: 'kanbanDesk',  
     templateUrl: './kanbanDesk.template.html',
-    providers : [DragDrop]
-})
+    providers : [DragDrop],
+ })
 export class KanbanDesk {
     columns: any;
     records: any;
