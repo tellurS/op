@@ -36,10 +36,7 @@ export class DragDrop {
         console.log("drop",event,dst,type);
         this.dropArr.push([dst,type]);        
     }
-    dropedMenu(event) {        
-        console.log("dropedMenu",event);
-        this.dropArr.push([event.itemDrop,"menu"]);       
-    }    
+
     dragEnd(event) {
         console.log("dragEnd",event,this.dropArr);
         let dst;
