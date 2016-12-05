@@ -8,8 +8,7 @@
 </div>
 
 <div class="ui-g" >
-    <div  class="ui-g-1" >
-        <div  *ngIf="features.bin" pDroppable="rec" (onDrop)="dragDrop.drop($event,col,'remove')"  (onDragEnter)="onDragEnter($event, node)" (onDragLeave)="dragDrop.onDragLeave($event, node)"><i class="kanban-recycle" aria-hidden="true"></i></div>
+    <div  class="ui-g-1" >        
         <m-menucommand  [model]="items"></m-menucommand>
     </div>
     <div  class="ui-g-11" >
