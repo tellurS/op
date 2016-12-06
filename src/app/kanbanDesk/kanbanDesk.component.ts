@@ -63,21 +63,15 @@ export class KanbanDesk {
         
         this.dragDrop.drapDropRun.subscribe((e:DragDropEvent)=>{
             let dropFinish;
-                dropFinish=e.drops.sort((a,b)=> (a.type === 'column')?1:-1);//column first
+                dropFinish=e.drops.sort((a,b)=> (a.type === 'changeColumn')?1:-1);//column first
                 console.log("drapDropRun dst",dropFinish[0]);
                 
-                if(dropFinish[0].type==='remove'){
-                    this.remove(e.src);
-                }                         
-                if(dropFinish[0].type==='column'){
-                    this.changeColumn(e.src,dropFinish[0].dst);
-                }                         
-                if(dropFinish[0].type==='menu'){
-                    if(dropFinish[0].dst.run&&this[dropFinish[0].dst.run]){
-                       console.log("Run:");
-                       this[dropFinish[0].dst.run](e.src,dropFinish[0].dst.dropDataItem);
-                    }
-                }                         
+                if(dropFinish[0].type&&this[dropFinish[0].type]){
+                    console.log("Run:");
+                    this[dropFinish[0].type](e.src,dropFinish[0].dst,dropFinish[0].dst.dropDataItem);
+                }
+                
+                
         });
           
     }

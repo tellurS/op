@@ -8,7 +8,7 @@ export class DragDrop {
     drapDropRun = new EventEmitter<DragDropEvent>();
         
     constructor(){
-        this.itemsDrop.subscribe(e=>this.drop(e,e.item,"menu"));
+        this.itemsDrop.subscribe(e=>this.drop(e,e.item,e.item.run));
     }
     onDragEnter($event, node){
         console.log("onDragEnter",$event, node);

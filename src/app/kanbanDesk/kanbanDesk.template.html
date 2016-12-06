@@ -12,7 +12,7 @@
         <m-menucommand  [model]="items"></m-menucommand>
     </div>
     <div  class="ui-g-11" >
-        <div [ngClass]="colWidth"  *ngFor="let col of columns"  pDroppable="rec" (onDrop)="dragDrop.drop($event,col,'column')">
+        <div [ngClass]="colWidth"  *ngFor="let col of columns"  pDroppable="rec" (onDrop)="dragDrop.drop($event,col,'changeColumn')" (onDragEnter)="dragDrop.onDragEnter($event,'changeColumn')" (onDragLeave)="dragDrop.onDragLeave($event,'changeColumn')">
             <div class="kanban-header-columns">
                 <i class="fa"  [ngClass]="col.icon" aria-hidden="true"></i>
                 {{col.caption}}          
