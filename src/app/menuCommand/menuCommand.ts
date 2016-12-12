@@ -143,12 +143,12 @@ export class MenuCommand implements AfterViewInit,OnDestroy {
             event.preventDefault();
         }
         
-        if(item.dropCommand||item.dropEventEmitter) {
-            if(!item.dropEventEmitter) {
-                item.dropEventEmitter = new EventEmitter();
-                item.dropEventEmitter.subscribe(item.dropCommand);
+        if(item.dropCommand||item.eventEmitter) {
+            if(!item.eventEmitter) {
+                item.eventEmitter = new EventEmitter();
+                item.eventEmitter.subscribe(item.dropCommand);
             }
-            item.dropEventEmitter.emit({
+            item.eventEmitter.emit({
                 originalEvent: event,
                 item: item,
                 type: "drop"
@@ -204,8 +204,6 @@ export class MenuCommand implements AfterViewInit,OnDestroy {
 
 
 export interface MenuCommandItem extends MenuItem{
-    dropCommand?: (event?: any) => void;
-    dropEventEmitter?: EventEmitter<any>;
     dataItem?:any;
     dropDataItem?:any;
     run?:string;

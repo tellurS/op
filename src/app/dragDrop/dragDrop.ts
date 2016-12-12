@@ -3,33 +3,40 @@ import { EventEmitter} from '@angular/core';
 
 @Injectable()
 export class DragDrop {
-    event:DragDropEvent;
-    itemsDrop = new EventEmitter();
+    eventDragDrop:DragDropEvent;
     drapDropRun = new EventEmitter<DragDropEvent>();
-        
-    constructor(){
-        this.itemsDrop.subscribe(e=>this.drop(e,e.item,e.item.run));
+    
+    events:EventEmitter<any>;    
+    
+    setEvents(events){
+        this.events=events;
+        this.events.emit({type:"setEvent",module:"dragDrop"});
     }
-    onDragEnter($event, node){
-        console.log("onDragEnter",$event, node);
+    constructor(){        
+        
+    }    
+    onDragEnter($event, node){        
+        this.events.emit({type:"onDragEnter",module:"dragDrop"});
     }
     onDragLeave($event, node){
-        console.log("onDragLeave",$event, node);
+        this.events.emit({type:"onDragLeave",module:"dragDrop"});
     }      
     dragStart(event,rec) {        
-        console.log("drag",event,rec);
-        delete(this.event);
-        this.event=new DragDropEvent();
-        this.event.src = rec;
+        delete(this.eventDragDrop);
+        this.eventDragDrop=new DragDropEvent();
+        this.eventDragDrop.src = rec;
+        this.events.emit({type:"onDragStart",module:"dragDrop",data:this.eventDragDrop});
     }    
     drop(event,dst,type) {        
-        console.log("drop",event,dst,type);
-        this.event.drops.push({type,dst});        
+        this.eventDragDrop.drops.push({type,dst});        
+        this.events.emit({type:"onDrop",module:"dragDrop",data:this.eventDragDrop});
     }
     dragEnd(event) {
-        console.log("dragEnd",event,this.event);
-        if (this.event.drops.length>0)
-            this.drapDropRun.emit(this.event);
+        console.log("dragEnd",event,this.eventDragDrop);
+        if (this.eventDragDrop.drops.length>0)
+              this.events.emit({type:"onDragEnd",module:"dragDrop",data:this.eventDragDrop});
+        else
+            this.events.emit({type:"onDragEndEmpty",module:"dragDrop",data:this.eventDragDrop});
     }            
 }
 

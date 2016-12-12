@@ -141,19 +141,8 @@
       "priority": 50
     },
     {
-      "id": 21,
-      "columnId": 2,
-      "caption": "super job",
-      "description": "No text",
-      "tags": [
-        1,
-        2
-      ],
-      "priority": 50
-    },
-    {
       "id": 22,
-      "columnId": 2,
+      "columnId": 1,
       "caption": "super job",
       "description": "No text",
       "tags": [
@@ -164,7 +153,7 @@
     },
     {
       "id": 23,
-      "columnId": 2,
+      "columnId": 3,
       "caption": "super job",
       "description": "No text",
       "tags": [
@@ -197,6 +186,17 @@
     },
     {
       "id": 26,
+      "columnId": 2,
+      "caption": "super job",
+      "description": "No text",
+      "tags": [
+        1,
+        2
+      ],
+      "priority": 50
+    },
+    {
+      "id": 27,
       "columnId": 1,
       "caption": "super job",
       "description": "No text",
