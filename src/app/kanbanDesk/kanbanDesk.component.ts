@@ -14,7 +14,8 @@ import { DragDrop,DragDropEvent } from '../dragDrop/dragDrop';
  })
 export class KanbanDesk {
     columns: any;
-    records: any;
+    records=[];
+    selectedIdRecords = [];
     colWidth: any;
     tags: any;
     msgs: Message[] = [];
@@ -31,14 +32,15 @@ export class KanbanDesk {
     @Input()  paramsIssuesList = {};
     @Output() paramsIssuesListChange = new EventEmitter();
     events = new EventEmitter();
-    @Input()  selectedItems = [];
+   
     
     
     //Start
     constructor(private route: ActivatedRoute,
         private router: Router,private dm:DataManager,public dragDrop:DragDrop) {       
+        console.log("kanban cteated");
+        this.dragDrop.setEvents(this.events);        
         
-        this.dragDrop.setEvents(this.events);
     }
 
     ngOnInit() {
@@ -71,7 +73,14 @@ export class KanbanDesk {
                    .subscribe(e=>this.processingDrop(e.data));        
         this.events.filter(e=>e.type==="click")
                    .subscribe(e=>this.processingClick(e.item));                   
-        this.events.subscribe(e=>console.log("Logger:",e));                           
+        this.events.subscribe(e=>console.log("Logger:",e));
+        this.events.filter(e=>e.type==="select")
+                   .subscribe(e=>this.changeUrl());                                                      
+        this.events.filter(e=>e.type==="applyUrlParams")
+                   .subscribe(e => this.selectRecords(null, false, ...e.data));
+                   
+        this.applyUrlParams(this.route.snapshot.params);                   
+
     }
     //click event    
     processingClick(e){
@@ -122,7 +131,6 @@ export class KanbanDesk {
     }     
     clone(rec){
         if(rec){
-            console.log("clone",rec); 
             this.dm.saveRecord("issues",Object.assign({},rec,{id:null})).subscribe((d)=>this.records.push(d));           
         }
     }
@@ -135,18 +143,30 @@ export class KanbanDesk {
         this.paramsIssuesList=Object.assign(this.paramsIssuesList,change);
         this.paramsIssuesListChange.emit(this.paramsIssuesList);           
     }
-    //select
-    select($event,rec){
-        if(!$event.shiftKey){
-            this.events.emit({type:"deSelect",module:"kanbanDesk",data:this.selectedItems,event:$event});
-            this.selectedItems=[];
+    applyUrlParams(params: Params){
+        if(params['selectedIds']){
+            this.events.emit({type:"applyUrlParams",module:"kanbanDesk",data:params['selectedIds'].split(',').map(s=>+s)});        
         }
-        this.selectedItems.push(rec);
-        this.events.emit({type:"select",module:"kanbanDesk",data:this.selectedItems});
+    }            
+    //select
+    selectRecords($event={},push=true,...recordsId){
+        if(!push){
+            this.events.emit({type:"deSelect",module:"kanbanDesk",data:this.selectedIdRecords});
+            this.selectedIdRecords=[];                      
+        }        
+        this.selectedIdRecords = this.selectedIdRecords.concat(recordsId);
+        this.events.emit({type:"select",module:"kanbanDesk",data:this.selectedIdRecords,event:$event});                
+    }
+    select($event,rec){
+        this.selectRecords($event,$event.shiftKey,rec.id);
     }
     isSelect(rec){
-        return this.selectedItems.indexOf(rec)>-1;       
-    }    
+        return this.selectedIdRecords.indexOf(rec.id)>-1;       
+    }   
+    //urls
+    changeUrl(){        
+       this.router.navigate([ { selectedIds:this.selectedIdRecords}],{});
+    }
 }
 
 import { Pipe, PipeTransform } from '@angular/core';
@@ -154,7 +174,7 @@ import { Pipe, PipeTransform } from '@angular/core';
   pure: false
 })
 export class byColumns implements PipeTransform {
-  transform(value: Array<any>, columnId: string): number {
+  transform(value: Array<Object>, columnId: string): number {
     return value.filter(a=>(a.columnId===columnId));
   }
 }

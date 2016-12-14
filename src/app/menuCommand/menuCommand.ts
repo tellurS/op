@@ -143,10 +143,10 @@ export class MenuCommand implements AfterViewInit,OnDestroy {
             event.preventDefault();
         }
         
-        if(item.dropCommand||item.eventEmitter) {
+        if(item.command||item.eventEmitter) {
             if(!item.eventEmitter) {
                 item.eventEmitter = new EventEmitter();
-                item.eventEmitter.subscribe(item.dropCommand);
+                item.eventEmitter.subscribe(item.command);
             }
             item.eventEmitter.emit({
                 originalEvent: event,

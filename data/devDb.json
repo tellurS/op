@@ -174,17 +174,6 @@
       "priority": 50
     },
     {
-      "id": 25,
-      "columnId": 1,
-      "caption": "super job",
-      "description": "No text",
-      "tags": [
-        1,
-        2
-      ],
-      "priority": 50
-    },
-    {
       "id": 26,
       "columnId": 2,
       "caption": "super job",
@@ -205,6 +194,20 @@
         2
       ],
       "priority": 50
+    },
+    {
+      "id": 28,
+      "columnId": 1,
+      "caption": "super job4",
+      "description": "No text4",
+      "tags": [
+        2
+      ]
+    },
+    {
+      "caption": "new witch template",
+      "columnId": 1,
+      "id": 29
     }
   ],
   "tags": [

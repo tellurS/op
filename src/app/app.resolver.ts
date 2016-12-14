@@ -8,12 +8,15 @@ import { DataManager } from './dataManager';
 
 @Injectable()
 export class DataResolver implements Resolve<any> {
-  constructor(private dataManager:DataManager) {}
+  constructor(private dataManager:DataManager) {
+        console.log("Resolver create");
+      
+  }
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    console.log("Resolve!!",route.data.datasets);
-    this.dataManager.setDataset(route.data.datasets);
-    this.dataManager.setCurrentData(route.data);    
-    return "Ok";    
+        console.log("Resolve!!",route.data);
+        this.dataManager.setDataset(route.data.datasets);
+        this.dataManager.setCurrentData(route.data);    
+        return "Ok";    
   }
 }
 
