@@ -205,9 +205,13 @@
       ]
     },
     {
-      "caption": "new witch template",
+      "id": 29,
       "columnId": 1,
-      "id": 29
+      "caption": "super job4",
+      "description": "No text4",
+      "tags": [
+        2
+      ]
     }
   ],
   "tags": [

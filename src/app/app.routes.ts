@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 //import { About } from './about';
 import { NoContent } from './no-content';
 import { KanbanDesk } from './kanbanDesk';
-import { DataResolver } from './app.resolver';
+//import { DataResolver } from './app.resolver';
 
 
 export const ROUTES: Routes = [
@@ -11,12 +11,11 @@ export const ROUTES: Routes = [
     {
         path: 'kanban_desk',
         component: KanbanDesk, 
-        resolve: {resolve: DataResolver},
-        
         /*    canActivate?: any[];
             canActivateChild?: any[];
             canDeactivate?: any[];
             canLoad?: any[];*/
+        //resolve: {resolve: DataResolver},
         data: {
             caption: 'Desk',
             enable: true,

@@ -1,7 +1,7 @@
 import { Component,Input,Output, EventEmitter} from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import {Message} from 'primeng/primeng';
-import { DataManager } from '../dataManager';
+import { DataManager,Utils} from '../dataManager';
 import 'rxjs/add/observable/combineLatest';
 import { Observable } from 'rxjs/Observable';
 import { DragDrop,DragDropEvent } from '../dragDrop/dragDrop';
@@ -37,8 +37,14 @@ export class KanbanDesk {
     
     //Start
     constructor(private route: ActivatedRoute,
-        private router: Router,private dm:DataManager,public dragDrop:DragDrop) {       
-        console.log("kanban cteated");
+                private router: Router,
+                private dm:DataManager,
+                public dragDrop:DragDrop) {       
+        
+        console.log("kanban created");
+        dm.setDataset(route.snapshot.data.datasets);//source
+        dm.setCurrentData(route.snapshot.data);     //reestr                          
+        
         this.dragDrop.setEvents(this.events);        
         
     }
@@ -58,7 +64,7 @@ export class KanbanDesk {
                    this.columns = c;
                    this.colWidth = 'ui-g-' + (11 / this.columns.length).toFixed();
                    this.records = i.sort((a,b)=>a.priority>b.priority);
-                   this.tags = this.array2index(t, "id");
+                   this.tags = Utils.array2index(t, "id");
                    console.log('datachanged!!!');
         });
         this.applyParams();              
@@ -108,11 +114,6 @@ export class KanbanDesk {
     tag2text(tag: string) {
         return this.tags[tag] && this.tags[tag].caption || '';
     }    
-    array2index(arr: Array<any>, index: String) {
-        let result ={};
-        arr.forEach(el=>result[el[index]]=el);
-        return result;
-    }
     //Commands    
     changeColumn(rec,dst){
         if(rec.columnId!=dst.id){//changeColumn

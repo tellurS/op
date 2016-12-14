@@ -4,6 +4,7 @@ import {Utils} from './utils';
 import { Observable } from 'rxjs/Observable';
 import { RestClient } from'./restClient.service';
 import './rxData';
+import 'rxjs/add/observable/of';
 
 @Injectable()
 export class DataManager {

@@ -13,7 +13,7 @@ import { ENV_PROVIDERS } from './environment';
 import { ROUTES } from './app.routes';
 // App is our top level component
 import { App } from './app.component';
-import { APP_RESOLVER_PROVIDERS } from './app.resolver';
+//import { APP_RESOLVER_PROVIDERS } from './app.resolver';
 import { AppState, InteralStateType } from './app.service';
 import { KanbanDesk,byColumns } from './kanbanDesk';
 import { DataManager,RestClient } from './dataManager';
@@ -23,7 +23,7 @@ import { MenuCommand } from './menuCommand/menuCommand';
 
 // Application wide providers
 const APP_PROVIDERS = [
-  ...APP_RESOLVER_PROVIDERS,
+//  ...APP_RESOLVER_PROVIDERS,
   AppState
 ];
 
