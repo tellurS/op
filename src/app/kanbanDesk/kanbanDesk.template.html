@@ -9,7 +9,7 @@
 
 <div class="ui-g" >
     <div  class="ui-g-1" >        
-        <m-menucommand  [model]="items"></m-menucommand>
+        <m-menucommand  [model]="menuItems"></m-menucommand>
     </div>
     <div  class="ui-g-11" >
         <div [ngClass]="colWidth"  *ngFor="let col of columns"  pDroppable="rec" (onDrop)="dragDrop.drop($event,col,'changeColumn')" (onDragEnter)="dragDrop.onDragEnter($event,'changeColumn')" (onDragLeave)="dragDrop.onDragLeave($event,'changeColumn')">

@@ -4,7 +4,7 @@ import {Utils} from './utils';
 import { Observable } from 'rxjs/Observable';
 import { RestClient } from'./restClient.service';
 import './rxData';
-import 'rxjs/add/observable/of';
+
 
 @Injectable()
 export class DataManager {
@@ -13,13 +13,7 @@ export class DataManager {
     setDataset(data: Dataset[]) {
         Object.assign(this.datasets, Utils.array2index(data));     
     }             
-    setCurrentData(currentData:CurrentData|any) {
-        this.currentData=currentData;
-    }    
-    getCurrentData(expression:string,default1:any=null):any {
-        return Utils.parse(this.currentData,expression)||default1;        
-    }        
-    getRecords(name: string,param={},options={}){//.share()
+    getRecords(name: string,param:Observable<any>|any={},options:{pooling:number}={pooling:0}){//.share()
         let source=[];
         if(param.flatMap){ //param - Observable
             source.push(param);
@@ -31,15 +25,17 @@ export class DataManager {
         }   
         
         return Observable.combineLatest(...source)
-                .flatMap((paramPlusTimer) =>this.getRecordsSimple(name,paramPlusTimer[0],param))
-                .distinctUntilChanged(null,(a,b)=> (JSON.stringify(a)!==JSON.stringify(b)));
+                .flatMap((paramPlusTimer) =>this.getRecordsSimple(name,paramPlusTimer[0]))
+                .distinctUntilChanged((a,b)=> (JSON.stringify(a)!==JSON.stringify(b)));
     }
     getRecordsSimple(name:string,params={}){
         console.log("get",params);
-       if(this.datasets[name].api==="rest"&&this.datasets[name].format==="json")
-            return this.rest.getRecords(this.datasets[name].src,params,{ 
-                                        retry: this.datasets[name].retry,
-                                        id: params.id})
+        let options={retry: this.datasets[name].retry};
+        if(params["id"]){ 
+            options["id"]= params["id"];
+        }                     
+        if(this.datasets[name].api==="rest"&&this.datasets[name].format==="json")
+            return this.rest.getRecords(this.datasets[name].src,params,options)
                 .share();
         throw {name : "NotImplementedError", message : "api"};           
     }
@@ -55,11 +51,11 @@ export class DataManager {
         throw {name : "NotImplementedError", message : "api"};         
     }
     private datasets: { [name: string]: Dataset } = {};
-    private currentData:CurrentData;
+
 }
 
 
-interface Dataset {
+export interface Dataset {
     name: string,
     src: string,
     api: string,
@@ -67,10 +63,3 @@ interface Dataset {
     retry?:number
 }
 
-interface CurrentData {
-    caption: string,
-    enable:  boolean,
-    role:    Array<string>,
-    future:  Object,
-    datasets:Object
-}

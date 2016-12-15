@@ -5,6 +5,7 @@ import { DataManager,Utils} from '../dataManager';
 import 'rxjs/add/observable/combineLatest';
 import { Observable } from 'rxjs/Observable';
 import { DragDrop,DragDropEvent } from '../dragDrop/dragDrop';
+import { Template } from '../template/template.component';
 
 
 @Component({
@@ -12,7 +13,7 @@ import { DragDrop,DragDropEvent } from '../dragDrop/dragDrop';
     templateUrl: './kanbanDesk.template.html',
     providers : [DragDrop],
  })
-export class KanbanDesk {
+export class KanbanDesk extends Template{
     columns: any;
     records=[];
     selectedIdRecords = [];
@@ -20,19 +21,14 @@ export class KanbanDesk {
     tags: any;
     msgs: Message[] = [];
     features={
-        pooling: false,
+        pooling: 0,
         bin:     false,
         peoples: false,
         resourse:false,
         priority:false        
     };
-    items=[];
+    menuItems=[];
 
-    
-    @Input()  paramsIssuesList = {};
-    @Output() paramsIssuesListChange = new EventEmitter();
-    events = new EventEmitter();
-   
     
     
     //Start
@@ -41,9 +37,8 @@ export class KanbanDesk {
                 private dm:DataManager,
                 public dragDrop:DragDrop) {       
         
+        super(route,dm);
         console.log("kanban created");
-        dm.setDataset(route.snapshot.data.datasets);//source
-        dm.setCurrentData(route.snapshot.data);     //reestr                          
         
         this.dragDrop.setEvents(this.events);        
         
@@ -51,11 +46,11 @@ export class KanbanDesk {
 
     ngOnInit() {
         console.log('hello `kanbanDesk` component');
-        this.features=this.dm.getCurrentData("feature",this.features);
+        this.features=this.getCurrentData("feature",this.features);
             
         Observable.combineLatest([this.dm.getRecords('columns'),
                                   this.dm.getRecords('issues', 
-                                                    this.paramsIssuesListChange, 
+                                                    this.paramsChange, 
                                                     {pooling:this.features.pooling}),
                                   this.dm.getRecords('tags')
                                   //this.dm.getRecords('issues',{id:"1"})
@@ -68,7 +63,7 @@ export class KanbanDesk {
                    console.log('datachanged!!!');
         });
         this.applyParams();              
-        this.items = [
+        this.menuItems = [
                        {label: "Remove" , icon: "kanban-recycle",eventEmitter:this.events,run:"remove"},
                        {label: "clone", icon: "fa-refresh",eventEmitter:this.events,run:"clone",dataItem:{"caption":"new witch template","columnId":1}}
         ];        
@@ -140,10 +135,6 @@ export class KanbanDesk {
     togglePriority(){
         this.applyParams({priority_gte:'15'});
     }
-    applyParams(change={}){
-        this.paramsIssuesList=Object.assign(this.paramsIssuesList,change);
-        this.paramsIssuesListChange.emit(this.paramsIssuesList);           
-    }
     applyUrlParams(params: Params){
         if(params['selectedIds']){
             this.events.emit({type:"applyUrlParams",module:"kanbanDesk",data:params['selectedIds'].split(',').map(s=>+s)});        
@@ -166,7 +157,7 @@ export class KanbanDesk {
     }   
     //urls
     changeUrl(){        
-       this.router.navigate([ { selectedIds:this.selectedIdRecords}],{});
+        this.router.navigate([{ selectedIds: this.selectedIdRecords}],  { replaceUrl: true });
     }
 }
 
@@ -175,8 +166,8 @@ import { Pipe, PipeTransform } from '@angular/core';
   pure: false
 })
 export class byColumns implements PipeTransform {
-  transform(value: Array<Object>, columnId: string): number {
-    return value.filter(a=>(a.columnId===columnId));
+  transform(values: Array<{columnId:number}>, columnId: number): Array<any> {
+    return values.filter(a=>(a.columnId==columnId));
   }
 }
 

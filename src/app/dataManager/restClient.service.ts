@@ -43,7 +43,7 @@ export class RestClient {
                         .catch(this.handleError);        
     }      
     private extractData(res: Response) {
-        return JSON.parse(res._body);
+        return JSON.parse(res["_body"]);
     }
        
     private handleError (error: any) {
