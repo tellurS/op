@@ -90,22 +90,22 @@ export class KanbanDesk extends Template{
     //click menu event    
     processingClick(e){
         if(e.run&&this[e.run]){
-            console.log("Run:",e.run,e.dataItem);
+            this.log("processingClick",{run:e.run,dataItem:e.dataItem});
             this[e.run](e.dataItem||{});
         }                
     }   
     //drop event
     processingDrop(e:DragDropEvent){
-        let dropFinish;
-            dropFinish=e.drops.sort((a,b)=> (a.type === 'changeColumn')?1:-1);//column first
-            console.log("drapDropRun dst",dropFinish[0]);
-
-            if(dropFinish[0].type&&this[dropFinish[0].type]){
-                console.log("Run:");
-                this[dropFinish[0].type](e.src,dropFinish[0].dst,dropFinish[0].dst.dropDataItem||{});
-            }                
+        let dropFinish,dst;
+        dropFinish=e.drops.sort((a,b)=> (a.type === 'changeColumn')?1:-1);//column first
+        dst=dst:dropFinish[0].dst;
+            
+        if(dropFinish[0].type&&this[dropFinish[0].type]){
+            this.log("processingClick",{src:e.src,dst,dataItem:dst.dropDataItem});
+            this[dropFinish[0].type](e.src,dropFinish[0].dst,dropFinish[0].dst.dropDataItem||{});
+                            
+        }
     }
-    
     //Helpers
     tag2icon(tag: string) {
         return this.tags[tag] && this.tags[tag].icon || '';
@@ -116,7 +116,7 @@ export class KanbanDesk extends Template{
     //Commands    
     changeColumn(rec,dst){
         if(rec.columnId!=dst.id){//changeColumn
-           console.log("changeColumn",rec,dst.id);
+           this.log("changeColumn",{rec,id:dst.id});
            rec.columnId=dst.id; 
            this.dm.saveRecord("issues", rec).subscribe((d)=>rec=d);
         }else{ //clone
@@ -125,8 +125,8 @@ export class KanbanDesk extends Template{
     }
     remove(rec){
         if(rec){
-            console.log("remove",rec); 
-            this.dm.deleteRecord("issues", rec).subscribe((d)=>this.records=this.records.filter(item => item !== rec));
+            this.log("remove",{rec,id:rec.id});            
+            this.dm.deleteRecord("issues", rec.id).subscribe((d)=>this.records=this.records.filter(item => item !== rec));
         }
     }     
     clone(rec){
@@ -148,11 +148,11 @@ export class KanbanDesk extends Template{
     //select
     selectRecords($event={},push=true,...recordsId){
         if(!push){
-            this.events.emit({type:"deSelect",module:"kanbanDesk",data:this.selectedIdRecords});
+            this.log("deSelect",{data:this.selectedIdRecords});            
             this.selectedIdRecords=[];                      
         }        
         this.selectedIdRecords = this.selectedIdRecords.concat(recordsId);
-        this.events.emit({type:"select",module:"kanbanDesk",data:this.selectedIdRecords,event:$event});                
+        this.log("select",{data:this.selectedIdRecords,event:$event});            
     }
     select(e){
         this.selectRecords(e.$event,e.$event.shiftKey,e.rec.id);        

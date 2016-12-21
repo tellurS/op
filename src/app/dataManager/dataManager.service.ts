@@ -44,10 +44,10 @@ export class DataManager {
             return this.rest.saveRecord(this.datasets[name].src, record, { retry: this.datasets[name].retry});
         throw {name : "NotImplementedError", message : "api"}; 
     }    
-    deleteRecord(name: string,record:any){
+    deleteRecord(name: string,idRecord:number){
         if(this.datasets[name].api==="rest"&&this.datasets[name].format==="json")
             return this.rest.deleteRecord(this.datasets[name].src, { retry: this.datasets[name].retry,
-                                                                     id: record.id});
+                                                                     id: idRecord});
         throw {name : "NotImplementedError", message : "api"};         
     }
     private datasets: { [name: string]: Dataset } = {};

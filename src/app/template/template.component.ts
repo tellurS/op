@@ -13,9 +13,13 @@ export class Template {
         let d=Object.assign({componentName:this.componentName},data);
         this.events.emit(d);                
     }
-    run(run:"run",data={}){       
+    run(run="run",data={}){       
         this.emit({type:'run',run,dataItem:data});                
     }    
+    log(type="log",data={}){       
+        let l=Object.assign({},{type},data);
+        this.emit(l);                
+    }        
     //Start
     constructor(public route: ActivatedRoute,public router: Router,public dm:DataManager) {  
         this.data=route.snapshot.data as ComponentData;                                         
