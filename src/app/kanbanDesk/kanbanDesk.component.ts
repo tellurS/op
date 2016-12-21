@@ -65,7 +65,9 @@ export class KanbanDesk extends Template{
         });             
         this.menuItems = [
                        {label: "Remove" , icon: "kanban-recycle",eventEmitter:this.events,run:"remove"},
-                       {label: "clone", icon: "fa-refresh",eventEmitter:this.events,run:"clone",dataItem:{"caption":"new witch template","columnId":1}}
+                       {label: "clone", icon: "fa-refresh",   eventEmitter:this.events,run:"clone"}
+                       //{label: "clone", icon: "fa-refresh",eventEmitter:this.events,run:"clone",dataItem:{"caption":"new witch template","columnId":1}}
+                       
         ];        
         
         this.events.filter(e=>e.type==="menuDrop")//Menu2drop
@@ -98,7 +100,7 @@ export class KanbanDesk extends Template{
     processingDrop(e:DragDropEvent){
         let dropFinish,dst;
         dropFinish=e.drops.sort((a,b)=> (a.type === 'changeColumn')?1:-1);//column first
-        dst=dst:dropFinish[0].dst;
+        dst=dropFinish[0].dst;
             
         if(dropFinish[0].type&&this[dropFinish[0].type]){
             this.log("processingClick",{src:e.src,dst,dataItem:dst.dropDataItem});
@@ -113,6 +115,9 @@ export class KanbanDesk extends Template{
     tag2text(tag: string) {
         return this.tags[tag] && this.tags[tag].caption || '';
     }    
+    id2record(id:number){
+        return this.records.find(r=>r.id===id);         
+    }    
     //Commands    
     changeColumn(rec,dst){
         if(rec.columnId!=dst.id){//changeColumn
@@ -123,16 +128,26 @@ export class KanbanDesk extends Template{
            this.clone(rec);
         }
     }
-    remove(rec){
-        if(rec){
-            this.log("remove",{rec,id:rec.id});            
-            this.dm.deleteRecord("issues", rec.id).subscribe((d)=>this.records=this.records.filter(item => item !== rec));
+   
+    remove(rec=null,rid=null){
+        let id=rec&&rec.id||rid;
+        if(id){
+            this.log("remove",{rec,id});            
+            this.dm.deleteRecord("issues", id).subscribe((d)=>this.records=this.records.filter(item => item.id !== id));
+        }else{
+            this.selectedIdRecords.forEach(r=>this.remove(null,r));        
+            this.selectedIdRecords=[];
         }
     }     
-    clone(rec){
-        if(rec){
+    clone(src=null,rid=null){
+        let rec = rid&&this.id2record(rid)||src;        
+        this.log("preclone",{src,rid,rec});
+        if(rec&&rec.id){
+            this.log("clone",{rec,id:rec.id});
             this.dm.saveRecord("issues",Object.assign({},rec,{id:null})).subscribe((d)=>this.records.push(d));           
-        }
+        }else{
+            this.selectedIdRecords.forEach(r=>this.clone(null,r));        
+        }        
     }
     
     //Params    
