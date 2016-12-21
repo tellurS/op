@@ -121,7 +121,7 @@ export class MenuCommand implements AfterViewInit,OnDestroy {
             item.eventEmitter.emit({
                 originalEvent: event,
                 item: item,
-                type: "click"                
+                type: "menuClick"                
             });
         }
         
@@ -151,7 +151,7 @@ export class MenuCommand implements AfterViewInit,OnDestroy {
             item.eventEmitter.emit({
                 originalEvent: event,
                 item: item,
-                type: "drop"
+                type: "menuDrop"
             });
         }
         

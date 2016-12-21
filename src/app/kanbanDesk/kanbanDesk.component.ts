@@ -14,6 +14,7 @@ import { Template } from '../template/template.component';
     providers : [DragDrop],
  })
 export class KanbanDesk extends Template{
+    componentName="KanbanDesk";
     columns: any;
     records=[];
     selectedIdRecords = [];
@@ -37,7 +38,7 @@ export class KanbanDesk extends Template{
                 private dm:DataManager,
                 public dragDrop:DragDrop) {       
         
-        super(route,dm);
+        super(route,router,dm);
         console.log("kanban created");
         
         this.dragDrop.setEvents(this.events);        
@@ -46,11 +47,11 @@ export class KanbanDesk extends Template{
 
     ngOnInit() {
         console.log('hello `kanbanDesk` component');
-        this.features=this.getCurrentData("feature",this.features);
+        this.features=this.getComponentData("feature",this.features);
             
         Observable.combineLatest([this.dm.getRecords('columns'),
                                   this.dm.getRecords('issues', 
-                                                    this.paramsChange, 
+                                                    this.events.filter(e=>e.type==="paramsChange").map(val => Utils.pick(val.params,["priority_gte"])).distinctUntilChanged(null,a=>JSON.stringify(a)), 
                                                     {pooling:this.features.pooling}),
                                   this.dm.getRecords('tags')
                                   //this.dm.getRecords('issues',{id:"1"})
@@ -61,29 +62,32 @@ export class KanbanDesk extends Template{
                    this.records = i.sort((a,b)=>a.priority>b.priority);
                    this.tags = Utils.array2index(t, "id");
                    console.log('datachanged!!!');
-        });
-        this.applyParams();              
+        });             
         this.menuItems = [
                        {label: "Remove" , icon: "kanban-recycle",eventEmitter:this.events,run:"remove"},
                        {label: "clone", icon: "fa-refresh",eventEmitter:this.events,run:"clone",dataItem:{"caption":"new witch template","columnId":1}}
         ];        
         
-        this.events.filter(e=>e.type==="drop")//Menu2drop
+        this.events.filter(e=>e.type==="menuDrop")//Menu2drop
                    .subscribe(e=>this.dragDrop.drop(e,e.item,e.item.run));        
         this.events.filter(e=>e.type==="onDragEnd")
                    .subscribe(e=>this.processingDrop(e.data));        
-        this.events.filter(e=>e.type==="click")
+        this.events.filter(e=>e.type==="menuClick")
                    .subscribe(e=>this.processingClick(e.item));                   
-        this.events.subscribe(e=>console.log("Logger:",e));
-        this.events.filter(e=>e.type==="select")
-                   .subscribe(e=>this.changeUrl());                                                      
-        this.events.filter(e=>e.type==="applyUrlParams")
-                   .subscribe(e => this.selectRecords(null, false, ...e.data));
+        this.events.filter(e=>e.type==="run")
+                   .subscribe(e=>this.processingClick(e));                   
                    
+        this.events.subscribe(e=>console.log("Logger:",e));
+        
+        this.events.filter(e=>e.type==="select")
+                    .subscribe(e=>this.applyParams({select: this.selectedIdRecords}));  
+               
+        this.events.filter(e=>e.type==="paramsChange")
+                   .subscribe(e=>this.changeUrl());                                                      
+        
         this.applyUrlParams(this.route.snapshot.params);                   
-
     }
-    //click event    
+    //click menu event    
     processingClick(e){
         if(e.run&&this[e.run]){
             console.log("Run:",e.run,e.dataItem);
@@ -136,9 +140,10 @@ export class KanbanDesk extends Template{
         this.applyParams({priority_gte:'15'});
     }
     applyUrlParams(params: Params){
-        if(params['selectedIds']){
-            this.events.emit({type:"applyUrlParams",module:"kanbanDesk",data:params['selectedIds'].split(',').map(s=>+s)});        
-        }
+        this.applyParams(params);
+        if(params['select']){
+            this.selectRecords(null, false, ...params['select'].split(',').map(s=>+s))    
+        };                
     }            
     //select
     selectRecords($event={},push=true,...recordsId){
@@ -149,16 +154,14 @@ export class KanbanDesk extends Template{
         this.selectedIdRecords = this.selectedIdRecords.concat(recordsId);
         this.events.emit({type:"select",module:"kanbanDesk",data:this.selectedIdRecords,event:$event});                
     }
-    select($event,rec){
-        this.selectRecords($event,$event.shiftKey,rec.id);
+    select(e){
+        this.selectRecords(e.$event,e.$event.shiftKey,e.rec.id);        
     }
     isSelect(rec){
         return this.selectedIdRecords.indexOf(rec.id)>-1;       
     }   
     //urls
-    changeUrl(){        
-        this.router.navigate([{ selectedIds: this.selectedIdRecords}],  { replaceUrl: true });
-    }
+
 }
 
 import { Pipe, PipeTransform } from '@angular/core';

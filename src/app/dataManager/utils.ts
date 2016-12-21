@@ -7,7 +7,7 @@ export class Utils {
  */
     static array2index(arr : Array<any>, index: string = "name"):any {
         let result = {};
-        arr.forEach(el=> result[el[index]as 'string'] = el);
+        arr.forEach(el=> result[ el[index]as 'string'] = el);
         return result;
     }    
     static parse(data:any,expression?:string,defaultValue?){
@@ -35,6 +35,16 @@ export class Utils {
            })
            return src;
         }       
-
+    }
+    static pick(obj:Object,keys:String[],invert:boolean=false){ //only keys
+        let res={};
+        for (var key in obj) {
+            if(!invert&&(keys.indexOf(key)>-1)||  
+               invert&&(keys.indexOf(key)==-1)   //inver
+            ){
+                res[key]=obj[key];
+            }
+        }
+        return res;
     }
 }

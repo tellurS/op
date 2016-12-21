@@ -26,7 +26,7 @@ export class DataManager {
         
         return Observable.combineLatest(...source)
                 .flatMap((paramPlusTimer) =>this.getRecordsSimple(name,paramPlusTimer[0]))
-                .distinctUntilChanged((a,b)=> (JSON.stringify(a)!==JSON.stringify(b)));
+                .distinctUntilChanged();
     }
     getRecordsSimple(name:string,params={}){
         console.log("get",params);
