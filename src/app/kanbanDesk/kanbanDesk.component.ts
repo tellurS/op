@@ -3,17 +3,18 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import {Message} from 'primeng/primeng';
 import { DataManager,Utils} from '../dataManager';
 import 'rxjs/add/observable/combineLatest';
+import 'rxjs/add/observable/concat';
 import { Observable } from 'rxjs/Observable';
 import { DragDrop,DragDropEvent } from '../dragDrop/dragDrop';
-import { Template } from '../template/template.component';
-
+import { Page } from '../page/page';
+import { MenuCommandItem } from '../menuCommand/menuCommand';
 
 @Component({
     selector: 'kanbanDesk',  
     templateUrl: './kanbanDesk.template.html',
     providers : [DragDrop],
  })
-export class KanbanDesk extends Template{
+export class KanbanDesk extends Page{
     componentName="KanbanDesk";
     columns: any;
     records=[];
@@ -33,20 +34,19 @@ export class KanbanDesk extends Template{
     
     
     //Start
-    constructor(private route: ActivatedRoute,
-                private router: Router,
-                private dm:DataManager,
+    constructor(public route: ActivatedRoute,
+                public router: Router,
+                public dm:DataManager,
                 public dragDrop:DragDrop) {       
         
         super(route,router,dm);
-        console.log("kanban created");
+        this.log("kanbanCreated");
         
         this.dragDrop.setEvents(this.events);        
         
     }
 
     ngOnInit() {
-        console.log('hello `kanbanDesk` component');
         this.features=this.getComponentData("feature",this.features);
             
         Observable.combineLatest([this.dm.getRecords('columns'),
@@ -58,54 +58,59 @@ export class KanbanDesk extends Template{
                                   ])
                .subscribe(([c,i,t])=>{
                    this.columns = c;
-                   this.colWidth = 'ui-g-' + (11 / this.columns.length).toFixed();
+                   this.colWidth = 'ui-g-' + (10 / this.columns.length).toFixed();
                    this.records = i.sort((a,b)=>a.priority>b.priority);
                    this.tags = Utils.array2index(t, "id");
-                   console.log('datachanged!!!');
+                   this.log("dataUpdated");
         });             
         this.menuItems = [
-                       {label: "Remove" , icon: "kanban-recycle",eventEmitter:this.events,run:"remove"},
-                       {label: "clone", icon: "fa-refresh",   eventEmitter:this.events,run:"clone"}
-                       //{label: "clone", icon: "fa-refresh",eventEmitter:this.events,run:"clone",dataItem:{"caption":"new witch template","columnId":1}}
-                       
+            {label: "Add", icon: "fa-plus",   eventEmitter:this.events,run:"add",multi:true},
+            {label: "Clone", icon: "fa-refresh",   eventEmitter:this.events,run:"clone",multi:true},
+            {label: "Remove" , icon: "fa-recycle",eventEmitter:this.events,run:"remove",multi:true}                       
         ];        
         
         this.events.filter(e=>e.type==="menuDrop")//Menu2drop
                    .subscribe(e=>this.dragDrop.drop(e,e.item,e.item.run));        
+                   
         this.events.filter(e=>e.type==="onDragEnd")
                    .subscribe(e=>this.processingDrop(e.data));        
         this.events.filter(e=>e.type==="menuClick")
-                   .subscribe(e=>this.processingClick(e.item));                   
+                   .subscribe(e=>this.processingClick(e.item)); 
         this.events.filter(e=>e.type==="run")
-                   .subscribe(e=>this.processingClick(e));                   
+                   .subscribe(e=>this.processingClick(e));               
                    
-        this.events.subscribe(e=>console.log("Logger:",e));
         
         this.events.filter(e=>e.type==="select")
-                    .subscribe(e=>this.applyParams({select: this.selectedIdRecords}));  
-               
+                    .subscribe(e=>this.applyParams({select: this.selectedIdRecords}));                 
         this.events.filter(e=>e.type==="paramsChange")
                    .subscribe(e=>this.changeUrl());                                                      
         
+        //start                   
+        Observable.concat(this.logs, this.events).subscribe(e=>console.log(e));        
+        this.log('init');
         this.applyUrlParams(this.route.snapshot.params);                   
     }
     //click menu event    
-    processingClick(e){
-        if(e.run&&this[e.run]){
-            this.log("processingClick",{run:e.run,dataItem:e.dataItem});
-            this[e.run](e.dataItem||{});
+    processingClick(item:MenuCommandItem){
+        if(item.run&&this[item.run]){          
+            this.log("processingClick",item);            
+            if (item.multi){//group2single                
+                this.selectedIdRecords.forEach(
+                          id=>this[item.run as string](item.options||{},id)
+                        );        
+            }else{               
+                this[item.run as string](item.options||{},this.selectedIdRecords);            
+            }                                             
         }                
     }   
     //drop event
     processingDrop(e:DragDropEvent){
-        let dropFinish,dst;
-        dropFinish=e.drops.sort((a,b)=> (a.type === 'changeColumn')?1:-1);//column first
-        dst=dropFinish[0].dst;
+        let dropFinish=e.drops.sort((a,b)=> (a.type === 'changeColumn')?1:-1);//column first
+        let dst=dropFinish[0].dst;
             
         if(dropFinish[0].type&&this[dropFinish[0].type]){
-            this.log("processingClick",{src:e.src,dst,dataItem:dst.dropDataItem});
-            this[dropFinish[0].type](e.src,dropFinish[0].dst,dropFinish[0].dst.dropDataItem||{});
-                            
+            this.log("processingDrop",{dataItem:dst.dropDataItem,src:e.src,dst});
+            this[dropFinish[0].type](dst.dropDataItem||{},e.src.id,dst);                            
         }
     }
     //Helpers
@@ -116,9 +121,11 @@ export class KanbanDesk extends Template{
         return this.tags[tag] && this.tags[tag].caption || '';
     }    
     id2record(id:number){
+        if(!id)
+            return null;
         return this.records.find(r=>r.id===id);         
     }    
-    //Commands    
+    //Commands       
     changeColumn(rec,dst){
         if(rec.columnId!=dst.id){//changeColumn
            this.log("changeColumn",{rec,id:dst.id});
@@ -129,27 +136,20 @@ export class KanbanDesk extends Template{
         }
     }
    
-    remove(rec=null,rid=null){
-        let id=rec&&rec.id||rid;
-        if(id){
-            this.log("remove",{rec,id});            
-            this.dm.deleteRecord("issues", id).subscribe((d)=>this.records=this.records.filter(item => item.id !== id));
-        }else{
-            this.selectedIdRecords.forEach(r=>this.remove(null,r));        
-            this.selectedIdRecords=[];
+    remove(options={},src=null){
+        if(src){
+            this.log("remove",{src});            
+            this.dm.deleteRecord("issues", src).subscribe((d)=>this.records=this.records.filter(item => item.id !== src));
         }
     }     
-    clone(src=null,rid=null){
-        let rec = rid&&this.id2record(rid)||src;        
-        this.log("preclone",{src,rid,rec});
-        if(rec&&rec.id){
-            this.log("clone",{rec,id:rec.id});
-            this.dm.saveRecord("issues",Object.assign({},rec,{id:null})).subscribe((d)=>this.records.push(d));           
-        }else{
-            this.selectedIdRecords.forEach(r=>this.clone(null,r));        
-        }        
-    }
-    
+    clone(options={},src=null){
+        let rec=this.id2record(src);
+        if(!src){
+            return;
+        }             
+        this.log("clone",{rec,src});
+        this.dm.saveRecord("issues",Object.assign({},rec,{id:null})).subscribe((d)=>this.records.push(d));                   
+    }    
     //Params    
     togglePriority(){
         this.applyParams({priority_gte:'15'});
@@ -163,14 +163,14 @@ export class KanbanDesk extends Template{
     //select
     selectRecords($event={},push=true,...recordsId){
         if(!push){
-            this.log("deSelect",{data:this.selectedIdRecords});            
+            this.emit("deSelect",{data:this.selectedIdRecords});            
             this.selectedIdRecords=[];                      
         }        
         this.selectedIdRecords = this.selectedIdRecords.concat(recordsId);
-        this.log("select",{data:this.selectedIdRecords,event:$event});            
+        this.emit("select",{data:this.selectedIdRecords,event:$event});            
     }
-    select(e){
-        this.selectRecords(e.$event,e.$event.shiftKey,e.rec.id);        
+    select(options={}){
+        this.selectRecords(options.$event,options.$event.shiftKey,options.rec.id);        
     }
     isSelect(rec){
         return this.selectedIdRecords.indexOf(rec.id)>-1;       

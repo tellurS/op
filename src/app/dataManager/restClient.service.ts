@@ -19,7 +19,6 @@ export class RestClient {
         return baseurl+((id!="")?(id='/'+id):"");
     }
     createOptions(data?):RequestOptions{
-        console.log("options",data);
         return new RequestOptions({ headers:  new Headers({ 'Content-Type': 'application/json' }),
                                     search:   this.data2URLSearchParams(data)
                              });

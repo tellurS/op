@@ -11,7 +11,6 @@ export class Utils {
         return result;
     }    
     static parse(data:any,expression?:string,defaultValue?){
-        console.log("Parsing",data,expression,defaultValue);
         if(!data)
             return defaultValue;
         if(!expression)
@@ -20,9 +19,7 @@ export class Utils {
             return data.flatMap((datar) => Observable.of(this.parse(datar,expression,defaultValue)));
         }else{
             let src=data;
-            console.log("Parsing Pre",src);
             expression.split('.').every(current=>{
-                console.log("Parsing Go",src,current);
                 if(current.charAt(0)==="["){//array
                     current = current.slice(1, current.length-1)
                 }

@@ -29,7 +29,6 @@ export class DataManager {
                 .distinctUntilChanged();
     }
     getRecordsSimple(name:string,params={}){
-        console.log("get",params);
         let options={retry: this.datasets[name].retry};
         if(params["id"]){ 
             options["id"]= params["id"];

@@ -4,21 +4,23 @@ import { DataManager,Utils,Dataset} from '../dataManager';
 import { Observable } from 'rxjs/Observable';
 
 
-export class Template {
+
+export class Page {
     features={};
     componentName="template";
     //Event
     events = new EventEmitter();
-    emit(data={}){                
-        let d=Object.assign({componentName:this.componentName},data);
+    logs = new EventEmitter();
+    emit(type="emit",data={}){                
+        let d=Object.assign({},{componentName:this.componentName,type},data);
         this.events.emit(d);                
     }
-    run(run="run",data={}){       
-        this.emit({type:'run',run,dataItem:data});                
+    run(run="run",options={}){       
+        this.emit('run',{run,options});                
     }    
     log(type="log",data={}){       
-        let l=Object.assign({},{type},data);
-        this.emit(l);                
+        let l=Object.assign({},{status:"log",componentName:this.componentName,type},data);
+        this.logs.emit(l);                        
     }        
     //Start
     constructor(public route: ActivatedRoute,public router: Router,public dm:DataManager) {  
@@ -34,7 +36,7 @@ export class Template {
     params = {};
     applyParams(change={}){
         this.params=Object.assign({},this.params,change);
-        this.emit({type:"paramsChange",params:this.params});           
+        this.emit("paramsChange",{params:this.params});           
     }       
     //Urls
     changeUrl(options={replaceUrl:true}){           
