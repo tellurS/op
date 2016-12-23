@@ -205,7 +205,6 @@ export class MenuCommand implements AfterViewInit,OnDestroy {
 
 export interface MenuCommandItem extends MenuItem{
     options?:any;
-    dropOptions?:any;
     run?:string;
     multi?:boolean;
     dst?:any;

@@ -30,7 +30,7 @@
       "tags": [
         2
       ],
-      "priority": 500
+      "priority": 1000
     },
     {
       "id": 4,
@@ -99,6 +99,28 @@
       "caption": "super job3",
       "description": "No description",
       "priority": 100
+    },
+    {
+      "id": 58,
+      "columnId": 2,
+      "caption": "super job",
+      "description": "No text",
+      "tags": [
+        1,
+        2
+      ],
+      "priority": 500
+    },
+    {
+      "id": 59,
+      "columnId": 2,
+      "caption": "super job",
+      "description": "No text",
+      "tags": [
+        1,
+        2
+      ],
+      "priority": 500
     }
   ],
   "tags": [

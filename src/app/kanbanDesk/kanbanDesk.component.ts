@@ -31,7 +31,7 @@ export class KanbanDesk extends Page{
     };
     menuItems=[];
     prefixTagCss="kanban-tag";
-    
+    workAria=10;
     
     //Start
     constructor(public route: ActivatedRoute,
@@ -58,7 +58,7 @@ export class KanbanDesk extends Page{
                                   ])
                .subscribe(([c,i,t])=>{
                    this.columns = c;
-                   this.colWidth = 'ui-g-' + (10 / this.columns.length).toFixed();
+                   this.colWidth = 'ui-g-' + (this.workAria/ this.columns.length).toFixed();
                    this.tags = Utils.array2index(t, "id");
                    this.records=i;
                    this.run("order");                   
@@ -115,8 +115,8 @@ export class KanbanDesk extends Page{
         let dst=dropFinish[0].dst;
 
         if(dropFinish[0].type&&this[dropFinish[0].type]){
-            this.log("processingDrop",{dataItem:dst.dropDataItem,src:e.src,dst});
-            this[dropFinish[0].type](dst.dropDataItem||{},e.src.id,dst);                            
+            this.log("processingDrop",{options:dst.options,src:e.src,dst});
+            this[dropFinish[0].type](dst.options,e.src.id,dst);                            
         }
     }
     //web Helpers
@@ -143,8 +143,8 @@ export class KanbanDesk extends Page{
         return this.records.find(r=>r.id===id);         
     }    
     //Commands       
-    order(options={},src=null,recs=this.records){
-        this.records = recs.sort((a,b)=>a.priority<b.priority);        
+    order(options={},src=null){
+        this.records = this.records.sort((a,b)=>a.priority<b.priority);        
     }    
     changeColumn(options={},src=null,dst){        
         let rec=this.id2record(src);
@@ -173,6 +173,19 @@ export class KanbanDesk extends Page{
         this.dm.saveRecord("issues",Object.assign({},rec,{id:null})).subscribe((d)=>this.records.push(d));                   
     }    
     change(options={},src=null){
+        let rec=this.id2record(src);
+        if(!src){
+            return;
+        }             
+        this.log("change",{options,src,rec});
+        this.dm.saveRecord("issues",Object.assign({},rec,options))
+               .subscribe((d)=>{
+                                this.records=this.records.filter(item => item.id !== src)
+                                this.records.push(d);    
+                                this.run("order");
+                               });                   
+    }    
+    resource(options={},src=null,dst=[]){
         let rec=this.id2record(src);
         if(!src){
             return;

@@ -15,8 +15,11 @@ export class Page {
         let d=Object.assign({},{componentName:this.componentName,type},data);
         this.events.emit(d);                
     }
-    run(run="run",options={}){       
-        this.emit('run',{run,options});                
+    run(run="run",options={},dst=null){       
+        let data={run,options};
+        if(dst)
+            data.dst=dst;
+        this.emit('run',data);                
     }    
     log(type="log",data={}){       
         let l=Object.assign({},{status:"log",componentName:this.componentName,type},data);
