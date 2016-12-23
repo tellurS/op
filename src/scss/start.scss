@@ -23,6 +23,11 @@
           background-color:#ffffff;           
        };
 }
+.kanban-tag1{//hard
+    .ui-widget-header{ 
+          filter: invert(100%);
+       };
+}
 .kanban-header-columns-sticked{
     position:fixed; 
     top: 0;

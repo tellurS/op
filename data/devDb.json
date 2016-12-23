@@ -214,7 +214,7 @@
       "options": {
         "priority": "500"
       },
-      "priority": 100
+      "priority": 1000
     }
   ],
   "tags": [

@@ -30,7 +30,7 @@ export class KanbanDesk extends Page{
         priority:false        
     };
     menuItems=[];
-
+    prefixTagCss="kanban-tag";
     
     
     //Start
@@ -125,13 +125,17 @@ export class KanbanDesk extends Page{
     }    
     tag2text(tag: string) {
         return this.tags[tag] && this.tags[tag].caption || '';
-    }    
+    }        
     status2class(rec){
-        return {'kanban-high':rec.priority>=700,
+        let dst={'kanban-high':rec.priority>=700,
                 'kanban-medium':(rec.priority<700)&&(rec.priority>400),
                 'kanban-low':(rec.priority<=400),
                 'kanban-selected':this.isSelect(rec)
                 };
+        if(rec.tags)
+            rec.tags.forEach(c=>{dst[this.prefixTagCss+c]=true;});
+            console.log(dst);
+        return dst;
     }
     //helpers
     id2record(id:number){
