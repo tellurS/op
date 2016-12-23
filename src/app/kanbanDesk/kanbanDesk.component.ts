@@ -59,14 +59,17 @@ export class KanbanDesk extends Page{
                .subscribe(([c,i,t])=>{
                    this.columns = c;
                    this.colWidth = 'ui-g-' + (10 / this.columns.length).toFixed();
-                   this.records = i.sort((a,b)=>a.priority>b.priority);
+                   this.orderRecords(i);
                    this.tags = Utils.array2index(t, "id");
                    this.log("dataUpdated");
         });             
         this.menuItems = [
             {label: "Add", icon: "fa-plus",   eventEmitter:this.events,run:"add",multi:true},
             {label: "Clone", icon: "fa-refresh",   eventEmitter:this.events,run:"clone",multi:true},
-            {label: "Remove" , icon: "fa-recycle",eventEmitter:this.events,run:"remove",multi:true}                       
+            {label: "Remove" , icon: "fa-recycle",eventEmitter:this.events,run:"remove",multi:true},                       
+            {label: "High Priority" , icon: "fa-fire",eventEmitter:this.events,run:"change",multi:true,options:{priority:"1000"}},            
+            {label: "Medium Priority" , icon: "fa-gavel",eventEmitter:this.events,run:"change",multi:true,options:{priority:"500"}},                        
+            {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"change",multi:true,options:{priority:"100"}},                        
         ];        
         
         this.events.filter(e=>e.type==="menuDrop")//Menu2drop
@@ -89,6 +92,9 @@ export class KanbanDesk extends Page{
         Observable.concat(this.logs, this.events).subscribe(e=>console.log(e));        
         this.log('init');
         this.applyUrlParams(this.route.snapshot.params);                   
+    }    
+    orderRecords(recs=this.records){
+        this.records = recs.sort((a,b)=>a.priority<b.priority);        
     }
     //click menu event    
     processingClick(item:MenuCommandItem){
@@ -107,35 +113,45 @@ export class KanbanDesk extends Page{
     processingDrop(e:DragDropEvent){
         let dropFinish=e.drops.sort((a,b)=> (a.type === 'changeColumn')?1:-1);//column first
         let dst=dropFinish[0].dst;
-            
+
         if(dropFinish[0].type&&this[dropFinish[0].type]){
             this.log("processingDrop",{dataItem:dst.dropDataItem,src:e.src,dst});
             this[dropFinish[0].type](dst.dropDataItem||{},e.src.id,dst);                            
         }
     }
-    //Helpers
+    //web Helpers
     tag2icon(tag: string) {
         return this.tags[tag] && this.tags[tag].icon || '';
     }    
     tag2text(tag: string) {
         return this.tags[tag] && this.tags[tag].caption || '';
     }    
+    status2class(rec){
+        return {'kanban-high':rec.priority>=700,
+                'kanban-medium':(rec.priority<700)&&(rec.priority>400),
+                'kanban-low':(rec.priority<=400),
+                'kanban-selected':this.isSelect(rec)
+                };
+    }
+    //helpers
     id2record(id:number){
         if(!id)
             return null;
         return this.records.find(r=>r.id===id);         
     }    
     //Commands       
-    changeColumn(rec,dst){
+    changeColumn(options={},src=null,dst){        
+        let rec=this.id2record(src);
+        if(!src){
+            return;
+        }                             
         if(rec.columnId!=dst.id){//changeColumn
            this.log("changeColumn",{rec,id:dst.id});
-           rec.columnId=dst.id; 
-           this.dm.saveRecord("issues", rec).subscribe((d)=>rec=d);
+           this.change({columnId:dst.id},src);
         }else{ //clone
-           this.clone(rec);
+           this.clone(options,src);
         }
     }
-   
     remove(options={},src=null){
         if(src){
             this.log("remove",{src});            
@@ -149,6 +165,19 @@ export class KanbanDesk extends Page{
         }             
         this.log("clone",{rec,src});
         this.dm.saveRecord("issues",Object.assign({},rec,{id:null})).subscribe((d)=>this.records.push(d));                   
+    }    
+    change(options={},src=null){
+        let rec=this.id2record(src);
+        if(!src){
+            return;
+        }             
+        this.log("change",{options,src,rec});
+        this.dm.saveRecord("issues",Object.assign({},rec,options))
+               .subscribe((d)=>{
+                                this.records=this.records.filter(item => item.id !== src)
+                                this.records.push(d);    
+                                this.orderRecords();                            
+                               });                   
     }    
     //Params    
     togglePriority(){
