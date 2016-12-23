@@ -72,7 +72,7 @@ export class KanbanDesk extends Page{
             {label: "Medium Priority" , icon: "fa-gavel",eventEmitter:this.events,run:"change",multi:true,options:{priority:"500"}},                        
             {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"change",multi:true,options:{priority:"100"}},                        
             {label: "Order" , icon: "fa-bed",eventEmitter:this.events,run:"order"},                        
-            {label: "Resource 1" , icon: "fa-bed",eventEmitter:this.events,run:"resource",multi:true,options:{resource:['1']}},                                    
+            {label: "Resource 1" , icon: "fa-bed",eventEmitter:this.events,run:"resource",multi:true,options:{resource:[1]}},                                    
         ];        
         
         this.events.filter(e=>e.type==="menuDrop")//Menu2drop
@@ -185,18 +185,18 @@ export class KanbanDesk extends Page{
                                 this.run("order");
                                });                   
     }    
-    resource(options={},src=null,dst=[]){
+    resource(options={},src=null,dst=null){
         let rec=this.id2record(src);
         if(!src){
             return;
         }             
-        this.log("change",{options,src,rec});
-        this.dm.saveRecord("issues",Object.assign({},rec,options))
-               .subscribe((d)=>{
-                                this.records=this.records.filter(item => item.id !== src)
-                                this.records.push(d);    
-                                this.run("order");
-                               });                   
+        let resource=rec.resource||[];
+        
+        
+        if(resource.indexOf())
+        resource.push(options.resource);
+        this.log("addResource",{options,src,rec});
+        this.change({resource},src);
     }    
     //Params    
     togglePriority(){
