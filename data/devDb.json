@@ -30,29 +30,14 @@
       "tags": [
         2
       ],
-      "priority": 1000
+      "priority": 500
     },
     {
       "id": 4,
       "columnId": 3,
       "caption": "super job3",
       "description": "No description",
-      "priority": 100
-    },
-    {
-      "id": 16,
-      "caption": "Progress",
-      "icon": "fa-font-awesome"
-    },
-    {
-      "id": 17,
-      "caption": "Progress",
-      "icon": "fa-font-awesome"
-    },
-    {
-      "id": 18,
-      "caption": "New",
-      "icon": "fa-file"
+      "priority": 1000
     },
     {
       "id": 22,
@@ -74,35 +59,12 @@
         1,
         2
       ],
-      "priority": 500
-    },
-    {
-      "id": 27,
-      "columnId": 2,
-      "caption": "super job",
-      "description": "No text",
-      "tags": [
-        1,
-        2
-      ],
-      "priority": 1000,
-      "options": {
-        "priority": "1000"
-      }
-    },
-    {
-      "id": 28
-    },
-    {
-      "id": 29
-    },
-    {
-      "id": 30
+      "priority": 100
     },
     {
       "id": 31,
       "columnId": 1,
-      "caption": "super job",
+      "caption": "super job31",
       "description": "No text",
       "tags": [
         1,
@@ -122,39 +84,6 @@
       "priority": 1000
     },
     {
-      "id": 34
-    },
-    {
-      "id": 35
-    },
-    {
-      "id": 36
-    },
-    {
-      "id": 37
-    },
-    {
-      "id": 38
-    },
-    {
-      "id": 39
-    },
-    {
-      "id": 41
-    },
-    {
-      "id": 42
-    },
-    {
-      "id": 43
-    },
-    {
-      "id": 54
-    },
-    {
-      "id": 55
-    },
-    {
       "id": 56,
       "columnId": 3,
       "caption": "super job4",
@@ -165,56 +94,11 @@
       "priority": 500
     },
     {
-      "id": 57
-    },
-    {
-      "id": 59
-    },
-    {
-      "id": 60,
-      "columnId": 1,
-      "caption": "super job4",
-      "description": "No text4",
-      "tags": [
-        2
-      ],
-      "options": {
-        "priority": "500"
-      },
-      "priority": 100
-    },
-    {
-      "id": 61,
-      "columnId": 2,
-      "caption": "super job",
-      "description": "No text",
-      "tags": [
-        1,
-        2
-      ],
-      "priority": 500
-    },
-    {
-      "id": 62
-    },
-    {
-      "options": {
-        "priority": "1000"
-      },
-      "id": 63
-    },
-    {
-      "id": 64,
+      "id": 57,
       "columnId": 3,
-      "caption": "super job4",
-      "description": "No text4",
-      "tags": [
-        2
-      ],
-      "options": {
-        "priority": "500"
-      },
-      "priority": 1000
+      "caption": "super job3",
+      "description": "No description",
+      "priority": 100
     }
   ],
   "tags": [

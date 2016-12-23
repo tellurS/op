@@ -208,4 +208,5 @@ export interface MenuCommandItem extends MenuItem{
     dropOptions?:any;
     run?:string;
     multi?:boolean;
+    dst?:any;
 }

@@ -59,9 +59,10 @@ export class KanbanDesk extends Page{
                .subscribe(([c,i,t])=>{
                    this.columns = c;
                    this.colWidth = 'ui-g-' + (10 / this.columns.length).toFixed();
-                   this.orderRecords(i);
                    this.tags = Utils.array2index(t, "id");
-                   this.log("dataUpdated");
+                   this.records=i;
+                   this.run("order");                   
+                   this.log("dataUpdated");                   
         });             
         this.menuItems = [
             {label: "Add", icon: "fa-plus",   eventEmitter:this.events,run:"add",multi:true},
@@ -70,6 +71,8 @@ export class KanbanDesk extends Page{
             {label: "High Priority" , icon: "fa-fire",eventEmitter:this.events,run:"change",multi:true,options:{priority:"1000"}},            
             {label: "Medium Priority" , icon: "fa-gavel",eventEmitter:this.events,run:"change",multi:true,options:{priority:"500"}},                        
             {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"change",multi:true,options:{priority:"100"}},                        
+            {label: "Order" , icon: "fa-bed",eventEmitter:this.events,run:"order"},                        
+            {label: "Resource 1" , icon: "fa-bed",eventEmitter:this.events,run:"resource",multi:true,options:{resource:['1']}},                                    
         ];        
         
         this.events.filter(e=>e.type==="menuDrop")//Menu2drop
@@ -93,9 +96,6 @@ export class KanbanDesk extends Page{
         this.log('init');
         this.applyUrlParams(this.route.snapshot.params);                   
     }    
-    orderRecords(recs=this.records){
-        this.records = recs.sort((a,b)=>a.priority<b.priority);        
-    }
     //click menu event    
     processingClick(item:MenuCommandItem){
         if(item.run&&this[item.run]){          
@@ -105,7 +105,7 @@ export class KanbanDesk extends Page{
                           id=>this[item.run as string](item.options||{},id)
                         );        
             }else{               
-                this[item.run as string](item.options||{},this.selectedIdRecords);            
+                this[item.run as string](item.options||{},this.selectedIdRecords,item.dst);            
             }                                             
         }                
     }   
@@ -134,7 +134,6 @@ export class KanbanDesk extends Page{
                 };
         if(rec.tags)
             rec.tags.forEach(c=>{dst[this.prefixTagCss+c]=true;});
-            console.log(dst);
         return dst;
     }
     //helpers
@@ -144,6 +143,9 @@ export class KanbanDesk extends Page{
         return this.records.find(r=>r.id===id);         
     }    
     //Commands       
+    order(options={},src=null,recs=this.records){
+        this.records = recs.sort((a,b)=>a.priority<b.priority);        
+    }    
     changeColumn(options={},src=null,dst){        
         let rec=this.id2record(src);
         if(!src){
@@ -180,7 +182,7 @@ export class KanbanDesk extends Page{
                .subscribe((d)=>{
                                 this.records=this.records.filter(item => item.id !== src)
                                 this.records.push(d);    
-                                this.orderRecords();                            
+                                this.run("order");
                                });                   
     }    
     //Params    
