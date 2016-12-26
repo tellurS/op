@@ -24,14 +24,15 @@ export const ROUTES: Routes = [
                 poolingNone: "6000",
                 bin: true,
                 peoples:true,
-                resourse:true,
+                resources:true,
                 priority:true
             },
             datasets:[
                 {name:"tags", src:"/api/tags",api:"rest",format:"json"},
                 {name:"issues", src:"/api/issues",api:"rest",format:"json"},
                 {name:"columns", src:"/api/columns",api:"rest",format:"json"},
-                {bags:"tags", src:"/api/bags",api:"rest",format:"json"},
+                {name:"peoples", src:"/api/peoples",api:"rest",format:"json"},
+                {name:"resources", src:"/api/resources",api:"rest",format:"json"}               
             ]      
             /*          children?: Route[]          loadChildren?: LoadChildren          */
 

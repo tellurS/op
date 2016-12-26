@@ -10,6 +10,8 @@
 <div class="ui-g" >
     <div  class="ui-g-2" >        
         <m-menucommand  [model]="menuItems"></m-menucommand>
+        <m-menucommand  [model]="menuPeoples"></m-menucommand>
+        <m-menucommand  [model]="menuResources"></m-menucommand>
     </div>
     <div  class="ui-g-10" >
         <div [ngClass]="colWidth"  *ngFor="let col of columns"  pDroppable="rec" (onDrop)="dragDrop.drop($event,col,'changeColumn')" (onDragEnter)="dragDrop.onDragEnter($event,'changeColumn')" (onDragLeave)="dragDrop.onDragLeave($event,'changeColumn')">
@@ -26,6 +28,14 @@
                             <i class="fa"  [ngClass]="tag2icon(tag)" aria-hidden="true" *ngFor="let tag of rec.tags" [pTooltip]="tag2text(tag)"></i>
                         </header>
                         {{rec.description}}
+                        <div *ngFor="let tag of rec.peoples">
+                            <i class="fa"  [ngClass]="people2icon(tag)"></i>
+                            {{people2text(tag)}}
+                        </div>                        
+                        <div *ngFor="let tag of rec.resources">
+                            <i class="fa"  [ngClass]="resource2icon(tag)" ></i>
+                            {{resource2text(tag)}}
+                        </div>
                     </p-panel>  
                 </div>
             </template>                     

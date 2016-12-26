@@ -18,6 +18,8 @@ export class KanbanDesk extends Page{
     componentName="KanbanDesk";
     columns: any;
     records=[];
+    peoples=[];
+    resources=[]''
     selectedIdRecords = [];
     colWidth: any;
     tags: any;
@@ -26,10 +28,12 @@ export class KanbanDesk extends Page{
         pooling: 0,
         bin:     false,
         peoples: false,
-        resourse:false,
+        resources:false,
         priority:false        
     };
     menuItems=[];
+    menuPeoples=[];
+    menuResources=[];    
     prefixTagCss="kanban-tag";
     workAria=10;
     
@@ -53,14 +57,20 @@ export class KanbanDesk extends Page{
                                   this.dm.getRecords('issues', 
                                                     this.events.filter(e=>e.type==="paramsChange").map(val => Utils.pick(val.params,["priority_gte"])).distinctUntilChanged(null,a=>JSON.stringify(a)), 
                                                     {pooling:this.features.pooling}),
-                                  this.dm.getRecords('tags')
+                                  this.dm.getRecords('tags'),
+                                  (this.features.peoples)?this.dm.getRecords('peoples'):Observable.of([]),
+                                  (this.features.resources)?this.dm.getRecords('resources'):Observable.of([]),
                                   //this.dm.getRecords('issues',{id:"1"})
                                   ])
-               .subscribe(([c,i,t])=>{
+               .subscribe(([c,i,t,p,r])=>{
                    this.columns = c;
                    this.colWidth = 'ui-g-' + (this.workAria/ this.columns.length).toFixed();
                    this.tags = Utils.array2index(t, "id");
                    this.records=i;
+                   this.peoples=Utils.array2index(p, "id");;
+                   this.updatePeopleMenu(p);
+                   this.resources=Utils.array2index(r, "id");;
+                   this.updateResourcesMenu(r);
                    this.run("order");                   
                    this.log("dataUpdated");                   
         });             
@@ -72,8 +82,11 @@ export class KanbanDesk extends Page{
             {label: "Medium Priority" , icon: "fa-gavel",eventEmitter:this.events,run:"change",multi:true,options:{priority:"500"}},                        
             {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"change",multi:true,options:{priority:"100"}},                        
             {label: "Order" , icon: "fa-bed",eventEmitter:this.events,run:"order"},                        
-            {label: "Resource 1" , icon: "fa-bed",eventEmitter:this.events,run:"resource",multi:true,options:{resource:[1]}},                                    
-        ];        
+        ];    
+        this.menuPeoples = [
+            //{label: "Resource 1" , icon: "fa-bed",eventEmitter:this.events,run:"update",multi:true,options:{key:"peoples",expression:"1",handle:"!"}},                                    
+        ];    
+                            
         
         this.events.filter(e=>e.type==="menuDrop")//Menu2drop
                    .subscribe(e=>this.dragDrop.drop(e,e.item,e.item.run));        
@@ -126,6 +139,19 @@ export class KanbanDesk extends Page{
     tag2text(tag: string) {
         return this.tags[tag] && this.tags[tag].caption || '';
     }        
+    people2icon(tag: string) {
+        return this.peoples[tag] && this.peoples[tag].icon || '';
+    }    
+    people2text(tag: string) {
+        return this.peoples[tag] && this.peoples[tag].caption || '';
+    }        
+    resource2icon(tag: string) {
+        return this.resources[tag] && this.resources[tag].icon || '';
+    }    
+    resource2text(tag: string) {
+        return this.resources[tag] && this.resources[tag].caption || '';
+    }                
+    
     status2class(rec){
         let dst={'kanban-high':rec.priority>=700,
                 'kanban-medium':(rec.priority<700)&&(rec.priority>400),
@@ -166,7 +192,7 @@ export class KanbanDesk extends Page{
     }     
     clone(options={},src=null){
         let rec=this.id2record(src);
-        if(!src){
+        if(!rec){
             return;
         }             
         this.log("clone",{rec,src});
@@ -174,7 +200,7 @@ export class KanbanDesk extends Page{
     }    
     change(options={},src=null){
         let rec=this.id2record(src);
-        if(!src){
+        if(!rec){
             return;
         }             
         this.log("change",{options,src,rec});
@@ -185,18 +211,12 @@ export class KanbanDesk extends Page{
                                 this.run("order");
                                });                   
     }    
-    resource(options={},src=null,dst=null){
+    update(options={},src=null,dst=null){
         let rec=this.id2record(src);
-        if(!src){
+        if(!rec||!options.key){
             return;
-        }             
-        let resource=rec.resource||[];
-        
-        
-        if(resource.indexOf())
-        resource.push(options.resource);
-        this.log("addResource",{options,src,rec});
-        this.change({resource},src);
+        }                     
+        this.change(Utils.update(Object.assign(rec),options),src);
     }    
     //Params    
     togglePriority(){
@@ -223,8 +243,19 @@ export class KanbanDesk extends Page{
     isSelect(rec){
         return this.selectedIdRecords.indexOf(rec.id)>-1;       
     }   
-    //urls
-
+    //etc
+    updatePeopleMenu(p){
+        this.menuPeoples=p.map(e=>
+          {return {label: e.caption , icon: e.icon ,eventEmitter:this.events,run:"update",multi:true,
+                    options:{key:"peoples",expression:e.id,handle:"!"}}
+          });                                                
+    }
+    updateResourcesMenu(r){
+        this.menuResources=r.map(e=>
+          {return {label: e.caption , icon: e.icon ,eventEmitter:this.events,run:"update",multi:true,
+                    options:{key:"resources",expression:e.id,handle:"!"}}
+          });                                                
+    }    
 }
 
 import { Pipe, PipeTransform } from '@angular/core';
