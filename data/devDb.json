@@ -72,20 +72,6 @@
       "priority": 1000
     },
     {
-      "id": 22,
-      "columnId": 1,
-      "caption": "super job",
-      "description": "No text",
-      "tags": [
-        1,
-        2
-      ],
-      "priority": 1000,
-      "peoples": [
-        1
-      ]
-    },
-    {
       "id": 26,
       "columnId": 2,
       "caption": "super job",
@@ -95,24 +81,14 @@
         2
       ],
       "priority": 1000,
-      "peoples": [
-        2
-      ],
+      "peoples": [],
       "resource": [
         1
       ],
-      "resources": []
-    },
-    {
-      "id": 31,
-      "columnId": 1,
-      "caption": "super job31",
-      "description": "No text",
-      "tags": [
+      "resources": [
         1,
         2
-      ],
-      "priority": 500
+      ]
     },
     {
       "id": 32,

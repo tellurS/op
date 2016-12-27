@@ -18,7 +18,7 @@ import { AppState, InteralStateType } from './app.service';
 import { KanbanDesk,byColumns } from './kanbanDesk';
 import { DataManager,RestClient } from './dataManager';
 import { NoContent } from './no-content';
-import { MenuCommand } from './menuCommand/menuCommand';
+import { MenuCommand,MenuCommandSub } from './menuCommand/menuCommand';
 
 
 // Application wide providers
@@ -42,7 +42,7 @@ type StoreType = {
     App,
     KanbanDesk,
     byColumns,
-    MenuCommand,
+    MenuCommand,MenuCommandSub,
     NoContent
   ],
   imports: [ // import Angular's modules

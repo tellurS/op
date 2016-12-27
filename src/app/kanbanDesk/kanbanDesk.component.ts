@@ -81,12 +81,15 @@ export class KanbanDesk extends Page{
             {label: "High Priority" , icon: "fa-fire",eventEmitter:this.events,run:"change",multi:true,options:{priority:"1000"}},            
             {label: "Medium Priority" , icon: "fa-gavel",eventEmitter:this.events,run:"change",multi:true,options:{priority:"500"}},                        
             {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"change",multi:true,options:{priority:"100"}},                        
-            {label: "Order" , icon: "fa-bed",eventEmitter:this.events,run:"order"},                        
+            {label: "Order" , icon: "fa-bed",eventEmitter:this.events,run:"order"},  
+            {label: "Folder" , //icon: "fa-bed",
+                    expanded:false,
+                    items: [
+                       {label: 'Redo', icon: 'fa-repeat'}
+                   ]
+            },                                    
         ];    
-        this.menuPeoples = [
-            //{label: "Resource 1" , icon: "fa-bed",eventEmitter:this.events,run:"update",multi:true,options:{key:"peoples",expression:"1",handle:"!"}},                                    
-        ];    
-                            
+   
         
         this.events.filter(e=>e.type==="menuDrop")//Menu2drop
                    .subscribe(e=>this.dragDrop.drop(e,e.item,e.item.run));        
