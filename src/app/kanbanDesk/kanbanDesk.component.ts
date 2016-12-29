@@ -19,15 +19,15 @@ export class KanbanDesk extends Page{
     columns: any;
     records=[];
     peoples=[];
-    resources=[]''
+    resources=[];
     selectedIdRecords = [];
     colWidth: any;
     tags: any;
     msgs: Message[] = [];
     features={
         pooling: 0,
-        bin:     false,
         peoples: false,
+        peoplesInTree:false,        
         resources:false,
         priority:false        
     };
@@ -68,7 +68,7 @@ export class KanbanDesk extends Page{
                    this.tags = Utils.array2index(t, "id");
                    this.records=i;
                    this.peoples=Utils.array2index(p, "id");;
-                   this.updatePeopleMenu(p);
+                   this.updatePeopleMenu(p,this.features.peoplesInTree);
                    this.resources=Utils.array2index(r, "id");;
                    this.updateResourcesMenu(r);
                    this.run("order");                   
@@ -81,13 +81,7 @@ export class KanbanDesk extends Page{
             {label: "High Priority" , icon: "fa-fire",eventEmitter:this.events,run:"change",multi:true,options:{priority:"1000"}},            
             {label: "Medium Priority" , icon: "fa-gavel",eventEmitter:this.events,run:"change",multi:true,options:{priority:"500"}},                        
             {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"change",multi:true,options:{priority:"100"}},                        
-            {label: "Order" , icon: "fa-bed",eventEmitter:this.events,run:"order"},  
-            {label: "Folder" , //icon: "fa-bed",
-                    expanded:false,
-                    items: [
-                       {label: 'Redo', icon: 'fa-repeat'}
-                   ]
-            },                                    
+            {label: "Order" , icon: "fa-bed",eventEmitter:this.events,run:"order"}                                 
         ];    
    
         
@@ -208,17 +202,20 @@ export class KanbanDesk extends Page{
         }             
         this.log("change",{options,src,rec});
         this.dm.saveRecord("issues",Object.assign({},rec,options))
-               .subscribe((d)=>{
-                                this.records=this.records.filter(item => item.id !== src)
-                                this.records.push(d);    
+               .subscribe((newR)=>{
+                            let index = this.records.indexOf(rec);
+                            console.log("index",index);
+                            if(index>0){
+                                this.records.splice(index, 1,newR);
                                 this.run("order");
-                               });                   
+                            }                            
+                        });                   
     }    
     update(options={},src=null,dst=null){
         let rec=this.id2record(src);
         if(!rec||!options.key){
             return;
-        }                     
+        }          
         this.change(Utils.update(Object.assign(rec),options),src);
     }    
     //Params    
@@ -247,11 +244,31 @@ export class KanbanDesk extends Page{
         return this.selectedIdRecords.indexOf(rec.id)>-1;       
     }   
     //etc
-    updatePeopleMenu(p){
-        this.menuPeoples=p.map(e=>
-          {return {label: e.caption , icon: e.icon ,eventEmitter:this.events,run:"update",multi:true,
-                    options:{key:"peoples",expression:e.id,handle:"!"}}
-          });                                                
+    updatePeopleMenuSub(items):MenuCommandItem[]{        
+        return items.map(e=>{                        
+                let item:MenuCommandItem={label: e.caption , icon: e.icon ,eventEmitter:this.events,run:"update",multi:true};
+                if(e.child){
+                    item.expanded=false;
+                    item.items=this.updatePeopleMenuSub(e.child.map(id=>this.peoples[id]));
+                }
+                
+                if(!e.onlyFolder)
+                    item.options={key:"peoples",expression:e.id,handle:"!"}    
+                return item;    
+              });               
+    }
+//   
+    updatePeopleMenu(p,onlyRoot:false){
+        if(!onlyRoot){
+            this.menuPeoples=p.map(e=>{                        
+                let item:MenuCommandItem={label: e.caption , icon: e.icon ,eventEmitter:this.events,run:"update",multi:true}
+                if(!e.onlyFolder)
+                    item.options={key:"peoples",expression:e.id,handle:"!"}    
+                return item;    
+              });                                                
+        }else{             
+            this.menuPeoples=this.updatePeopleMenuSub(p.filter(item=>item.root);)
+        }
     }
     updateResourcesMenu(r){
         this.menuResources=r.map(e=>

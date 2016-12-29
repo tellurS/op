@@ -22,10 +22,10 @@ export const ROUTES: Routes = [
             role: ['root', 'admin'],
             feature: {
                 poolingNone: "6000",
-                bin: true,
-                peoples:true,
+                peoples:true,             
                 resources:true,
-                priority:true
+                priority:true,
+                peoplesInTree:true
             },
             datasets:[
                 {name:"tags", src:"/api/tags",api:"rest",format:"json"},
