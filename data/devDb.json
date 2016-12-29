@@ -23,6 +23,18 @@
   ],
   "peoples": [
     {
+      "id": 3,
+      "caption": "people",
+      "icon": "fa-folder",
+      "_child": [
+        1,
+        2,
+        4
+      ],
+      "_root": true,
+      "_onlyFolder": true
+    },
+    {
       "id": 1,
       "caption": "first",
       "icon": "fa-file"
@@ -31,6 +43,14 @@
       "id": 2,
       "caption": "two",
       "icon": "fa-font-awesome"
+    },
+    {
+      "id": 4,
+      "caption": "boss",
+      "icon": "fa-folder",
+      "_child": [
+        1
+      ]
     }
   ],
   "resources": [
@@ -52,8 +72,7 @@
       "caption": "!!!!super job2 fdsfsdaf dsf dsf dsf sadf dsf dsfa sd",
       "description": "super dsf dsf sdf dsf sdf sdfsfds",
       "tags": [
-        2,
-        "1"
+        2
       ],
       "priority": 1004,
       "peoples": [
@@ -70,25 +89,6 @@
       "caption": "super job3",
       "description": "No description",
       "priority": 1000
-    },
-    {
-      "id": 26,
-      "columnId": 2,
-      "caption": "super job",
-      "description": "No text",
-      "tags": [
-        1,
-        2
-      ],
-      "priority": 1000,
-      "peoples": [],
-      "resource": [
-        1
-      ],
-      "resources": [
-        1,
-        2
-      ]
     },
     {
       "id": 32,
@@ -127,8 +127,7 @@
         1,
         2
       ],
-      "priority": 1000,
-      "resources": []
+      "priority": 1000
     },
     {
       "id": 59,
@@ -139,14 +138,29 @@
         1,
         2
       ],
-      "priority": 1000,
+      "priority": 500,
       "peoples": [
-        1,
         2
       ],
       "resource": [
         2,
         1
+      ]
+    },
+    {
+      "id": 60,
+      "columnId": 1,
+      "caption": "super job",
+      "description": "No text",
+      "tags": [],
+      "priority": 100,
+      "peoples": [
+        1,
+        2
+      ],
+      "resources": [
+        1,
+        2
       ]
     }
   ],
@@ -160,6 +174,13 @@
       "id": 2,
       "caption": "Hard",
       "icon": "fa-font-awesome"
+    },
+    {
+      "id": 3,
+      "caption": "Tags change",
+      "icon": "fa-font-awesome",
+      "_itIsRoot": true,
+      "_onlyFolder": true
     }
   ],
   "bags": [

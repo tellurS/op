@@ -29,6 +29,8 @@ export class KanbanDesk extends Page{
         peoples: false,
         peoplesInTree:false,        
         resources:false,
+        resourcesInTree:false,        
+        tagsInTree:false,
         priority:false        
     };
     menuItems=[];
@@ -66,11 +68,12 @@ export class KanbanDesk extends Page{
                    this.columns = c;
                    this.colWidth = 'ui-g-' + (this.workAria/ this.columns.length).toFixed();
                    this.tags = Utils.array2index(t, "id");
+                   this.data2menu(t,this.features.tagsInTree,"menuTags","tags");                   
                    this.records=i;
                    this.peoples=Utils.array2index(p, "id");;
-                   this.updatePeopleMenu(p,this.features.peoplesInTree);
+                   this.data2menu(p,this.features.peoplesInTree,"menuPeoples","peoples");
                    this.resources=Utils.array2index(r, "id");;
-                   this.updateResourcesMenu(r);
+                   this.data2menu(r,this.features.resourcesInTree,"menuResources","resources");                                     
                    this.run("order");                   
                    this.log("dataUpdated");                   
         });             
@@ -212,6 +215,7 @@ export class KanbanDesk extends Page{
                         });                   
     }    
     update(options={},src=null,dst=null){
+        console.log("update",options,src,dst);
         let rec=this.id2record(src);
         if(!rec||!options.key){
             return;
@@ -244,37 +248,27 @@ export class KanbanDesk extends Page{
         return this.selectedIdRecords.indexOf(rec.id)>-1;       
     }   
     //etc
-    updatePeopleMenuSub(items):MenuCommandItem[]{        
+    data2menuSub(items,directoryName:string):MenuCommandItem[]{        
         return items.map(e=>{                        
-                let item:MenuCommandItem={label: e.caption , icon: e.icon ,eventEmitter:this.events,run:"update",multi:true};
-                if(e.child){
+                let item:MenuCommandItem={label: e.caption||'' , icon: e.icon ,eventEmitter:this.events,run:"update",multi:true};
+                if(e._child){
                     item.expanded=false;
-                    item.items=this.updatePeopleMenuSub(e.child.map(id=>this.peoples[id]));
+                    item.items=this.data2menuSub(e._child.map(id=>this[directoryName][id]),directoryName);
                 }
                 
-                if(!e.onlyFolder)
-                    item.options={key:"peoples",expression:e.id,handle:"!"}    
+                if(!e._onlyFolder)
+                    item.options={key:directoryName,expression:e.id,handle:"!"}    
                 return item;    
               });               
-    }
-//   
-    updatePeopleMenu(p,onlyRoot:false){
-        if(!onlyRoot){
-            this.menuPeoples=p.map(e=>{                        
-                let item:MenuCommandItem={label: e.caption , icon: e.icon ,eventEmitter:this.events,run:"update",multi:true}
-                if(!e.onlyFolder)
-                    item.options={key:"peoples",expression:e.id,handle:"!"}    
-                return item;    
-              });                                                
-        }else{             
-            this.menuPeoples=this.updatePeopleMenuSub(p.filter(item=>item.root);)
+    } 
+    data2menu(data:Array<any>,onlyRoot:false,menuName:string,directoryName:string){
+        let roots=data.filter(item=>item._itIsRoot);
+        if (roots.length===1){
+            roots[0]._child=data.filter(item=>!item._itIsRoot).map(e=>e.id);
+            this[menuName]=this.data2menuSub(roots,directoryName);
+        }else{        
+            this[menuName]=this.data2menuSub(data.filter(item=>(!onlyRoot||item._root)),directoryName);
         }
-    }
-    updateResourcesMenu(r){
-        this.menuResources=r.map(e=>
-          {return {label: e.caption , icon: e.icon ,eventEmitter:this.events,run:"update",multi:true,
-                    options:{key:"resources",expression:e.id,handle:"!"}}
-          });                                                
     }    
 }
 

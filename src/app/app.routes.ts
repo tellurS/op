@@ -25,7 +25,9 @@ export const ROUTES: Routes = [
                 peoples:true,             
                 resources:true,
                 priority:true,
-                peoplesInTree:true
+                peoplesInTree:true,
+                resourcesInTree:false,        
+                tagsInTree:false
             },
             datasets:[
                 {name:"tags", src:"/api/tags",api:"rest",format:"json"},
