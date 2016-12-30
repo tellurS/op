@@ -80,11 +80,19 @@ export class KanbanDesk extends Page{
         this.menuItems = [
             {label: "Add", icon: "fa-plus",   eventEmitter:this.events,run:"add",multi:true},
             {label: "Clone", icon: "fa-refresh",   eventEmitter:this.events,run:"clone",multi:true},
-            {label: "Remove" , icon: "fa-recycle",eventEmitter:this.events,run:"remove",multi:true},                       
-            {label: "High Priority" , icon: "fa-fire",eventEmitter:this.events,run:"change",multi:true,options:{priority:"1000"}},            
-            {label: "Medium Priority" , icon: "fa-gavel",eventEmitter:this.events,run:"change",multi:true,options:{priority:"500"}},                        
-            {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"change",multi:true,options:{priority:"100"}},                        
-            {label: "Order" , icon: "fa-bed",eventEmitter:this.events,run:"order"}                                 
+            {label: "Remove" , icon: "fa-cut",eventEmitter:this.events,run:"remove",multi:true},                                   
+            {label: "Priority" , icon: "fa-fire", items:[            
+                {label: "High Priority" , icon: "fa-fire",eventEmitter:this.events,run:"change",multi:true,options:{priority:"1000"}},            
+                {label: "Medium Priority" , icon: "fa-gavel",eventEmitter:this.events,run:"change",multi:true,options:{priority:"500"}},                        
+                {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"change",multi:true,options:{priority:"100"}}
+            ]},                        
+            {label: "Select" , icon: "fa-fire", items:[            
+                {label: "Select all" , icon: "fa-battery-full",eventEmitter:this.events,run:"selectAll"},            
+                {label: "Toggle select" , icon: "fa-battery-quarter",eventEmitter:this.events,run:"toggleSelect"},                        
+                {label: "Deselect" , icon: "fa-battery-empty",eventEmitter:this.events,run:"deSelect"},                        
+                {label: "Order" , icon: "fa-sort-up",eventEmitter:this.events,run:"order"}                                 
+            ]},                                    
+            
         ];    
    
         
@@ -168,7 +176,7 @@ export class KanbanDesk extends Page{
             return null;
         return this.records.find(r=>r.id===id);         
     }    
-    //Commands       
+    //Commands  
     order(options={},src=null){
         this.records = this.records.sort((a,b)=>a.priority<b.priority);        
     }    
@@ -207,7 +215,6 @@ export class KanbanDesk extends Page{
         this.dm.saveRecord("issues",Object.assign({},rec,options))
                .subscribe((newR)=>{
                             let index = this.records.indexOf(rec);
-                            console.log("index",index);
                             if(index>0){
                                 this.records.splice(index, 1,newR);
                                 this.run("order");
@@ -215,7 +222,6 @@ export class KanbanDesk extends Page{
                         });                   
     }    
     update(options={},src=null,dst=null){
-        console.log("update",options,src,dst);
         let rec=this.id2record(src);
         if(!rec||!options.key){
             return;
@@ -247,6 +253,15 @@ export class KanbanDesk extends Page{
     isSelect(rec){
         return this.selectedIdRecords.indexOf(rec.id)>-1;       
     }   
+    selectAll(options={},src=null,dst){
+        this.selectRecords(null,false,...this.records.map(e=>e.id));
+    }         
+    toggleSelect(options={},src=null,dst){
+            this.selectRecords(null, false, ...this.records.filter(e => this.selectedIdRecords.indexOf(e.id)===-1).map(e=>e.id));
+    }         
+    deSelect(options={},src=null,dst){
+            this.selectRecords(null, false);
+    }         
     //etc
     data2menuSub(items,directoryName:string):MenuCommandItem[]{        
         return items.map(e=>{                        

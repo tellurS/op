@@ -81,14 +81,16 @@
       "resource": [
         1,
         2
-      ]
+      ],
+      "resources": []
     },
     {
       "id": 4,
       "columnId": 3,
       "caption": "super job3",
       "description": "No description",
-      "priority": 1000
+      "priority": 1000,
+      "resources": []
     },
     {
       "id": 32,
@@ -99,7 +101,8 @@
         1,
         2
       ],
-      "priority": 1000
+      "priority": 1000,
+      "resources": []
     },
     {
       "id": 56,
@@ -109,14 +112,16 @@
       "tags": [
         2
       ],
-      "priority": 500
+      "priority": 500,
+      "resources": []
     },
     {
       "id": 57,
       "columnId": 3,
       "caption": "super job3",
       "description": "No description",
-      "priority": 100
+      "priority": 100,
+      "resources": []
     },
     {
       "id": 58,
@@ -127,7 +132,8 @@
         1,
         2
       ],
-      "priority": 1000
+      "priority": 1000,
+      "resources": []
     },
     {
       "id": 59,
@@ -145,7 +151,8 @@
       "resource": [
         2,
         1
-      ]
+      ],
+      "resources": []
     },
     {
       "id": 60,
@@ -154,10 +161,7 @@
       "description": "No text",
       "tags": [],
       "priority": 100,
-      "peoples": [
-        1,
-        2
-      ],
+      "peoples": [],
       "resources": [
         1,
         2
