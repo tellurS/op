@@ -1,0 +1,11 @@
+<p-dialog [header]="header" [(visible)]="visible">
+        <p>{{body}}</p>
+        <footer>
+            <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+                <button type="button" pButton *ngFor="let button of buttons"
+                        [icon]="button.icon" 
+                        (click)="click(button)" [label]="button.label"></button>               
+            </div>
+        </footer>
+</p-dialog>
+

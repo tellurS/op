@@ -14,7 +14,7 @@ export class Page {
     emit(type="emit",data={}){                
         let d=Object.assign({},{componentName:this.componentName,type},data);
         this.events.emit(d);                
-    }
+    }    
     run(run="run",options={},dst=null){       
         let data={run,options};
         if(dst)

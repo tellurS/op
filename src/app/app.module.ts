@@ -16,6 +16,7 @@ import { App } from './app.component';
 //import { APP_RESOLVER_PROVIDERS } from './app.resolver';
 import { AppState, InteralStateType } from './app.service';
 import { KanbanDesk,byColumns } from './kanbanDesk';
+import { DialogForm } from './dialogForm';
 import { DataManager,RestClient } from './dataManager';
 import { NoContent } from './no-content';
 import { MenuCommand,MenuCommandSub } from './menuCommand/menuCommand';
@@ -43,7 +44,8 @@ type StoreType = {
     KanbanDesk,
     byColumns,
     MenuCommand,MenuCommandSub,
-    NoContent
+    NoContent,
+    DialogForm
   ],
   imports: [ // import Angular's modules
     BrowserModule,
@@ -55,6 +57,8 @@ type StoreType = {
     Primeng.TreeModule,
     Primeng.GrowlModule,
     Primeng.MenuModule,
+    Primeng.DialogModule,
+    Primeng.ButtonModule,
     RouterModule.forRoot(ROUTES, { useHash: true })    
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection

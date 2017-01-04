@@ -1,4 +1,4 @@
-import { Component,Input,Output, EventEmitter} from '@angular/core';
+import { Component,Input,Output, EventEmitter,ViewChild} from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import {Message} from 'primeng/primeng';
 import { DataManager,Utils} from '../dataManager';
@@ -8,6 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { DragDrop,DragDropEvent } from '../dragDrop/dragDrop';
 import { Page } from '../page/page';
 import { MenuCommandItem } from '../menuCommand/menuCommand';
+import { DialogForm } from '../dialogForm';
 
 @Component({
     selector: 'kanbanDesk',  
@@ -38,7 +39,7 @@ export class KanbanDesk extends Page{
     menuResources=[];    
     prefixTagCss="kanban-tag";
     workAria=10;
-    
+    @ViewChild(DialogForm) dialog:DialogForm;
     //Start
     constructor(public route: ActivatedRoute,
                 public router: Router,
@@ -78,13 +79,15 @@ export class KanbanDesk extends Page{
                    this.log("dataUpdated");                   
         });             
         this.menuItems = [
-            {label: "Add", icon: "fa-plus",   eventEmitter:this.events,run:"add",multi:true},
+            {label: "Add", icon: "fa-plus",   eventEmitter:this.events,run:"add"},
             {label: "Clone", icon: "fa-refresh",   eventEmitter:this.events,run:"clone",multi:true},
             {label: "Remove" , icon: "fa-cut",eventEmitter:this.events,run:"remove",multi:true},                                   
             {label: "Priority" , icon: "fa-fire", items:[            
                 {label: "High Priority" , icon: "fa-fire",eventEmitter:this.events,run:"change",multi:true,options:{priority:"1000"}},            
                 {label: "Medium Priority" , icon: "fa-gavel",eventEmitter:this.events,run:"change",multi:true,options:{priority:"500"}},                        
-                {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"change",multi:true,options:{priority:"100"}}
+                {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"alternative",options:[
+                        {run:"change",label:"Set Low Priority",multi:true,options:{priority:"100"}}
+                ]}
             ]},                        
             {label: "Select" , icon: "fa-fire", items:[            
                 {label: "Select all" , icon: "fa-battery-full",eventEmitter:this.events,run:"selectAll"},            
@@ -94,8 +97,10 @@ export class KanbanDesk extends Page{
             ]},                                    
             
         ];    
-   
-        
+                                                                          
+    }    
+    
+  ngAfterViewInit() {     
         this.events.filter(e=>e.type==="menuDrop")//Menu2drop
                    .subscribe(e=>this.dragDrop.drop(e,e.item,e.item.run));        
                    
@@ -104,19 +109,20 @@ export class KanbanDesk extends Page{
         this.events.filter(e=>e.type==="menuClick")
                    .subscribe(e=>this.processingClick(e.item)); 
         this.events.filter(e=>e.type==="run")
-                   .subscribe(e=>this.processingClick(e));               
-                   
-        
+                   .subscribe(e=>this.processingClick(e));     
+        this.dialog.events.filter(e=>e.type==="run")
+               .subscribe(e=>this.processingClick(e)); 
+                                   
         this.events.filter(e=>e.type==="select")
                     .subscribe(e=>this.applyParams({select: this.selectedIdRecords}));                 
         this.events.filter(e=>e.type==="paramsChange")
-                   .subscribe(e=>this.changeUrl());                                                      
-        
-        //start                   
-        Observable.concat(this.logs, this.events).subscribe(e=>console.log(e));        
+                   .subscribe(e=>this.changeUrl());       
+              
+        Observable.concat(this.logs, this.events,this.dialog.events).subscribe(e=>console.log(e));
+          //start                                
         this.log('init');
-        this.applyUrlParams(this.route.snapshot.params);                   
-    }    
+        this.applyUrlParams(this.route.snapshot.params);
+  }    
     //click menu event    
     processingClick(item:MenuCommandItem){
         if(item.run&&this[item.run]){          
@@ -261,7 +267,10 @@ export class KanbanDesk extends Page{
     }         
     deSelect(options={},src=null,dst){
             this.selectRecords(null, false);
-    }         
+    }
+    alternative(options=[],src=null,dst=null){
+        this.dialog.alternative("select", "please select action", { src, dst }, ...options);
+    }              
     //etc
     data2menuSub(items,directoryName:string):MenuCommandItem[]{        
         return items.map(e=>{                        
@@ -285,6 +294,10 @@ export class KanbanDesk extends Page{
             this[menuName]=this.data2menuSub(data.filter(item=>(!onlyRoot||item._root)),directoryName);
         }
     }    
+    //
+    bridge($event){
+        this.log("bridge",$event);
+    }
 }
 
 import { Pipe, PipeTransform } from '@angular/core';
