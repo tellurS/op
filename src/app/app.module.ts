@@ -22,6 +22,8 @@ import { NoContent } from './no-content';
 import { MenuCommand,MenuCommandSub } from './menuCommand/menuCommand';
 
 
+
+
 // Application wide providers
 const APP_PROVIDERS = [
 //  ...APP_RESOLVER_PROVIDERS,
@@ -65,14 +67,16 @@ type StoreType = {
     Primeng.InputTextModule,
     Primeng.InputTextareaModule,
     Primeng.TabViewModule,
-    Primeng.CodeHighlighterModule,    
+    Primeng.CodeHighlighterModule, 
+    Primeng.SpinnerModule,       
+    Primeng.ListboxModule,
     RouterModule.forRoot(ROUTES, { useHash: true })    
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,
     APP_PROVIDERS,
     DataManager,
-    RestClient    
+    RestClient,   
     ]
 })
 export class AppModule {

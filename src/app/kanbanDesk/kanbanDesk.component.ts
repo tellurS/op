@@ -23,6 +23,7 @@ export class KanbanDesk extends Page{
     resources=[];
     selectedIdRecords = [];
     colWidth: any;
+    tagsa: any;
     tags: any;
     msgs: Message[] = [];
     features={
@@ -68,6 +69,7 @@ export class KanbanDesk extends Page{
                .subscribe(([c,i,t,p,r])=>{
                    this.columns = c;
                    this.colWidth = 'ui-g-' + (this.workAria/ this.columns.length).toFixed();
+                   this.tagsa=t;
                    this.tags = Utils.array2index(t, "id");
                    this.data2menu(t,this.features.tagsInTree,"menuTags","tags");                   
                    this.records=i;
@@ -185,11 +187,16 @@ export class KanbanDesk extends Page{
     //Commands 
     addDialog(options={},src=null){
         let form:Array<FormItem>=[
-            {name:"columnId",caption:"Column",type:"select",values:Utils.array2index(this.columns, "id"),
-             idValues:"id",captionValues:"captionValues",icon:"icon","default":2,description:"Column type"},
+            {name:"columnId",caption:"Column",type:"dropdown",values:this.columns,
+             idValue:"id",labelValue:"caption",icon:"icon","default":2,description:"Column type",
+             required:true,number:true
+             },
             {name:"caption",caption:"Caption",type:"text",minLength:15,maxLength:60,description:"Caption for issue"},
             {name:"description",caption:"Description",type:"text",minLength:15,maxLength:260,description:"Description for issue"},
-            {name:"priority",caption:"Priority",type:"int",min:0,maxLength:2000,description:"Priority for issue"}
+            {name:"priority",caption:"Priority",type:"number",min:0,max:2000,description:"Priority for issue",default:"500"},
+            {name:"tags",caption:"Label",type:"listbox",description:"Tag for issue",default:[],
+             values:this.tagsa,idValue:"id",labelValue:"caption",icon:"icon"            
+            }
         ];
         
         this.dialog.form("new record", "please enter:", form,[

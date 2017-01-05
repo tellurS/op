@@ -157,20 +157,21 @@
     },
     {
       "id": 60,
-      "columnId": 1,
+      "columnId": 2,
       "caption": "super job",
       "description": "No text",
       "tags": [
-        1,
-        2
+        1
       ],
       "priority": 100,
-      "peoples": [
-        2
-      ],
-      "resources": [
+      "peoples": [],
+      "resource": [
         2,
         1
+      ],
+      "resources": [
+        1,
+        2
       ]
     },
     {
@@ -232,6 +233,15 @@
         2,
         1
       ]
+    },
+    {
+      "id": 66
+    },
+    {
+      "id": 67
+    },
+    {
+      "id": 68
     }
   ],
   "tags": [
