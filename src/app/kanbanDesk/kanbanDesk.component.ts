@@ -82,7 +82,7 @@ export class KanbanDesk extends Page{
         });             
         this.menuItems = [
             {label: "Add", icon: "fa-plus",   eventEmitter:this.events,run:"addDialog"},
-            {label: "Change", icon: "fa-edit",   eventEmitter:this.events,run:"changeDialog",one:true},
+            {label: "Change", icon: "fa-edit", eventEmitter: this.events, run: "changeDialog", one: true},
             {label: "Clone", icon: "fa-refresh",   eventEmitter:this.events,run:"clone",multi:true},
             {label: "Remove" , icon: "fa-cut",eventEmitter:this.events,run:"remove",multi:true},                                   
             {label: "Priority" , icon: "fa-fire", items:[            
@@ -117,10 +117,15 @@ export class KanbanDesk extends Page{
                .subscribe(e=>this.processingClick(e)); 
                                    
         this.events.filter(e=>e.type==="select")
-                    .subscribe(e=>this.applyParams({select: this.selectedIdRecords}));                 
+                    .subscribe(e=>this.applyParams({select: this.selectedIdRecords}));    
+        this.events.filter(e=>e.type==="select")
+            .subscribe(e => { this.menuItems[1].disabled = (this.selectedIdRecords.length==0)});                                   
         this.events.filter(e=>e.type==="paramsChange")
                    .subscribe(e=>this.changeUrl());       
-              
+          
+                   
+        this.selectedIdRecords           
+                       
         Observable.concat(this.logs, this.events,this.dialog.events).subscribe(e=>console.log(e));
           //start                                
         this.log('init');
@@ -130,7 +135,7 @@ export class KanbanDesk extends Page{
     processingClick(item:MenuCommandItem){
         if(item.run&&this[item.run]){          
             this.log("processingClick",item);            
-            if (item.multi){//group2single                
+            if (item.multi||item.one){//group2single                
                 this.selectedIdRecords.forEach(
                           id=>this[item.run as string](item.options||{},id)
                         );        

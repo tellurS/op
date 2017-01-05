@@ -42,10 +42,6 @@ export class BaseMenuCommand {
     }
     
     itemDrop(event, item: MenuCommandItem) {
-        if(item.disabled) {
-            event.preventDefault();
-            return;
-        }
         
         if(!item.url||item.routerLink) {
             event.preventDefault();
