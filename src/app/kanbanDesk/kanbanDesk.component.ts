@@ -82,6 +82,7 @@ export class KanbanDesk extends Page{
         });             
         this.menuItems = [
             {label: "Add", icon: "fa-plus",   eventEmitter:this.events,run:"addDialog"},
+            {label: "Change", icon: "fa-edit",   eventEmitter:this.events,run:"changeDialog",one:true},
             {label: "Clone", icon: "fa-refresh",   eventEmitter:this.events,run:"clone",multi:true},
             {label: "Remove" , icon: "fa-cut",eventEmitter:this.events,run:"remove",multi:true},                                   
             {label: "Priority" , icon: "fa-fire", items:[            
@@ -198,18 +199,54 @@ export class KanbanDesk extends Page{
              values:this.tagsa,idValue:"id",labelValue:"caption",icon:"icon"            
             }
         ];
+        this.log("addDialog",{options,src});        
         
-        this.dialog.form("new record", "please enter:", form,[
-            {label: "Add",   icon: "fa-plus", run:"add"},
+        this.dialog.form("new record", "please enter:",{}, form,[
+            {label: "Add",   icon: "fa-plus", run:"save"},
             {label: "Close", icon: "fa-close"},
         ]);
     }     
-    add(options={},src=null){
-        this.log("add",{options});
-        this.dm.saveRecord("issues",Object.assign({},options)).subscribe((d)=>this.records.push(d));                           
+    changeDialog(options={},src=null){
+        let rec=this.id2record(src);
+        if(!rec){
+            return;
+        }             
+        this.log("changeDialog",{options,src,rec});        
+        
+        let form:Array<FormItem>=[
+            {name:"columnId",caption:"Column",type:"dropdown",values:this.columns,
+             idValue:"id",labelValue:"caption",icon:"icon","default":2,description:"Column type",
+             required:true,number:true
+             },
+            {name:"caption",caption:"Caption",type:"text",minLength:15,maxLength:60,description:"Caption for issue"},
+            {name:"description",caption:"Description",type:"text",minLength:15,maxLength:260,description:"Description for issue"},
+            {name:"priority",caption:"Priority",type:"number",min:0,max:2000,description:"Priority for issue",default:"500"},
+            {name:"tags",caption:"Label",type:"listbox",description:"Tag for issue",default:[],
+             values:this.tagsa,idValue:"id",labelValue:"caption",icon:"icon"            
+            }
+        ];
+        
+        this.dialog.form("Edit record", "please change:",rec, form,[
+            {label: "Save",   icon: "fa-edit", run:"save"},
+            {label: "Close", icon: "fa-close"},
+        ]);
+    }    
+    save(options={},src=null,dst={}){
+        this.log("save",{options});
+        this.dm.saveRecord("issues",options)
+               .subscribe((newR)=>{
+                            let index = this.records.indexOf(dst);
+                            if(index>0){
+                                this.records.splice(index, 1,newR);
+                            }else{
+                                this.records.push(newR);
+                            }                            
+                            this.run("order");
+                        });                                              
     }
     order(options={},src=null){
-        this.records = this.records.sort((a,b)=>a.priority<b.priority);        
+        this.records = this.records.sort((a,b)=>a.priority<b.priority);    
+        console.log("order",this.records);    
     }    
     changeColumn(options={},src=null,dst){        
         let rec=this.id2record(src);
@@ -243,21 +280,14 @@ export class KanbanDesk extends Page{
             return;
         }             
         this.log("change",{options,src,rec});
-        this.dm.saveRecord("issues",Object.assign({},rec,options))
-               .subscribe((newR)=>{
-                            let index = this.records.indexOf(rec);
-                            if(index>0){
-                                this.records.splice(index, 1,newR);
-                                this.run("order");
-                            }                            
-                        });                   
+        this.save(Object.assign({},rec,options),src,rec);           
     }    
     update(options={},src=null,dst=null){
         let rec=this.id2record(src);
         if(!rec||!options.key){
             return;
         }          
-        this.change(Utils.update(Object.assign(rec),options),src);
+        this.save(Utils.update(Object.assign(rec),options),src,rec);
     }    
     //Params    
     togglePriority(){

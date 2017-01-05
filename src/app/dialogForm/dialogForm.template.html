@@ -1,8 +1,6 @@
 <p-dialog [header]="header" *ngIf="visible" [modal]="true" class="dialog" [(visible)]="visible">
     <p>{{body}}</p>
  
-    <p-growl [value]="msgs" sticky="sticky"></p-growl>
-
     <form [formGroup]="userform" (ngSubmit)="onSubmit(userform.value)">
                 <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid">
                     <div class="ui-grid-row" *ngFor="let model of models">
@@ -22,6 +20,9 @@
                                 [(ngModel)]="values[model.name]"
                                 [options]="model.labelsValues"
                             >
+                                <template let-option>
+                                    <i class="fa"  [ngClass]="option.icon"></i><span>{{option.label}}</span>
+                                </template>
                             </p-dropdown>    
                             <p-spinner *ngIf="model.type=='number'"
                                 [formControlName]="model.name"
@@ -29,16 +30,18 @@
                                 [min]="model.min||'0'" [max]="model.min||'100'"
                                 [step]="model.step||1"
                                 size="30"
-
                             >
                             </p-spinner>
                             <p-listbox  *ngIf="model.type=='listbox'"
                                 [formControlName]="model.name"
-                                multiple="multiple" checkbox="checkbox" filter="filter"
+                                multiple="true" checkbox="true" filter="true"
                                 [options]="model.labelsValues"
-                                [(ngModel)]="values[model.name]"
+                               [(ngModel)]="values[model.name]"
                             >
-                            </p-listbox >                            
+                                <template let-option>
+                                    <i class="fa"  [ngClass]="option.icon"></i><span>{{option.label}}</span>
+                                </template>
+                            </p-listbox>                            
                             
 
                         </div>
@@ -55,3 +58,5 @@
         </div>
     </footer>
 </p-dialog>
+
+{{values|json}}

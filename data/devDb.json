@@ -68,13 +68,14 @@
   "issues": [
     {
       "id": 3,
-      "columnId": 2,
+      "columnId": 1,
       "caption": "!!!!super job2 fdsfsdaf dsf dsf dsf sadf dsf dsfa sd",
       "description": "super dsf dsf sdf dsf sdf sdfsfds",
       "tags": [
+        1,
         2
       ],
-      "priority": 1004,
+      "priority": 100,
       "peoples": [
         1,
         2
@@ -113,15 +114,7 @@
       "tags": [
         2
       ],
-      "priority": 100,
-      "resources": []
-    },
-    {
-      "id": 57,
-      "columnId": 3,
-      "caption": "super job3",
-      "description": "No description",
-      "priority": 100,
+      "priority": 1000,
       "resources": []
     },
     {
@@ -132,20 +125,20 @@
       "tags": [
         1
       ],
-      "priority": 1000,
+      "priority": 500,
       "resources": [],
       "peoples": []
     },
     {
       "id": 59,
-      "columnId": 2,
-      "caption": "super job",
-      "description": "No text",
+      "columnId": 3,
+      "caption": "super job 3wewe",
+      "description": "No text er er  df",
       "tags": [
-        1,
-        2
+        2,
+        1
       ],
-      "priority": 100,
+      "priority": 1000,
       "peoples": [
         2
       ],
@@ -193,30 +186,6 @@
       ]
     },
     {
-      "id": 62
-    },
-    {
-      "id": 63
-    },
-    {
-      "id": 64,
-      "columnId": 1,
-      "caption": "super job",
-      "description": "No text",
-      "tags": [
-        1,
-        2
-      ],
-      "priority": 100,
-      "peoples": [
-        2
-      ],
-      "resources": [
-        2,
-        1
-      ]
-    },
-    {
       "id": 65,
       "columnId": 1,
       "caption": "super job",
@@ -225,23 +194,37 @@
         1,
         2
       ],
-      "priority": 100,
+      "priority": 1000,
       "peoples": [
         2
       ],
       "resources": [
-        2,
         1
       ]
     },
     {
-      "id": 66
+      "columnId": 1,
+      "caption": 1.111111111111111e+25,
+      "description": "sdfsdfsdfsdfdfs",
+      "priority": 100,
+      "tags": [
+        1,
+        3
+      ],
+      "id": 69,
+      "peoples": [
+        2
+      ]
     },
     {
-      "id": 67
-    },
-    {
-      "id": 68
+      "columnId": 2,
+      "caption": 1.1111111111111112e+39,
+      "description": 222222222222222230000,
+      "priority": 500,
+      "tags": [
+        1
+      ],
+      "id": 70
     }
   ],
   "tags": [

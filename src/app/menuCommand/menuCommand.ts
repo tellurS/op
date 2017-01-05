@@ -186,5 +186,6 @@ export interface MenuCommandItem extends MenuItem{
     options?:any;
     run?:string;
     multi?:boolean;
+    one?:boolean;
     dst?:any;
 }

@@ -31,18 +31,20 @@ export class DialogForm{
     }    
     click(item:MenuCommandItem){
         this.visible=false;        
-        this.emit("run",item,this.data,{options:this.values});
+        this.emit("run",this.data,{options:this.values},item);
     }
     alternative(header:string,body:string,data:Object,commandsItems:Array<MenuCommandItem>){
         this.header=header;
         this.body=body;
         this.buttons=commandsItems;
         this.data=data;
-        this.models=[];
+        this.models=[];               
+        this.userform=this.fb.group([]);
+        this.values={};  
         this.show();
     }
     
-    models2form(models:Array<FormItem>, controlsConfig={},values):any{ 
+    prepareForm(models:Array<FormItem>, controlsConfig={},values):any{ 
         this.models.forEach(model=>{
             let modelValidators=[];
             if(model.required)
@@ -95,11 +97,9 @@ export class DialogForm{
                 modelValidators.push(CustValidators.equalTo(controlsConfig[model.equalTo]));  
 
             if((model.type=="dropdown"||model.type=="listbox")&&model.values){
-                console.log(model)
                 model.labelsValues = model.values.map(e => {
-                    return { value: e[model.idValue], label: e[model.labelValue]}
+                    return { value: e[model.idValue], label: e[model.labelValue], icon: e[model.icon]}
                 });    
-                
             }    
             
             if (!this.values[model.name]){
@@ -110,41 +110,20 @@ export class DialogForm{
         }); 
         return controlsConfig;
     }
-    form(header:string,body:string,models:Array<FormItem>,commandsItems:Array<MenuCommandItem>){
+    form(header:string,body:string,rec:Object,models:Array<FormItem>,commandsItems:Array<MenuCommandItem>){
         this.header=header;
         this.body=body;
         this.buttons=commandsItems;
         this.models=models;
-        this.values={};        
+        this.values=Object.assign({},rec);
+        this.data={dst:rec};       
+        let f=this.prepareForm(this.models,{},this.values);
         
-        this.userform = this.fb.group(this.models2form(this.models,{},this.values));
+        this.userform = this.fb.group(f);
 
         
         this.show();
     }    
-
-
-    
-
-    
-    submitted: boolean;
-    
-    genders: SelectItem[];
-        
-    description: string;
-    
-    ngOnInit() {
-        this.genders = [];
-        this.genders.push({label:'Select Gender', value:''});
-        this.genders.push({label:'Male', value:'Male'});
-        this.genders.push({label:'Female', value:'Female'});
-    }
-    
-    onSubmit(value: string) {
-        this.submitted = true;
-        this.msgs = [];
-        this.msgs.push({severity:'info', summary:'Success', detail:'Form Submitted'});
-    }
     
     
 }
