@@ -8,7 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { DragDrop,DragDropEvent } from '../dragDrop/dragDrop';
 import { Page } from '../page/page';
 import { MenuCommandItem } from '../menuCommand/menuCommand';
-import { DialogForm } from '../dialogForm';
+import { DialogForm,FormItem } from '../dialogForm';
 
 @Component({
     selector: 'kanbanDesk',  
@@ -79,7 +79,7 @@ export class KanbanDesk extends Page{
                    this.log("dataUpdated");                   
         });             
         this.menuItems = [
-            {label: "Add", icon: "fa-plus",   eventEmitter:this.events,run:"add"},
+            {label: "Add", icon: "fa-plus",   eventEmitter:this.events,run:"addDialog"},
             {label: "Clone", icon: "fa-refresh",   eventEmitter:this.events,run:"clone",multi:true},
             {label: "Remove" , icon: "fa-cut",eventEmitter:this.events,run:"remove",multi:true},                                   
             {label: "Priority" , icon: "fa-fire", items:[            
@@ -182,7 +182,25 @@ export class KanbanDesk extends Page{
             return null;
         return this.records.find(r=>r.id===id);         
     }    
-    //Commands  
+    //Commands 
+    addDialog(options={},src=null){
+        let form:Array<FormItem>=[
+            {name:"columnId",caption:"Column",type:"select",values:Utils.array2index(this.columns, "id"),
+             idValues:"id",captionValues:"captionValues",icon:"icon","default":2,description:"Column type"},
+            {name:"caption",caption:"Caption",type:"text",minLength:15,maxLength:60,description:"Caption for issue"},
+            {name:"description",caption:"Description",type:"text",minLength:15,maxLength:260,description:"Description for issue"},
+            {name:"priority",caption:"Priority",type:"int",min:0,maxLength:2000,description:"Priority for issue"}
+        ];
+        
+        this.dialog.form("new record", "please enter:", form,[
+            {label: "Add",   icon: "fa-plus", run:"add"},
+            {label: "Close", icon: "fa-close"},
+        ]);
+    }     
+    add(options={},src=null){
+        this.log("add",{options});
+        this.dm.saveRecord("issues",Object.assign({},options)).subscribe((d)=>this.records.push(d));                           
+    }
     order(options={},src=null){
         this.records = this.records.sort((a,b)=>a.priority<b.priority);        
     }    
@@ -269,7 +287,7 @@ export class KanbanDesk extends Page{
             this.selectRecords(null, false);
     }
     alternative(options=[],src=null,dst=null){
-        this.dialog.alternative("select", "please select action", { src, dst }, ...options);
+        this.dialog.alternative("select", "please select action", { src, dst }, options);
     }              
     //etc
     data2menuSub(items,directoryName:string):MenuCommandItem[]{        
@@ -294,10 +312,6 @@ export class KanbanDesk extends Page{
             this[menuName]=this.data2menuSub(data.filter(item=>(!onlyRoot||item._root)),directoryName);
         }
     }    
-    //
-    bridge($event){
-        this.log("bridge",$event);
-    }
 }
 
 import { Pipe, PipeTransform } from '@angular/core';

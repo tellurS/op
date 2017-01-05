@@ -38,6 +38,11 @@
         };
 }
 
+.dialog{
+    .ui-dialog {
+       //  width: auto !important; 
+    } 
+}
 /*
 (function(){  // анонимная функция (function(){ })(), чтобы переменные "a" и "b" не стали глобальными
 var a = document.querySelector('#aside1'), b = null;  // селектор блока, который нужно закрепить

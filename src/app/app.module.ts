@@ -1,6 +1,6 @@
 import { NgModule, ApplicationRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
@@ -50,6 +50,7 @@ type StoreType = {
   imports: [ // import Angular's modules
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     Primeng.PanelModule,
     Primeng.TooltipModule,
@@ -59,6 +60,12 @@ type StoreType = {
     Primeng.MenuModule,
     Primeng.DialogModule,
     Primeng.ButtonModule,
+    Primeng.PanelModule,
+    Primeng.DropdownModule,
+    Primeng.InputTextModule,
+    Primeng.InputTextareaModule,
+    Primeng.TabViewModule,
+    Primeng.CodeHighlighterModule,    
     RouterModule.forRoot(ROUTES, { useHash: true })    
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
