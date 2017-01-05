@@ -167,7 +167,8 @@ export interface FormItem {
     phone?:string,
     uuid?:boolean,   
     equal?:any,
-    equalTo?:string
+    equalTo?:string,
     
-    step?:string
+    step?:string,
+    readonly?:string
 }

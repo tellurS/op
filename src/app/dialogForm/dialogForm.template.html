@@ -14,11 +14,12 @@
                             </div>                            
                         </div>
                         <div class="ui-grid-col-6">
-                            <input *ngIf="model.type=='text'" pInputText type="text" [formControlName]="model.name" [placeholder]="model.placeholder||''"  [(ngModel)]="values[model.name]" />
+                            <input *ngIf="model.type=='text'" pInputText type="text" [formControlName]="model.name" [disabled]="model.readonly" [placeholder]="model.placeholder||''"  [(ngModel)]="values[model.name]" />
                             <p-dropdown *ngIf="model.type=='dropdown'"
                                 [formControlName]="model.name"
                                 [(ngModel)]="values[model.name]"
                                 [options]="model.labelsValues"
+                                [disabled]="model.readonly"
                             >
                                 <template let-option>
                                     <i class="fa"  [ngClass]="option.icon"></i><span>{{option.label}}</span>
@@ -30,6 +31,7 @@
                                 [min]="model.min||'0'" [max]="model.min||'100'"
                                 [step]="model.step||1"
                                 size="30"
+                                [disabled]="model.readonly"
                             >
                             </p-spinner>
                             <p-listbox  *ngIf="model.type=='listbox'"
@@ -37,6 +39,7 @@
                                 multiple="true" checkbox="true" filter="true"
                                 [options]="model.labelsValues"
                                [(ngModel)]="values[model.name]"
+                               [disabled]="model.readonly"
                             >
                                 <template let-option>
                                     <i class="fa"  [ngClass]="option.icon"></i><span>{{option.label}}</span>
