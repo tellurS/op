@@ -184,4 +184,5 @@ export interface MenuCommandItem extends MenuItem{
     multi?:boolean;
     one?:boolean;
     dst?:any;
+    formStatus?:any;
 }

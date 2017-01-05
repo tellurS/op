@@ -53,7 +53,7 @@
             <button type="button" pButton *ngFor="let button of buttons"
                     [icon]="button.icon" 
                     (click)="click(button)" [label]="button.label"
-                    [disabled]="!userform.valid"
+                    [disabled]="button.formStatus&&!userform.valid"
                     ></button>               
         </div>
     </footer>

@@ -207,7 +207,7 @@ export class KanbanDesk extends Page{
         this.log("addDialog",{options,src});        
         
         this.dialog.form("new record", "please enter:",{}, form,[
-            {label: "Add",   icon: "fa-plus", run:"save"},
+            {label: "Add",   icon: "fa-plus", run:"save",formStatus:true},
             {label: "Close", icon: "fa-close"},
         ]);
     }     
@@ -232,7 +232,7 @@ export class KanbanDesk extends Page{
         ];
         
         this.dialog.form("Edit record", "please change:",rec, form,[
-            {label: "Save",   icon: "fa-edit", run:"save"},
+            {label: "Save",   icon: "fa-edit", run:"save",formStatus:true},
             {label: "Close", icon: "fa-close"},
         ]);
     }    
