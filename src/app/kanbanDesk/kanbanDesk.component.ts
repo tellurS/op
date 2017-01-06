@@ -197,7 +197,7 @@ export class KanbanDesk extends Page{
              idValue:"id",labelValue:"caption",icon:"icon","default":2,description:"Column type",
              required:true,number:true
              },
-            {name:"caption",caption:"Caption",type:"text",minLength:15,maxLength:60,description:"Caption for issue"},
+            {name:"caption",caption:"Caption",type:"text",minLength:15,maxLength:60,description:"Caption for issue",required:true},
             {name:"description",caption:"Description",type:"text",minLength:15,maxLength:260,description:"Description for issue"},
             {name:"priority",caption:"Priority",type:"number",min:0,max:2000,description:"Priority for issue",default:"500"},
             {name:"tags",caption:"Label",type:"listbox",description:"Tag for issue",default:[],
@@ -223,7 +223,7 @@ export class KanbanDesk extends Page{
              idValue:"id",labelValue:"caption",icon:"icon","default":2,description:"Column type",
              required:true,number:true
              },
-            {name:"caption",caption:"Caption",type:"text",minLength:15,maxLength:60,description:"Caption for issue"},
+            {name:"caption",caption:"Caption",type:"text",minLength:15,maxLength:60,description:"Caption for issue",required:true},
             {name:"description",caption:"Description",type:"text",minLength:15,maxLength:260,description:"Description for issue"},
             {name:"priority",caption:"Priority",type:"number",min:0,max:2000,description:"Priority for issue",default:"500"},
             {name:"tags",caption:"Label",type:"listbox",description:"Tag for issue",default:[],
@@ -237,7 +237,6 @@ export class KanbanDesk extends Page{
         ]);
     }    
     save(options={},src=null,dst={}){
-        this.log("save",{options});
         this.dm.saveRecord("issues",options)
                .subscribe((newR)=>{
                             let index = this.records.indexOf(dst);

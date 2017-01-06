@@ -1,7 +1,7 @@
 <p-dialog [header]="header" *ngIf="visible" [modal]="true" class="dialog" [(visible)]="visible">
     <p>{{body}}</p>
  
-    <form [formGroup]="userform" (ngSubmit)="onSubmit(userform.value)">
+    <form [formGroup]="userform">
                 <div class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid">
                     <div class="ui-grid-row" *ngFor="let model of models">
                         <div class="ui-grid-col-6">
@@ -9,17 +9,20 @@
                                 {{model.caption}}
                                 <span *ngIf="model.required"> *</span>
                             </div>
-                            <div class="ui-message ui-messages-warn ui-corner-all" *ngIf="!userform.controls[model.name].valid&&userform.controls[model.name].dirty">
+                            <div class="ui-message ui-messages-warn ui-corner-all" *ngIf="!userform.controls[model.name].valid&&userform.controls[model.name].touched">
                                  <i class="fa fa-close"></i>{{model.errorMsg||model.description}}
                             </div>                            
                         </div>
                         <div class="ui-grid-col-6">
-                            <input *ngIf="model.type=='text'" pInputText type="text" [formControlName]="model.name" [disabled]="model.readonly" [placeholder]="model.placeholder||''"  [(ngModel)]="values[model.name]" />
+                            <input *ngIf="model.type=='text'" pInputText type="text" 
+                                [formControlName]="model.name"  
+                                [placeholder]="model.placeholder||''"  [(ngModel)]="values[model.name]" />
+                            
                             <p-dropdown *ngIf="model.type=='dropdown'"
                                 [formControlName]="model.name"
                                 [(ngModel)]="values[model.name]"
                                 [options]="model.labelsValues"
-                                [disabled]="model.readonly"
+                               
                             >
                                 <template let-option>
                                     <i class="fa"  [ngClass]="option.icon"></i><span>{{option.label}}</span>
@@ -31,7 +34,7 @@
                                 [min]="model.min||'0'" [max]="model.min||'100'"
                                 [step]="model.step||1"
                                 size="30"
-                                [disabled]="model.readonly"
+                   
                             >
                             </p-spinner>
                             <p-listbox  *ngIf="model.type=='listbox'"
@@ -39,13 +42,14 @@
                                 multiple="true" checkbox="true" filter="true"
                                 [options]="model.labelsValues"
                                [(ngModel)]="values[model.name]"
-                               [disabled]="model.readonly"
+                  
                             >
                                 <template let-option>
                                     <i class="fa"  [ngClass]="option.icon"></i><span>{{option.label}}</span>
                                 </template>
                             </p-listbox>                            
                             
+
 
                         </div>
                      </div>                                          
@@ -56,10 +60,9 @@
             <button type="button" pButton *ngFor="let button of buttons"
                     [icon]="button.icon" 
                     (click)="click(button)" [label]="button.label"
-                    [disabled]="button.formStatus&&!userform.valid"
+                    [disabled]="button.formStatus&&(!userform.valid||userform.dirty)"
                     ></button>               
         </div>
     </footer>
 </p-dialog>
 
-{{values|json}}

@@ -1,8 +1,12 @@
 @import "../../node_modules/font-awesome/scss/font-awesome.scss";
 
+@import "../../node_modules/quill/dist/quill.core.css";
+@import "../../node_modules/quill/dist/quill.snow.css";
+
 @import "../../node_modules/primeng/resources/themes/omega/theme.css";
 //@import "../../node_modules/primeng/resources/primeng.css";
 @import "primeng.scss";
+
 
 .ov-inline{
     display:inline-block;

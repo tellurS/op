@@ -30,7 +30,7 @@ export class DialogForm{
         this.events.emit(d);                
     }    
     click(item:MenuCommandItem){
-        this.visible=false;        
+        this.visible=false;         
         this.emit("run",this.data,{options:this.values},item);
     }
     alternative(header:string,body:string,data:Object,commandsItems:Array<MenuCommandItem>){
@@ -87,9 +87,9 @@ export class DialogForm{
             if (model.minDate)    
                 modelValidators.push(CustValidators.minDate(model.minDate));                    
             if (model.maxDate)    
-                modelValidators.push(CustValidators.minDate(model.maxDate));   
+                modelValidators.push(CustValidators.maxDate(model.maxDate));   
             if (model.phone)    
-                modelValidators.push(CustValidators.minDate(model.phone));                    
+                modelValidators.push(CustValidators.phone(model.phone));                    
             if (model.equal)    
                 modelValidators.push(CustValidators.equal(model.equal));                    
                 
@@ -105,9 +105,10 @@ export class DialogForm{
             if (!this.values[model.name]){
                 this.values[model.name] = model.default;
             }
-                                                      
-            controlsConfig[model.name]=new FormControl('', modelValidators);
+                                                    
+            controlsConfig[model.name]=new FormControl({disabled:!model.readonly}, modelValidators);
         }); 
+        
         return controlsConfig;
     }
     form(header:string,body:string,rec:Object,models:Array<FormItem>,commandsItems:Array<MenuCommandItem>){

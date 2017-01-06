@@ -70,6 +70,8 @@ type StoreType = {
     Primeng.CodeHighlighterModule, 
     Primeng.SpinnerModule,       
     Primeng.ListboxModule,
+    Primeng.EditorModule,
+    Primeng.SharedModule,
     RouterModule.forRoot(ROUTES, { useHash: true })    
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection

@@ -149,25 +149,6 @@
       "resources": []
     },
     {
-      "id": 60,
-      "columnId": 2,
-      "caption": "super job",
-      "description": "No text",
-      "tags": [
-        1
-      ],
-      "priority": 100,
-      "peoples": [],
-      "resource": [
-        2,
-        1
-      ],
-      "resources": [
-        1,
-        2
-      ]
-    },
-    {
       "id": 61,
       "columnId": 4,
       "caption": "super job",
@@ -199,7 +180,8 @@
         2
       ],
       "resources": [
-        1
+        1,
+        2
       ]
     },
     {
@@ -225,6 +207,26 @@
         1
       ],
       "id": 70
+    },
+    {
+      "columnId": 2,
+      "caption": "huuiii999999999999999999999999999999999999999999",
+      "description": 1e+39,
+      "priority": 500,
+      "tags": [
+        1
+      ],
+      "id": 71
+    },
+    {
+      "columnId": 2,
+      "caption": "huuiii999999999999999999999999999999999999999999",
+      "description": 1e+39,
+      "priority": 500,
+      "tags": [
+        1
+      ],
+      "id": 72
     }
   ],
   "tags": [

@@ -4,7 +4,7 @@
 
 const webpack = require('webpack');
 const helpers = require('./helpers');
-
+var path = require('path');
 /*
  * Webpack Plugins
  */
@@ -79,10 +79,12 @@ module.exports = function(options) {
        * See: http://webpack.github.io/docs/configuration.html#resolve-extensions
        */
       extensions: ['', '.ts', '.js', '.json'],
-
       // Make sure root is src
       root: helpers.root('src'),
-
+      /*  alias: {
+          'parchment': path.resolve(__dirname, 'node_modules/parchment/src/parchment.ts'),
+          'quill$': path.resolve(__dirname, 'node_modules/quill/dist/quill.js'),
+        },*/
       // remove other default values
       modulesDirectories: ['node_modules'],
 
