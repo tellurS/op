@@ -106,7 +106,7 @@ export class DialogForm{
                 this.values[model.name] = model.default;
             }
                                                     
-            controlsConfig[model.name]=new FormControl({disabled:!model.readonly}, modelValidators);
+            controlsConfig[model.name]=new FormControl('', modelValidators);
         }); 
         
         return controlsConfig;
@@ -170,6 +170,5 @@ export interface FormItem {
     equal?:any,
     equalTo?:string,
     
-    step?:string,
-    readonly?:string
+    step?:string
 }
