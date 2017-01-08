@@ -205,11 +205,12 @@ module.exports = function(env) {
      *
      * See: https://github.com/wbuchwalter/tslint-loader
      */
+    /*
     tslint: {
       emitErrors: true,
       failOnHint: true,
       resourcePath: 'src'
-    },
+    },*/
 
     /**
      * Html loader advanced options
