@@ -2,7 +2,7 @@ import { Component,Input,Output, EventEmitter} from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { DataManager,Utils,Dataset} from '../dataManager';
 import { Observable } from 'rxjs/Observable';
-
+import { MenuCommandItem } from '../menuCommand/menuCommand';
 
 
 export class Page {
@@ -16,7 +16,7 @@ export class Page {
         this.events.emit(d);                
     }    
     run(run="run",options={},dst=null){       
-        let data={run,options};
+        let data:MenuCommandItem={run,options};
         if(dst)
             data.dst=dst;
         this.emit('run',data);                

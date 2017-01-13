@@ -1,9 +1,13 @@
-FROM alpine:latest
-# Build the npm modules.
-ADD package.json package.json 
-RUN npm install
+FROM node:6.9.4-alpine
 
-# Add the remaining source (excluding `root/app/node_modules` thanks to `.dockerignore`).
+ADD package.json package.json 
+
 ADD dist /dist
+ADD src/server /src/server
+ADD node_modules /node_modules
+
 VOLUME ["/data"]
-CMD ["node json-server --watch ./data/dev.json --port 3001 && node http-server dist -p 80 --proxy 3001"]
+VOLUME ["/ssl"]
+EXPOSE 5555
+
+CMD [ "npm", "start" ]

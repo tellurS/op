@@ -60,3 +60,4 @@ npm-debug.log
 .idea/
 *.swp
 /nbproject/private/
+/data/db.json

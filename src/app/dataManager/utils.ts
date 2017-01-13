@@ -44,13 +44,13 @@ export class Utils {
         }
         return res;
     }
-    static update(obj:Object,options:{key:string,expression?:string,handle?:updateHandler|string,defaultValue?:any}){
+    static update(obj:Object,options:{key?:string,expression?:string,handle?:updateHandler|string,defaultValue?:any}){
         if(!obj)
             return options.defaultValue;
         if(!options.expression)
             return options.defaultValue;                    
         if(obj["flatMap"]){            
-            return obj.flatMap((objValue) => Observable.of(this.update(obj,options)));
+            return obj["flatMap"]((objValue) => Observable.of(this.update(obj,options)));
         }else{
             let src=obj;
             options.key.split('.').every((current,i,arr)=>{

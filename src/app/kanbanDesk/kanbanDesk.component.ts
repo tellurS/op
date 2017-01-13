@@ -18,7 +18,7 @@ import { DialogForm,FormItem } from '../dialogForm';
 export class KanbanDesk extends Page{
     componentName="KanbanDesk";
     columns: any;
-    records=[];
+    records:Array<RecordItem>;
     peoples=[];
     resources=[];
     selectedIdRecords = [];
@@ -58,13 +58,15 @@ export class KanbanDesk extends Page{
         this.features=this.getComponentData("feature",this.features);
             
         Observable.combineLatest([this.dm.getRecords('columns'),
-                                  this.dm.getRecords('issues', 
-                                                    this.events.filter(e=>e.type==="paramsChange").map(val => Utils.pick(val.params,["priority_gte"])).distinctUntilChanged(null,a=>JSON.stringify(a)), 
-                                                    {pooling:this.features.pooling}),
-                                  this.dm.getRecords('tags'),
-                                  (this.features.peoples)?this.dm.getRecords('peoples'):Observable.of([]),
-                                  (this.features.resources)?this.dm.getRecords('resources'):Observable.of([]),
-                                  //this.dm.getRecords('issues',{id:"1"})
+                                this.dm.getRecords('issues', 
+                                    this.events.filter((e:MenuCommandItem)=>e.type&&e.type==="paramsChange")
+                                        .map((val:MenuCommandItem) => Utils.pick(val.params,["priority_gte"]))
+                                        .distinctUntilChanged(null,a=>JSON.stringify(a)),
+                                    {pooling:this.features.pooling}),
+                                this.dm.getRecords('tags'),
+                                (this.features.peoples)?this.dm.getRecords('peoples'):Observable.of([]),
+                                (this.features.resources)?this.dm.getRecords('resources'):Observable.of([]),
+                                //this.dm.getRecords('issues',{id:"1"})
                                   ])
                .subscribe(([c,i,t,p,r])=>{
                    this.columns = c;
@@ -104,23 +106,23 @@ export class KanbanDesk extends Page{
     }    
     
   ngAfterViewInit() {     
-        this.events.filter(e=>e.type==="menuDrop")//Menu2drop
-                   .subscribe(e=>this.dragDrop.drop(e,e.item,e.item.run));        
+        this.events.filter((e:MenuCommandItem)=>e.type==="menuDrop")//Menu2drop
+                   .subscribe((e:MenuCommandItem)=>this.dragDrop.drop(e,e.item,e.item.run));        
                    
-        this.events.filter(e=>e.type==="onDragEnd")
-                   .subscribe(e=>this.processingDrop(e.data));        
-        this.events.filter(e=>e.type==="menuClick")
-                   .subscribe(e=>this.processingClick(e.item)); 
-        this.events.filter(e=>e.type==="run")
-                   .subscribe(e=>this.processingClick(e));     
-        this.dialog.events.filter(e=>e.type==="run")
-               .subscribe(e=>this.processingClick(e)); 
+        this.events.filter((e:MenuCommandItem)=>e.type==="onDragEnd")
+                   .subscribe((e:MenuCommandItem)=>this.processingDrop(e.data));        
+        this.events.filter((e:MenuCommandItem)=>e.type==="menuClick")
+                   .subscribe((e:MenuCommandItem)=>this.processingClick(e.item)); 
+        this.events.filter((e:MenuCommandItem)=>e.type==="run")
+                   .subscribe((e:MenuCommandItem)=>this.processingClick(e));     
+        this.dialog.events.filter((e:MenuCommandItem)=>e.type==="run")
+               .subscribe((e:MenuCommandItem)=>this.processingClick(e)); 
                                    
-        this.events.filter(e=>e.type==="select")
+        this.events.filter((e:MenuCommandItem)=>e.type==="select")
                     .subscribe(e=>this.applyParams({select: this.selectedIdRecords}));    
-        this.events.filter(e=>e.type==="select")
-            .subscribe(e => { this.menuItems[1].disabled = (this.selectedIdRecords.length==0)});                                   
-        this.events.filter(e=>e.type==="paramsChange")
+        this.events.filter((e:MenuCommandItem)=>e.type==="select")
+            .subscribe((e:MenuCommandItem) => { this.menuItems[1].disabled = (this.selectedIdRecords.length==0)});                                   
+        this.events.filter((e:MenuCommandItem)=>e.type==="paramsChange")
                    .subscribe(e=>this.changeUrl());       
           
                    
@@ -147,11 +149,11 @@ export class KanbanDesk extends Page{
     //drop event
     processingDrop(e:DragDropEvent){
         let dropFinish=e.drops.sort((a,b)=> (a.type === 'changeColumn')?1:-1);//column first
-        let dst=dropFinish[0].dst;
+        let dst:MenuCommandItem=dropFinish[0].dst;
 
         if(dropFinish[0].type&&this[dropFinish[0].type]){
             this.log("processingDrop",{options:dst.options,src:e.src,dst});
-            this[dropFinish[0].type](dst.options,e.src.id,dst);                            
+            this[dropFinish[0].type](dst.options,e.src["id"],dst);                            
         }
     }
     //web Helpers
@@ -249,17 +251,16 @@ export class KanbanDesk extends Page{
                         });                                              
     }
     order(options={},src=null){
-        this.records = this.records.sort((a,b)=>a.priority<b.priority);    
-        console.log("order",this.records);    
+        this.records = this.records.sort((a:RecordItem,b:RecordItem)=>( +(a.priority > b.priority) || +(a.priority === b.priority) - 1));    
     }    
-    changeColumn(options={},src=null,dst){        
+    changeColumn(options:MenuCommandItem={},src=null,dst?){        
         let rec=this.id2record(src);
         if(!src){
             return;
         }                             
         if(rec.columnId!=dst.id){//changeColumn
            this.log("changeColumn",{rec,id:dst.id});
-           this.change({columnId:dst.id},src);
+           this.change({columnId:dst["id"]},src);
         }else{ //clone
            this.clone(options,src);
         }
@@ -288,7 +289,7 @@ export class KanbanDesk extends Page{
     }    
     update(options={},src=null,dst=null){
         let rec=this.id2record(src);
-        if(!rec||!options.key){
+        if(!rec||!options["key"]){
             return;
         }          
         this.save(Utils.update(Object.assign(rec),options),src,rec);
@@ -312,10 +313,10 @@ export class KanbanDesk extends Page{
         this.selectedIdRecords = this.selectedIdRecords.concat(recordsId);
         this.emit("select",{data:this.selectedIdRecords,event:$event});            
     }
-    select(options={}){
-        this.selectRecords(options.$event,options.$event.shiftKey,options.rec.id);        
+    select(options:MenuCommandItem={}){
+        this.selectRecords(options.$event,options.$event["shiftKey"],options.rec["id"]);        
     }
-    isSelect(rec){
+    isSelect(rec:RecordItem){
         return this.selectedIdRecords.indexOf(rec.id)>-1;       
     }   
     selectAll(options={},src=null,dst){
@@ -344,7 +345,7 @@ export class KanbanDesk extends Page{
                 return item;    
               });               
     } 
-    data2menu(data:Array<any>,onlyRoot:false,menuName:string,directoryName:string){
+    data2menu(data:Array<any>,onlyRoot:boolean,menuName:string,directoryName:string){
         let roots=data.filter(item=>item._itIsRoot);
         if (roots.length===1){
             roots[0]._child=data.filter(item=>!item._itIsRoot).map(e=>e.id);
@@ -365,3 +366,8 @@ export class byColumns implements PipeTransform {
   }
 }
 
+export interface RecordItem{
+    id?:number;
+    priority?:number;
+    columnId?:number;
+}
