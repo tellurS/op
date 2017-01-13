@@ -47,5 +47,11 @@ httpsServer.listen(5555);
 console.log('OP server is running');
 
 
+let request = require('request-json');
+var client = request.createClient('https://localhost:5555/',{strictSSL: false});
+ 
+client.get('issues/', function(err, res, body) {
+  return console.log(err, res, body);
+});
 
 
