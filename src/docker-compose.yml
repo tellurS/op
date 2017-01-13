@@ -1,0 +1,12 @@
+version: "2"
+services:
+  jsonserver:
+    image: json-server
+    volumes:
+      - .:/code         
+  web:
+    image: op/op-prod    
+    ports:
+      - "5000:5000"
+    volumes:
+      - ssl:/ssl
