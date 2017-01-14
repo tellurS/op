@@ -61,3 +61,4 @@ npm-debug.log
 *.swp
 /nbproject/private/
 /data/db.json
+/ssl/

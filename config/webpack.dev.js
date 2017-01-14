@@ -143,7 +143,7 @@ const helpers = require('./helpers');
                     outputPath: helpers.root('dist'),
                     proxy: {
                         '/api': {
-                            target: 'http://localhost:3001',
+                            target: 'https://localhost:3002',
                             secure: false,
                             pathRewrite: {'^/api' : ''}
                         }

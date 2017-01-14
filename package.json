@@ -5,6 +5,12 @@
   "author": "Tellurs",
   "homepage": "https://github.com/tellurS/op",
   "scripts": {
+    "server:dev:hmr": "npm run server:dev -- --inline --hot",
+    "server:dev": "webpack-dev-server --config config/webpack.dev.js --progress --profile --watch --content-base src/",        
+    "opserver:dev": "supervisor -x ts-node -w ./server -e 'js,ts' -- ./server/start.ts  ./dist",
+    "jsonserver:dev": "json-server --watch ./data/devDb.json --port 3001",
+    "dev": "concurrently --prefix \"{time}\" -t \"HH:mm:ss.SSS\"  -c \"black.bgWhite,cyan,blue\" --kill-others \"npm run jsonserver:dev\"  \"npm run server:dev:hmr\" \"npm run opserver:dev\" ",
+        
     "build:dev": "webpack --config config/webpack.dev.js --progress --profile",
     "build:docker": "npm run build:prod && npm run docker:build",
     "build:prod": "webpack --config config/webpack.prod.js  --progress --profile --bail",
@@ -37,10 +43,7 @@
     "preversion": "npm test",
     "protractor": "protractor",
     "rimraf": "rimraf",
-    "server:dev:hmr": "npm run server:dev -- --inline --hot",
-    "server:dev": "webpack-dev-server --config config/webpack.dev.js --progress --profile --watch --content-base src/",        
     "server:prod": "supervisor -x ts-node -i . -- ./src/server/server.ts ./data/db.json ./dist",        
-    "json-server": "json-server --watch ./data/devDb.json --port 3001",
     "server": "concurrently -r --kill-others \"npm run json-server\"  \"npm run server:dev\" ",
     "start:hmr": "npm run server:dev:hmr",
     "start": "npm run server:prod",
