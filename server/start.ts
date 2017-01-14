@@ -1,5 +1,6 @@
 var process = require('process');
 const express = require('express');
+var bodyParser = require('body-parser');
 var server = express();
 
 //https
@@ -32,18 +33,31 @@ server.use(function (req, res, next) {
 
 server.use(express.static(stat));
 
+server.use(bodyParser.json()); // for parsing application/json
+server.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 //proxy
 let request = require('request-json');
 var client = request.createClient('http://localhost:3001/',{strictSSL: false});
 
-server.use(function (req, res, next) {
-   client.get(req.originalUrl, function(e, r, body) {
-      res.send(body);
-      //return console.log("res",e, r, body);
-   });   
+server.use((req, res, next)=>{    
+    switch(req.method) {
+      case 'GET':  
+        client.get(req.originalUrl,(e,r,body)=>res.send(body));
+        break;
+      case 'POST':  
+        client.post(req.originalUrl,req.body,(e,r,body)=>res.send(body));
+        break;        
+      case 'PUT':  
+        client.post(req.originalUrl,req.body,(e,r,body)=>res.send(body));
+        break;        
+      case 'DELETE':  
+        client.delete(req.originalUrl,(e,r,body)=>res.send(body));
+        break;                
+      default:
+        res.status(404).end();
+    }        
+    
 });
-
-
 
 
 server.use(function (req, res, next) {
