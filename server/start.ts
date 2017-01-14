@@ -2,10 +2,12 @@
 
 import {Web} from './lib/web';
 import {JsonClient} from './lib/jsonclient';
+import {Rbac} from './lib/rbac';
 
 //components
 let web=new Web(3002); 
 let client=new JsonClient(); 
+let rbac=new Rbac(client); 
 
 //config
 
@@ -20,22 +22,28 @@ web.addStatic('dist');
 
 
 web.server.use((req, res, next)=>{    
-    switch(req.method) {
-      case 'GET':  
-        client.jsonServer.get(req.originalUrl,(e,r,body)=>res.send(body));
-        break;
-      case 'POST':  
-        client.jsonServer.post(req.originalUrl,req.body,(e,r,body)=>res.send(body));
-        break;        
-      case 'PUT':  
-        client.jsonServer.put(req.originalUrl,req.body,(e,r,body)=>res.send(body));
-        break;        
-      case 'DELETE':  
-        client.jsonServer.delete(req.originalUrl,(e,r,body)=>res.send(body));
-        break;                
-      default:
-        res.status(404).end();
-    }        
+    rbac.validate('0101',req.originalUrl,req.body, (err,auth)=>{
+        if(err){
+            res.status(401).end();
+            return;
+        }
+        switch(req.method) {
+          case 'GET':  
+            client.jsonServer.get(req.originalUrl,(e,r,body)=>res.send(body));
+            break;
+          case 'POST':  
+            client.jsonServer.post(req.originalUrl,req.body,(e,r,body)=>res.send(body));
+            break;        
+          case 'PUT':  
+            client.jsonServer.put(req.originalUrl,req.body,(e,r,body)=>res.send(body));
+            break;        
+          case 'DELETE':  
+            client.jsonServer.delete(req.originalUrl,(e,r,body)=>res.send(body));
+            break;                
+          default:
+            res.status(404).end();
+        }        
+    });
 });
 
 //start

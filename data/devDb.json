@@ -1,4 +1,51 @@
 {
+  "users": [
+    {
+      "id": 1,
+      "caption": "root",
+      "role": ["admin","kanban"],
+      "passwd":""
+    },
+    {
+      "id": 2,
+      "caption": "simple",
+      "role": ["kanban"],
+      "passwd":""
+    } 
+  ],    
+  "roles": [
+    {
+      "id": 1,
+      "caption": "root"            
+    },
+    {
+      "id": 2,
+      "caption": "kanban",      
+      "collections":{
+            "columns":{"readonly":true},
+            "issues":{"full":true}
+       }                    
+    } 
+  ],   
+  "sessions":[{
+        "id": "0101",    
+        "role":  
+              {
+                "id": 2,
+                "caption": "kanban",      
+                "collections":{
+                      "columns":{"readonly":true},
+                      "issues":{"full":true}
+                 }                    
+              },               
+        "user":  {
+              "id": 1,
+              "caption": "root",
+              "role": ["admin","kanban"],
+              "passwd":""            
+          }
+          
+}],  
   "columns": [
     {
       "id": 1,
@@ -119,7 +166,7 @@
     },
     {
       "id": 58,
-      "columnId": 2,
+      "columnId": 1,
       "caption": "super job",
       "description": "No text",
       "tags": [
