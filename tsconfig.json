@@ -7,11 +7,9 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "noEmitHelpers": true,
+    "noEmitHelpers": false,
     "strictNullChecks": false,
     "baseUrl": "./src",
-    "paths": [
-    ],
     "lib": [
       "dom",
       "es6"
@@ -25,7 +23,7 @@
       "source-map",
       "uglify-js",
       "webpack"
-    ]
+    ]    
   },
   "exclude": [
     "node_modules",

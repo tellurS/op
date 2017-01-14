@@ -1,3 +1,48 @@
+//import {Application} from './components/application';
+
+import {Web} from './lib/web';
+import {JsonClient} from './lib/jsonclient';
+
+//components
+let web=new Web(3002); 
+let client=new JsonClient(); 
+
+//config
+
+//init
+web.init();
+client.init();
+
+web.addStatic('dist');
+
+
+//proxy
+
+
+web.server.use((req, res, next)=>{    
+    switch(req.method) {
+      case 'GET':  
+        client.jsonServer.get(req.originalUrl,(e,r,body)=>res.send(body));
+        break;
+      case 'POST':  
+        client.jsonServer.post(req.originalUrl,req.body,(e,r,body)=>res.send(body));
+        break;        
+      case 'PUT':  
+        client.jsonServer.put(req.originalUrl,req.body,(e,r,body)=>res.send(body));
+        break;        
+      case 'DELETE':  
+        client.jsonServer.delete(req.originalUrl,(e,r,body)=>res.send(body));
+        break;                
+      default:
+        res.status(404).end();
+    }        
+});
+
+//start
+
+web.start();
+
+/*
 var process = require('process');
 const express = require('express');
 var bodyParser = require('body-parser');
@@ -72,14 +117,14 @@ var httpsServer = https.createServer(credentials, server);
 httpsServer.listen(3002);
 console.log('OP server is running');
 
-
+*/
  
 /*
 client.get('issues/', function(err, res, body) {
   return console.log("kuku");
 });
 */
-
+/*
  process.on('SIGINT', function () { 
     httpsServer.close();
     process.exit(2);
@@ -88,3 +133,4 @@ client.get('issues/', function(err, res, body) {
     httpsServer.close();
     process.exit(2);
  });
+ */
