@@ -1,4 +1,5 @@
 import {JsonClient} from './jsonclient';
+let Promise = require('promise');
 
 export class Rbac{    
     componentName="rbac";
@@ -6,15 +7,10 @@ export class Rbac{
     init(){
         
     }
-    validate(session:string,req:any,body:any,auth:validateCallback){
-        this.json.jsonServer.get('sessions/'+session,(e,r,body)=>{
-            if(e){
-                auth(e,null);
-            }else{
-                auth(null,'ok');
-                console.log(body);
-            }            
-        });
+    validate(session:string,req:any,body:any):any{
+        return this.json.dget('sessions/'+session)
+            .then((r,body)=>'ok')
+            .catch((e)=> {throw e});
     }
     
 }

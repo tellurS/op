@@ -3,49 +3,65 @@
     {
       "id": 1,
       "caption": "root",
-      "role": ["admin","kanban"],
-      "passwd":""
+      "role": [
+        "admin",
+        "kanban"
+      ],
+      "passwd": ""
     },
     {
       "id": 2,
       "caption": "simple",
-      "role": ["kanban"],
-      "passwd":""
-    } 
-  ],    
+      "role": [
+        "kanban"
+      ],
+      "passwd": ""
+    }
+  ],
   "roles": [
     {
       "id": 1,
-      "caption": "root"            
+      "caption": "root"
     },
     {
       "id": 2,
-      "caption": "kanban",      
-      "collections":{
-            "columns":{"readonly":true},
-            "issues":{"full":true}
-       }                    
-    } 
-  ],   
-  "sessions":[{
-        "id": "0101",    
-        "role":  
-              {
-                "id": 2,
-                "caption": "kanban",      
-                "collections":{
-                      "columns":{"readonly":true},
-                      "issues":{"full":true}
-                 }                    
-              },               
-        "user":  {
-              "id": 1,
-              "caption": "root",
-              "role": ["admin","kanban"],
-              "passwd":""            
+      "caption": "kanban",
+      "collections": {
+        "columns": {
+          "readonly": true
+        },
+        "issues": {
+          "full": true
+        }
+      }
+    }
+  ],
+  "sessions": [
+    {
+      "id": "0101",
+      "role": {
+        "id": 2,
+        "caption": "kanban",
+        "collections": {
+          "columns": {
+            "readonly": true
+          },
+          "issues": {
+            "full": true
           }
-          
-}],  
+        }
+      },
+      "user": {
+        "id": 1,
+        "caption": "root",
+        "role": [
+          "admin",
+          "kanban"
+        ],
+        "passwd": ""
+      }
+    }
+  ],
   "columns": [
     {
       "id": 1,
@@ -174,7 +190,9 @@
       ],
       "priority": 500,
       "resources": [],
-      "peoples": []
+      "peoples": [
+        1
+      ]
     },
     {
       "id": 59,
@@ -244,16 +262,6 @@
       "peoples": [
         2
       ]
-    },
-    {
-      "columnId": 2,
-      "caption": 1.1111111111111112e+39,
-      "description": 222222222222222230000,
-      "priority": 500,
-      "tags": [
-        1
-      ],
-      "id": 70
     },
     {
       "columnId": 2,
