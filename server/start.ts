@@ -18,13 +18,16 @@ client.init();
 web.addStatic('dist');
 
 
-//proxy
+//proxy 
 web.server.use((req, res, next)=>{    
     rbac.validate('0101',req.originalUrl,req.body)
     .then(d=>{
         switch(req.method) {
-          case 'GET':  
-            return client.dget(req.originalUrl).then(result=>res.send(result.body));
+          case 'GET':  {
+           //return client.dget(req.originalUrl).then(result=>res.send(result.body)); 
+            next();
+            break;         
+          }
           case 'POST':  
             return client.dpost(req.originalUrl,req.body).then(result=>res.send(result.body));
            case 'PUT':  
@@ -41,7 +44,12 @@ web.server.use((req, res, next)=>{
             return;
     });    
 });
-
 //start
 
-web.start();
+web.server.get('*', function(req, res,next) {
+    return client.dget(req.originalUrl).then(result=>res.send(result.body));         
+});
+
+
+web.start(); 
+console.log('starting Op:server!');

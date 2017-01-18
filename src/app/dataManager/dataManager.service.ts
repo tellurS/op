@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { RestClient } from'./restClient.service';
 import './rxData';
 
-
+  
 @Injectable()
 export class DataManager {
     constructor(private rest: RestClient) {

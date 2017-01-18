@@ -1,0 +1,25 @@
+{
+  "apps" : [{
+    "name"        : "opserver-dev",
+    "interpreter" :"node_modules/.bin/ts-node",    
+    "script"      :"./server/start.ts",
+    "args"        :"./dist",
+    "watch"       :["server"],
+    "kill_timeout" : 3000,
+    "env"         :{
+                    "NODE_ENV"  :"development"
+                   }
+  },
+  {
+    "name"        :"json-server-dev",
+    "script"      :"node_modules/.bin/json-server",    
+    "args"        :"--watch ./data/devDb.json --port 3001"            
+  },
+  {
+    "name"        :"webpack-dev",
+    "script"      :"webpack-dev-server",    
+    "args"        :"--config config/webpack.dev.js --progress --profile --watch --content-base src/"            
+  }   
+]      
+}
+

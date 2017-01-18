@@ -17,8 +17,22 @@ export class Web{
         let certificate = fs.readFileSync('ssl/server.crt', 'utf8');
         let credentials = {key: privateKey, cert: certificate};
         
-        process.on('SIGINT',()=>this.stop());
-        process.on('exit', ()=>this.stop());
+        
+    process.on("SIGUSR1", function () {
+        // stop stuff
+            this.stop('7');
+     });        
+        process.on('SIGTERM',()=>this.stop('1'));
+        process.on('SIGINT',()=>this.stop('2'));//ctrl+c
+        process.on('SIGHUP',()=>this.stop('3'));
+        process.on('SIGQUIT',()=>this.stop('4'));  
+        process.on('uncaughtException', (err)=>{
+                                this.stop('5'+err);
+        });       
+        process.on('beforeExit', ()=>{this.stop('6')});
+        //process.on('exit', ()=>{this.stop('8')});
+        //process.on('SIGKILL',()=>this.stop('9'));  
+
         
         this.server = express();        
         this.httpsServer = Https.createServer(credentials, this.server);        
@@ -28,7 +42,7 @@ export class Web{
         
         this.server.use((req, res, next)=>{
            console.log("request", req.originalUrl);
-           next(); 
+           next();  
         });
         
         
@@ -42,8 +56,11 @@ export class Web{
     start(){
         this.httpsServer.listen(this.port);        
     }
-    stop(){
-        this.httpsServer.close();
+    stop(r:string){
+        console.log("stop",r);
+        this.httpsServer&&this.httpsServer.close&&this.httpsServer.close(()=>{          
+            process.exit(0);
+        });
     }
 }
 

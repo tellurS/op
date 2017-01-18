@@ -7,9 +7,16 @@
   "scripts": {
     "server:dev:hmr": "npm run server:dev -- --inline --hot",
     "server:dev": "webpack-dev-server --config config/webpack.dev.js --progress --profile --watch --content-base src/",
-    "opserver:dev": "supervisor -x ts-node -w ./server -e 'js,ts' -- ./server/start.ts  ./dist",
+    "opserver:dev": "supervisor -s -x ts-node -w server -e 'js,ts' -- ./server/start.ts  ./dist",
     "jsonserver:dev": "json-server --watch ./data/devDb.json --port 3001",
-    "dev": "concurrently --prefix \"{time}\" -t \"HH:mm:ss.SSS\"  -c \"black.bgWhite,cyan,blue\" --kill-others \"npm run jsonserver:dev\"  \"npm run server:dev:hmr\" \"npm run opserver:dev\" ",
+    "devold": "concurrently --prefix \"{time}\" -t \"HH:mm:ss.SSS\"  -c \"black.bgWhite,cyan,blue\" --kill-others \"npm run jsonserver:dev\"  \"npm run server:dev:hmr\" \"npm run opserver:dev\" ",        
+    "devstart":"pm2 startOrRestart  ./config/pm2-dev.json",   
+    "devstop":"pm2 delete  ./config/pm2-dev.json",           
+    "devclear":"pm2 flush ",                   
+    "devlist":"pm2 list",                           
+    "devlog":"pm2 log",                                   
+    "devmonit":"pm2 monit",                                           
+    "dev":"npm run devclear && npm run devstart && npm run devlog && pm2 monit",                   
         
     "opserver": "supervisor -x ts-node -w ./server -e 'js,ts' -- ./server/opserver.ts",
         
