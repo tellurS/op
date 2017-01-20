@@ -4,7 +4,8 @@ let express = require('express');
 let bodyParser = require('body-parser');
 let Https = require('https');
 let fs = require('fs');
-
+let Promise = require('promise');
+let Session = require('express-session');
 
 
 export class Web{
@@ -30,13 +31,21 @@ export class Web{
                                 this.stop('5'+err);
         });       
         process.on('beforeExit', ()=>{this.stop('6')});
-        //process.on('exit', ()=>{this.stop('8')});
+        process.on('exit', ()=>{this.stop('8')});
         //process.on('SIGKILL',()=>this.stop('9'));  
 
         
         this.server = express();        
         this.httpsServer = Https.createServer(credentials, this.server);        
+
         
+        this.server.use(Session({
+          secret: 'buba',
+          resave: false,
+          saveUninitialized: true,
+          cookie: { secure: true }
+        }))        
+                
         this.server.use(bodyParser.json()); // for parsing application/json
         this.server.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
         
@@ -50,18 +59,27 @@ export class Web{
     addStatic(path:string='static',url:string=null){
         if(url)
             this.server.use(url,express.static(path));
-        else
+        else 
             this.server.use(express.static(path));
     }
     start(){
         this.httpsServer.listen(this.port);        
     }
     stop(r:string){
-        console.log("stop",r);
-        this.httpsServer&&this.httpsServer.close&&this.httpsServer.close(()=>{          
+        console.log("stops!  ",r);
+        this.httpsServer.close(()=>{          
+            console.log("exit ===============================================!!!!!!!",r);
             process.exit(0);
-        });
+        });        
+        process.abort();
     }
+    /*
+    sessionEnd{
+        let destroy = Promise.denodeify(req.session.destroy);
+        return destroy();
+    }*/
+    
+    
 }
 
 

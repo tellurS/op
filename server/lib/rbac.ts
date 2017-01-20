@@ -3,20 +3,33 @@ let Promise = require('promise');
 
 export class Rbac{    
     componentName="rbac";
-    constructor(public json:JsonClient) {}
+    constructor(public db:JsonClient) {}
     init(){
         
     }
-    validate(session:string,req:any,body:any):any{
-        return this.json.dget('sessions/'+session)
-            .then((r,body)=>'ok')
-            .catch((e)=> {throw e});
-    }
-    
+
+    loadRoles(rolesId:Array<string>){                
+        return Promise.all(rolesId.map(id=>this.loadRole(id)));
+    }  
+    loadRole(id:string){                
+        console.log('load role',id);
+        return this.db.dget('roles/'+id)
+            .then(r=>r.body)
+            .catch((e)=> {throw e})        
+    } 
+    commulateRolesDataByPriority(roles:Array<Role>){
+        console.log('commulateRolesDataByPriority-In',roles);
+        let rolesData:Array<Role>=roles.sort((a,b)=>(a.priority-b.priority));
+        let result=Object.assign({}, ...rolesData);
+        console.log('commulateRolesDataByPriority',result,rolesData);
+        return result;        
+    }     
 }
 
 
-export interface validateCallback {(
-    err:boolean,
-    data:any
-)}
+export interface Role{
+    id            :number,
+    caption       :string,
+    priority      :number,
+    dictionaries? :any,    
+}

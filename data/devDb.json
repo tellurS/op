@@ -20,20 +20,41 @@
   ],
   "roles": [
     {
-      "id": 1,
-      "caption": "root"
+      "id": "root",
+      "caption": "root",
+      "priority": 0,            
+      "dictionaries":[
+        {
+            "id"  : "/columns",
+            "src" : "columns"
+        }]            
     },
     {
-      "id": 2,
-      "caption": "kanban",
-      "collections": {
-        "columns": {
-          "readonly": true
+      "id": "base",
+      "caption": "base",
+      "priority": 1,      
+      "dictionaries":[{
+            "id"  : "/issues",
+            "src" : "issues"
         },
-        "issues": {
-          "full": true
-        }
-      }
+        {
+            "id"  : "/columns",
+            "src" : "columns",
+            "toSrc":[{"operation":"addSearch","options":["id_gte=2"]}]        
+        },
+        {
+            "id"  : "/peoples",
+            "src" : "peoples"
+        } ,
+        {
+            "id"  : "/resources",
+            "src" : "resources"
+        } ,
+        {
+            "id"  : "/tags",
+            "src" : "tags"
+        }  
+      ]        
     }
   ],
   "sessions": [

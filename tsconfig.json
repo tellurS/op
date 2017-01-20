@@ -9,7 +9,7 @@
     "sourceMap": true,
     "noEmitHelpers": false,
     "strictNullChecks": false,
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "lib": [
       "dom",
       "es6"

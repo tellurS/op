@@ -8,6 +8,7 @@ export class JsonClient implements dataProvider{
         this.jsonServer = request.createClient(this.urlServer,{strictSSL: false});        
     }
     dget(name:string):any{        
+        console.log('get',name);
         return this.jsonServer.get(name);            
     }
     ddelete(name:string):any{
