@@ -71,10 +71,13 @@ web.server.get('*', function(req, res, next){
         
     .then(dicts=>rbac.commulateRolesDataByPriority(dicts))
         .then((log)=>{console.log('pr3b',log);return log;})    
-        
-    .then(comulate=>DM.getRows(comulate[dictionaryName],param))
-     //   .then((log)=>{console.log('pr4b',log);return log;})    
-        
+
+    .then(comulate=>DM.operationSrc(comulate[dictionaryName],param))
+        .then((log)=>{console.log('pr4a',log);return log;})           
+                
+    .then((pre)=>DM.getRows(pre.uri))
+        .then((log)=>{console.log('pr4b',log);return log;})    
+                
     .then(result=>{res.send(result);return "ok"}) 
         .then((log)=>{console.log('pr5',log);return log;})    
         
