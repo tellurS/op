@@ -1,24 +1,58 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "root",
       "caption": "root",
-      "role": [
+      "roles": [
         "admin",
         "kanban"
       ],
       "passwd": ""
     },
     {
-      "id": 2,
+      "id": "simple",
       "caption": "simple",
-      "role": [
+      "roles": [
         "kanban"
       ],
       "passwd": ""
     }
   ],
   "roles": [
+    {
+      "id": "noauth",
+      "caption": "noauth",
+      "priority": 0,            
+      "dictionaries":[
+        {
+            "id"  : "/login",
+            "src" : "users",
+            "toSrc":[{"operation":"valid"}
+                    ],                       
+            "field":[
+                        {"name":"username","caption":"Login","type":"text","minLength":5,"maxLength":25,"description":"Login","required":true},
+                        {"name":"password","caption":"Password","type":"password","minLength":5,"maxLength":26,"description":"Password","required":true,"toSrc":"sha256"}
+                    ],
+            "schemaA":{
+                "type": "object",                        
+                "additionalProperties": false,                       
+                "properties": {
+                   "body": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                           "username": {"caption":"Login"   ,"type":"string","minLength":5,"maxLength":25,"description":"Login"},
+                           "password": {"caption":"Password","type":"string","minLength":5,"maxLength":26,"description":"Password","crypt":"sha256"}
+                           },
+                        "required": ["username", "password"],                                                                                                                                  
+                        "log":["1/username","1/password_"]                                
+                   }
+                },
+                "required": ["body"]
+            }        
+                            
+        }]            
+    },        
     {
       "id": "root",
       "caption": "root",
@@ -28,19 +62,21 @@
             "id"  : "/columns",
             "src" : "columns"            
         }]            
-    },
+    },   
     {
       "id": "base",
       "caption": "base",
       "priority": 1,      
-      "dictionaries":[{
+      "dictionaries":[{                    
             "id"  : "/issues",
             "src" : "issues"
         },
         {
             "id"  : "/columns",
             "src" : "columns",
-            "toSrc":[{"operation":"addSearch","options":["id_gte=2"]}]        
+            "toSrc":[{"operation":"addSearch","options":["id_gte=2"]},
+                     {"operation":"getRows","options":[]}
+                    ]        
         },
         {
             "id"  : "/peoples",

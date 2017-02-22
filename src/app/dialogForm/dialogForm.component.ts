@@ -111,7 +111,7 @@ export class DialogForm{
         
         return controlsConfig;
     }
-    form(header:string,body:string,rec:Object,models:Array<FormItem>,commandsItems:Array<MenuCommandItem>){
+    form(header:string,body:string,rec:Object,models:Array<FormItem>,commandsItems:Array<MenuCommandItem>):EventEmitter<any>{
         this.header=header;
         this.body=body;
         this.buttons=commandsItems;
@@ -121,9 +121,9 @@ export class DialogForm{
         let f=this.prepareForm(this.models,{},this.values);
         
         this.userform = this.fb.group(f);
-
-        
+       
         this.show();
+        return this.events;
     }    
     
     

@@ -18,6 +18,10 @@
                                 [formControlName]="model.name"  
                                 [placeholder]="model.placeholder||''"  [(ngModel)]="values[model.name]" />
                             
+                            <input *ngIf="model.type=='password'" pInputText type="password" 
+                                [formControlName]="model.name"  
+                                [placeholder]="model.placeholder||''"  [(ngModel)]="values[model.name]" />
+                            
                             <p-dropdown *ngIf="model.type=='dropdown'"
                                 [formControlName]="model.name"
                                 [(ngModel)]="values[model.name]"
@@ -60,9 +64,10 @@
             <button type="button" pButton *ngFor="let button of buttons"
                     [icon]="button.icon" 
                     (click)="click(button)" [label]="button.label"
-                    [disabled]="button.formStatus&&(!userform.valid||userform.dirty)"
+                    [disabled]="button.formStatus&&(!userform.valid||!userform.dirty)"
                     ></button>               
         </div>
     </footer>
 </p-dialog>
+
 

@@ -3,14 +3,30 @@ import { Routes, RouterModule } from '@angular/router';
 //import { About } from './about';
 import { NoContent } from './no-content';
 import { KanbanDesk } from './kanbanDesk';
+import { AuthGuard } from './auth/authGuard';
+import { Login } from './auth/login.component';
 //import { DataResolver } from './app.resolver';
 
 
 export const ROUTES: Routes = [
-    { path: '', redirectTo: 'kanban_desk', pathMatch: "full" },
+    { path: '', redirectTo: 'kanban', pathMatch: "full" },
     {
-        path: 'kanban_desk',
+        path: 'login',
+        component: Login,        
+        data: {
+            caption: 'login',
+            enable: true,
+            roles: ['noauth'],
+            feature:[],                    
+            datasets:[
+                {name:"login", src:"/api/login",api:"rest",format:"json"},        
+            ]
+        }   
+    },    
+    {
+        path: 'kanban',
         component: KanbanDesk, 
+        canActivate: [AuthGuard],
         /*    canActivate?: any[];
             canActivateChild?: any[];
             canDeactivate?: any[];
@@ -19,7 +35,7 @@ export const ROUTES: Routes = [
         data: {
             caption: 'Desk',
             enable: true,
-            role: ['root', 'admin'],
+            roles: ['kanban_view', 'admin'],
             feature: {
                 poolingNone: "6000",
                 peoples:true,             

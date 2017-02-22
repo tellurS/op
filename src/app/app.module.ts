@@ -20,8 +20,8 @@ import { DialogForm } from './dialogForm';
 import { DataManager,RestClient } from './dataManager';
 import { NoContent } from './no-content';
 import { MenuCommand,MenuCommandSub } from './menuCommand/menuCommand';
-
-
+import { AuthGuard } from './auth/authGuard';
+import { Login } from './auth/login.component';
 
 
 // Application wide providers
@@ -47,7 +47,8 @@ type StoreType = {
     byColumns,
     MenuCommand,MenuCommandSub,
     NoContent,
-    DialogForm
+    DialogForm,
+    Login
   ],
   imports: [ // import Angular's modules
     BrowserModule,
@@ -79,6 +80,7 @@ type StoreType = {
     APP_PROVIDERS,
     DataManager,
     RestClient,   
+    AuthGuard
     ]
 })
 export class AppModule {
