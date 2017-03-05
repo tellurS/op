@@ -71,7 +71,7 @@ export class KanbanDesk extends Page{
                .subscribe(([c,i,t,p,r])=>{
                    this.columns = c;
                    this.colWidth = 'ui-g-' + (this.workAria/ this.columns.length).toFixed();
-                   this.tagsa=t;
+                   this.tagsa=t.filter(t=>!t._onlyFolder);
                    this.tags = Utils.array2index(t, "id");
                    this.data2menu(t,this.features.tagsInTree,"menuTags","tags");                   
                    this.records=i;
