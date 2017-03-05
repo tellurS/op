@@ -91,7 +91,8 @@ export class KanbanDesk extends Page{
                 {label: "High Priority" , icon: "fa-fire",eventEmitter:this.events,run:"change",multi:true,options:{priority:"1000"}},            
                 {label: "Medium Priority" , icon: "fa-gavel",eventEmitter:this.events,run:"change",multi:true,options:{priority:"500"}},                        
                 {label: "Low Priority" , icon: "fa-bed",eventEmitter:this.events,run:"alternative",options:[
-                        {run:"change",label:"Set Low Priority",multi:true,options:{priority:"100"}}
+                        {run:"change",label:"Set Low Priority",multi:true,options:{priority:"100"}},
+                        {run:"selectWhere",label:"Select with Low Priority",multi:false,options:{priority:"100"}}
                 ]}
             ]},                        
             {label: "Select" , icon: "fa-fire", items:[            
@@ -312,6 +313,17 @@ export class KanbanDesk extends Page{
         }        
         this.selectedIdRecords = this.selectedIdRecords.concat(recordsId);
         this.emit("select",{data:this.selectedIdRecords,event:$event});            
+    } 
+    eq(A,where):boolean{
+        for (let key in where) {
+            if(!A[key]||A[key]!=where[key])
+             return false;
+        }
+        return true;
+    }
+    selectWhere(options:MenuCommandItem={}){ 
+        let records = this.records.filter(r=>this.eq(r,options)).map(r=>r.id);
+        this.selectRecords({},false,...records);              
     }
     select(options:MenuCommandItem={}){
         this.selectRecords(options.$event,options.$event["shiftKey"],options.rec["id"]);        
