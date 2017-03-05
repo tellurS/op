@@ -23,7 +23,8 @@ export class Schema{
     componentName="Schema";
     ajv:any;
     constructor() {
-        this.ajv = new Ajv({ removeAdditional: true,allErrors: true });     
+        this.ajv = new Ajv({  v5: true, removeAdditional: true,allErrors: true });     
+        require('ajv-merge-patch')(this.ajv);
         this.ajv.addKeyword('crypt', { type: 'string',
             compile:(param, parentSchema,it)=>{
                 return (data, dataPath, parentData, parentDataProperty, rootData)=>
@@ -55,6 +56,9 @@ export class Schema{
        });       
     }
     init(){
+    }
+    compile(schema){
+        return this.ajv.compile(schema);
     }
 
 }

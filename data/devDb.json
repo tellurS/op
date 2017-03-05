@@ -5,120 +5,114 @@
       "caption": "root",
       "roles": [
         "admin",
+        "user",
         "kanban"
       ],
-      "passwd": ""
+      "passwd_": ""
     },
     {
       "id": "simple",
       "caption": "simple",
       "roles": [
-        "kanban"
+        "user"
       ],
-      "passwd": ""
+      "passwd_": ""
     }
   ],
+  "resources":{
+        "user":{
+            "src":"jsonserver",
+            "uri":"user",
+            "model":{
+                       "properties": {
+                           "id": {
+                               "caption": "Login",
+                               "type": "string",
+                               "minLength": 5,
+                               "maxLength": 25,
+                               "description": "Login"
+                           },
+                           "password": {
+                               "caption": "Password",
+                               "type": "string",
+                               "minLength": 5,
+                               "maxLength": 26,
+                               "description": "Password"
+                           },
+                           "password_": {
+                               "type": "string"
+                           },
+                           "roles":   { "type": "array", "items": { "type": "string" } }
+                       }           
+                   },      
+                "PUT":{   "properties":{
+                               "password_":{"sha256":"password"}
+                       },
+                       "required": ["username", "password"] 
+                },
+                "POST":{"properties":{
+                               "password_":{"sha256":"password"}
+                       },
+                       "required": ["username", "password"] 
+                },                 
+               "OUT":{
+                      "clear":["password","password_"]
+                   }                                     
+        },
+        "session":{
+            "parent":"user",
+            "client":{
+                    "required": ["username", "password"]     
+            },            
+            "POST":{
+                    "only":["username", "password"],
+                    "required": ["username", "password"]
+            },
+            "OUT":{
+                      "clear":["username","roles"]
+            },
+            "POST/":{"run":"auth"}
+        }           
+   },
   "roles": [
     {
-      "id": "noauth",
-      "caption": "noauth",
-      "priority": 0,            
-      "dictionaries":[
-        {
-            "id"  : "/login",
-            "src" : "users",
-            "toSrc":[{"operation":"valid"}
-                    ],                       
-            "field":[
-                        {"name":"username","caption":"Login","type":"text","minLength":5,"maxLength":25,"description":"Login","required":true},
-                        {"name":"password","caption":"Password","type":"password","minLength":5,"maxLength":26,"description":"Password","required":true,"toSrc":"sha256"}
-                    ],
-            "schemaA":{
-                "type": "object",                        
-                "additionalProperties": false,                       
-                "properties": {
-                   "body": {
-                        "type": "object",
-                        "additionalProperties": false,
-                        "properties": {
-                           "username": {"caption":"Login"   ,"type":"string","minLength":5,"maxLength":25,"description":"Login"},
-                           "password": {"caption":"Password","type":"string","minLength":5,"maxLength":26,"description":"Password","crypt":"sha256"}
-                           },
-                        "required": ["username", "password"],                                                                                                                                  
-                        "log":["1/username","1/password_"]                                
-                   }
-                },
-                "required": ["body"]
-            }        
-                            
-        }]            
-    },        
+       "id": "noauth",
+       "caption": "noauth",
+       "priority": 0,  
+       "acl":{"deny":{},
+              "allow":{
+                    "POST/session":{},
+                    "PUT/user":{"roles":["user"]}
+              }
+            }      
+    },
     {
-      "id": "root",
-      "caption": "root",
-      "priority": 0,            
-      "dictionaries":[
-        {
-            "id"  : "/columns",
-            "src" : "columns"            
-        }]            
-    },   
+       "id": "user",
+       "caption": "user",
+       "priority": 1,  
+       "acl":{"deny":{},
+              "allow":{
+                    "DELETE/session":{"changeUrl":"POST/session","status":"false"},
+                    "POST/user":{"noChangeRoles":"true"}
+              }
+            }      
+    },
     {
-      "id": "base",
-      "caption": "base",
-      "priority": 1,      
-      "dictionaries":[{                    
-            "id"  : "/issues",
-            "src" : "issues"
-        },
-        {
-            "id"  : "/columns",
-            "src" : "columns",
-            "toSrc":[{"operation":"addSearch","options":["id_gte=2"]},
-                     {"operation":"getRows","options":[]}
-                    ]        
-        },
-        {
-            "id"  : "/peoples",
-            "src" : "peoples"
-        } ,
-        {
-            "id"  : "/resources",
-            "src" : "resources"
-        } ,
-        {
-            "id"  : "/tags",
-            "src" : "tags"
-        }  
-      ]        
+       "id": "root",
+       "caption": "super user",
+       "priority": 2,  
+       "acl":{"deny":{},
+              "allow":{
+                    "GET/user":{},
+                    "POST/user":{},
+                    "DELETE/user":{},
+                    "PUT/user":{}
+              }
+            }      
     }
-  ],
+    ],   
   "sessions": [
-    {
-      "id": "0101",
-      "role": {
-        "id": 2,
-        "caption": "kanban",
-        "collections": {
-          "columns": {
-            "readonly": true
-          },
-          "issues": {
-            "full": true
-          }
-        }
-      },
-      "user": {
-        "id": 1,
-        "caption": "root",
-        "role": [
-          "admin",
-          "kanban"
-        ],
-        "passwd": ""
-      }
-    }
-  ],
+   ],
   "columns": [
     {
       "id": 1,

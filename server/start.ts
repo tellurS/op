@@ -3,7 +3,7 @@
 import {Web} from './lib/web';
 import {JsonClient} from './lib/jsonclient';
 import {Rbac} from './lib/rbac';
-import {DictionaryManager} from './lib/dictionaryManager';
+import {ResourceManager} from './lib/resourceManager';
 import {Schema} from './lib/schema';
 
 var url = require('url');
@@ -13,7 +13,7 @@ let web=new Web(3002);
 let client=new JsonClient(); 
 let rbac=new Rbac(client); 
 let schema=new Schema();
-let DM=new DictionaryManager(client,schema); 
+let rm=new ResourceManager(client,schema); 
 //config
 
 //init
@@ -53,7 +53,7 @@ web.server.use((req, res, next)=>{
 //start
 
 
-
+/*
 web.server.get('*', function(req, res, next){    
     let dictionaryName=req.path;
     let url_parts = url.parse(req.url, false);    
@@ -85,8 +85,8 @@ web.server.get('*', function(req, res, next){
     .catch((e)=> {console.log("catch",e);res.status(500).end()});    
 });
 
-
-
+*/
+/*
 web.server.post('*', function(req, res, next){    
     let dictionaryName=req.path;
     let url_parts = url.parse(req.url, false);    
@@ -117,7 +117,52 @@ web.server.post('*', function(req, res, next){
         
     .catch((e)=> {console.log("catch",e);res.status(e.status||500).send(e.errors||"general error").end()});    
 });
+*/
+web.server.use('/:urlResource/:urlId?/:urlAction?', function(req, res, next){
+    //rbac
+    rbac.setDeafultRoles(req.session,['noauth']);
+    //param       
+    let resourceName:string=req.params.urlResource;
+    let action=req.params.urlAction;
+    if(action){
+       action="/"+action;
+    }else{
+        action="";    
+    
+    let urlId=req.params.urlId;    
+    let url_parts = url.parse(req.url, false);
+    let data;//to one    
+   
+    console.log("0. Resource",resourceName);        
+        
+    rbac.loadRolesByPriorityWithCompile(req.session.roles)  
+        .then((log)=>{console.log('1.Get roles',log);return log;})
+        
+    .then(roles=>rbac.validate(roles,req.method,resourceName,action))
+        .then((log)=>{console.log('2.Rbac param',log);return log;})    
+ 
+    .then(paramRbac=>{return data=Object.assign({},url_parts.search,req.body,req.params,{urlMethod:req.method},paramRbac)})
+        .then((log)=>{console.log('3.Param request',log);return log;})
+        
+    .then(data=>rm.loadDataById(resourceName,urlId)
+                .then((log)=>{console.log('4.Preload by id',log);return log;})
+                .then(res=>data=Object.assign({old:res},data))) 
+                        
+    .then(data=>rm.validate(req.method,resourceName,action,data))
+        .then((log)=>{console.log('5.Result input validation',log);return log;})    //send client err
+              
+   
+    .then(comulate=>rm.prepareOperations(comulate[dictionaryName]))
+        .then((log)=>{console.log('5.Prepare dictionary',log);return log;})    
 
+    .then(ops=>DM.runOperations(ops,param))
+        .then((log)=>{console.log('5.Run Operation',log);return log;})           
+
+    .then(result=>{res.send(result.result);return "ok"}) 
+        .then((log)=>{console.log('7.Sended',log);return log;})    
+        
+    .catch((e)=> {console.log("catch",e);res.status(e.status||500).send(e.errors||"general error").end()});    
+});
 
 web.start(); 
 console.log('starting Op:server!');

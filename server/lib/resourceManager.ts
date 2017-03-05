@@ -2,13 +2,39 @@ import {JsonClient} from './jsonclient';
 let Promise = require('promise');
 import {Schema} from './schema';
 
-export class DictionaryManager{    
-    componentName="DictionaryManager";
+export class ResourceManager{    
+    componentName="ResourceManager";
     constructor(public db:JsonClient,public schema:Schema) {}
     init(){
         
     }
-
+    //
+    unionSchema(A, B) {
+        return {
+            "$merge": {
+                "source": A,
+                "with": B
+            }      
+        };
+    }
+    loadSchema(resourceName:string):Promise<any>{
+        if(!resourceName)
+          return Promise.resolve({});
+        this.db.dget("resources/"+resourceName)
+            .then(resource => this.loadSchema(resource.parent).then(parent => this.unionSchema(parent,resource)));        
+    }
+    prepareSchema(method:string,resourceName:string,action:string):Promise<any>{
+        return this.loadSchema(resourceName)
+            .then(resource => this.unionSchema(resource["model"],resource[method+action])); 
+    }    
+    validate(method:string,resourceName:string,urlAction:string,param:any):Promise<any>{
+        return this.prepareSchema(method,resourceName,urlAction)
+        .then(s=>s.compile(s))
+        .then(validate=>validate(param));
+    }
+    loadDataById(resourceName:string,urlId:any){      
+        return this.db.dget(resourceName+'/'+urlId)       
+    }
     //operations    
     getRows(acc:Request){             
         console.log("getRows",acc.uri);
