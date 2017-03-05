@@ -26,7 +26,7 @@ export const ROUTES: Routes = [
     {
         path: 'kanban',
         component: KanbanDesk, 
-        canActivate: [AuthGuard],
+        //canActivate: [AuthGuard],
         /*    canActivate?: any[];
             canActivateChild?: any[];
             canDeactivate?: any[];
