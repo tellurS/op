@@ -2,18 +2,11 @@
 
 import {Web} from './lib/web';
 import {JsonClient} from './lib/jsonclient';
-import {Rbac} from './lib/rbac';
-import {ResourceManager} from './lib/resourceManager';
-import {Schema} from './lib/schema';
-
-var url = require('url');
 
 //components
 let web=new Web(3002); 
 let client=new JsonClient(); 
-let rbac=new Rbac(client); 
-let schema=new Schema();
-let rm=new ResourceManager(client,schema); 
+
 //config
 
 //init
@@ -23,146 +16,121 @@ client.init();
 web.addStatic('dist');
 
 
-//proxy 
-/*
+//proxy
+
+
 web.server.use((req, res, next)=>{    
-    rbac.validate('0101',req.originalUrl,req.body)
-    .then(d=>{
-        switch(req.method) {
-          case 'GET':  {
-           //return client.dget(req.originalUrl).then(result=>res.send(result.body)); 
-            next();
-            break;         
-          }
-          case 'POST':  
-            return client.dpost(req.originalUrl,req.body).then(result=>res.send(result.body));
-           case 'PUT':  
-            return client.dput(req.originalUrl,req.body).then(result=>res.send(result.body));
-          case 'DELETE':  
-            return client.ddelete(req.originalUrl).then(result=>res.send(result.body));
-          default:
-            return res.status(404).end();
-        }                 
-    })
-    .catch(err=>{
-            res.status(401).end();
-            console.log(err);
-            return;
-    });    
-});*/
+    switch(req.method) {
+      case 'GET':  
+        client.jsonServer.get(req.originalUrl,(e,r,body)=>res.send(body));
+        break;
+      case 'POST':  
+        client.jsonServer.post(req.originalUrl,req.body,(e,r,body)=>res.send(body));
+        break;        
+      case 'PUT':  
+        client.jsonServer.put(req.originalUrl,req.body,(e,r,body)=>res.send(body));
+        break;        
+      case 'DELETE':  
+        client.jsonServer.delete(req.originalUrl,(e,r,body)=>res.send(body));
+        break;                
+      default:
+        res.status(404).end();
+    }        
+});
+
 //start
 
+web.start();
 
 /*
-web.server.get('*', function(req, res, next){    
-    let dictionaryName=req.path;
-    let url_parts = url.parse(req.url, false);    
-    let param=url_parts.search||'';
-    
-    console.log("0. DictionaryName",dictionaryName,param);        
-        
-    req.session.rolesId=['root','base']; 
-        
+var process = require('process');
+const express = require('express');
+var bodyParser = require('body-parser');
+var server = express();
 
-    rbac.loadRoles(req.session.rolesId||[])
-        .then((log)=>{console.log('1.Get roles',log);return log;})
-        
-    .then(roles=>roles.map(r=>DM.array2index(r['dictionaries']||[],'id')))                
-        .then((log)=>{console.log('2.Get dictionary',log);return log;})
-        
-    .then(dicts=>rbac.commulateRolesDataByPriority(dicts))
-        .then((log)=>{console.log('3.Commulate Dict ',log);return log;})    
+//https
+var https = require('https');
+var fs = require('fs');
+//http://www.akadia.com/services/ssh_test_certificate.html
+var privateKey  = fs.readFileSync('ssl/server.key', 'utf8');
+var certificate = fs.readFileSync('ssl/server.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
 
-    .then(comulate=>DM.prepareOperations(comulate[dictionaryName]))
-        .then((log)=>{console.log('4.Prepare dictionary',log);return log;})    
 
-    .then(ops=>DM.runOperations(ops,param))
-        .then((log)=>{console.log('5.Run Operation',log);return log;})           
-
-    .then(result=>{res.send(result.result);return "ok"}) 
-        .then((log)=>{console.log('7.Sended',log);return log;})    
-        
-    .catch((e)=> {console.log("catch",e);res.status(500).end()});    
-});
-
-*/
-/*
-web.server.post('*', function(req, res, next){    
-    let dictionaryName=req.path;
-    let url_parts = url.parse(req.url, false);    
-    let param={url:url_parts.search||{},body:req.body||{}};
-    
-    console.log("0. DictionaryName",dictionaryName,param);        
-        
-    req.session.rolesId=['noauth']; 
-        
-
-    rbac.loadRoles(req.session.rolesId||[])
-        .then((log)=>{console.log('1.Get roles',log);return log;})
-        
-    .then(roles=>roles.map(r=>DM.array2index(r['dictionaries']||[],'id')))                
-        .then((log)=>{console.log('2.Get dictionary',log);return log;})
-        
-    .then(dicts=>rbac.commulateRolesDataByPriority(dicts))
-        .then((log)=>{console.log('3.Commulate Dict ',log);return log;})    
-
-    .then(comulate=>DM.prepareOperations(comulate[dictionaryName]))
-        .then((log)=>{console.log('4.Prepare dictionary',log);return log;})    
-
-    .then(ops=>DM.runOperations(ops,param))
-        .then((log)=>{console.log('5.Run Operation',log);return log;})           
-
-    .then(result=>{res.send(result.result);return "ok"}) 
-        .then((log)=>{console.log('7.Sended',log);return log;})    
-        
-    .catch((e)=> {console.log("catch",e);res.status(e.status||500).send(e.errors||"general error").end()});    
-});
-*/
-web.server.use('/:urlResource/:urlId?/:urlAction?', function(req, res, next){
-    //rbac
-    rbac.setDeafultRoles(req.session,['noauth']);
-    //param       
-    let resourceName:string=req.params.urlResource;
-    let action=req.params.urlAction;
-    if(action){
-       action="/"+action;
-    }else{
-        action="";    
-    
-    let urlId=req.params.urlId;    
-    let url_parts = url.parse(req.url, false);
-    let data;//to one    
-   
-    console.log("0. Resource",resourceName);        
-        
-    rbac.loadRolesByPriorityWithCompile(req.session.roles)  
-        .then((log)=>{console.log('1.Get roles',log);return log;})
-        
-    .then(roles=>rbac.validate(roles,req.method,resourceName,action))
-        .then((log)=>{console.log('2.Rbac param',log);return log;})    
+//arg
  
-    .then(paramRbac=>{return data=Object.assign({},url_parts.search,req.body,req.params,{urlMethod:req.method},paramRbac)})
-        .then((log)=>{console.log('3.Param request',log);return log;})
-        
-    .then(data=>rm.loadDataById(resourceName,urlId)
-                .then((log)=>{console.log('4.Preload by id',log);return log;})
-                .then(res=>data=Object.assign({old:res},data))) 
-                        
-    .then(data=>rm.validate(req.method,resourceName,action,data))
-        .then((log)=>{console.log('5.Result input validation',log);return log;})    //send client err
-              
-   
-    .then(comulate=>rm.prepareOperations(comulate[dictionaryName]))
-        .then((log)=>{console.log('5.Prepare dictionary',log);return log;})    
+ if (process.argv.length !== 3) {
+    console.log("Usage: " + __filename + " DB static",process.argv,process.argv.length);
+    process.exit(-1);
+}
+ 
+//var db = process.argv[2];
+var stat=process.argv[2];
+ 
+console.log('Static ' + stat);
+  
 
-    .then(ops=>DM.runOperations(ops,param))
-        .then((log)=>{console.log('5.Run Operation',log);return log;})           
-
-    .then(result=>{res.send(result.result);return "ok"}) 
-        .then((log)=>{console.log('7.Sended',log);return log;})    
-        
-    .catch((e)=> {console.log("catch",e);res.status(e.status||500).send(e.errors||"general error").end()});    
+//server
+server.use(function (req, res, next) {
+   console.log("request", req.originalUrl);
+   next(); 
 });
 
-web.start(); 
-console.log('starting Op:server!');
+server.use(express.static(stat));
+
+server.use(bodyParser.json()); // for parsing application/json
+server.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+//proxy
+let request = require('request-json');
+var client = request.createClient('http://localhost:3001/',{strictSSL: false});
+
+server.use((req, res, next)=>{    
+    switch(req.method) {
+      case 'GET':  
+        client.get(req.originalUrl,(e,r,body)=>res.send(body));
+        break;
+      case 'POST':  
+        client.post(req.originalUrl,req.body,(e,r,body)=>res.send(body));
+        break;        
+      case 'PUT':  
+        client.post(req.originalUrl,req.body,(e,r,body)=>res.send(body));
+        break;        
+      case 'DELETE':  
+        client.delete(req.originalUrl,(e,r,body)=>res.send(body));
+        break;                
+      default:
+        res.status(404).end();
+    }        
+    
+});
+
+
+server.use(function (req, res, next) {
+ //if (isAuthorized(req)) { // add your authorization logic here 
+   next(); 
+ //} else {  res.sendStatus(401)}
+});
+
+//server.use(router);
+//start
+var httpsServer = https.createServer(credentials, server);
+httpsServer.listen(3002);
+console.log('OP server is running');
+
+*/
+ 
+/*
+client.get('issues/', function(err, res, body) {
+  return console.log("kuku");
+});
+*/
+/*
+ process.on('SIGINT', function () { 
+    httpsServer.close();
+    process.exit(2);
+ });
+  process.on('exit', function () { 
+    httpsServer.close();
+    process.exit(2);
+ });
+ */
