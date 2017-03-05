@@ -7,6 +7,8 @@ import 'rxjs/add/observable/combineLatest';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/distinctUntilChanged';
 import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/share'
-import 'rxjs/add/operator/filter'
+import 'rxjs/add/operator/share';
+import 'rxjs/add/operator/filter';
 import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/mergeMap';
+import 'rxjs/add/operator/map';

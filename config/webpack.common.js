@@ -4,23 +4,29 @@
 
 const webpack = require('webpack');
 const helpers = require('./helpers');
-var path = require('path');
+
 /*
  * Webpack Plugins
  */
 // problem with copy-webpack-plugin
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
-const HtmlElementsPlugin = require('./html-elements-plugin');
 const AssetsPlugin = require('assets-webpack-plugin');
-const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin'); 
+const NormalModuleReplacementPlugin = require('webpack/lib/NormalModuleReplacementPlugin');
+const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
+const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
+const HtmlElementsPlugin = require('./html-elements-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const ngcWebpack = require('ngc-webpack');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 /*
  * Webpack Constants
  */
 const HMR = helpers.hasProcessFlag('hot');
+const AOT = helpers.hasNpmFlag('aot');
 const METADATA = {
   title: 'Tellur Operations',
   baseUrl: '/',
@@ -32,16 +38,9 @@ const METADATA = {
  *
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
-module.exports = function(options) {
+module.exports = function (options) {
   isProd = options.env === 'production';
   return {
-
-    /*
-     * Static metadata for index.html
-     *
-     * See: (custom attribute)
-     */
-    metadata: METADATA,
 
     /*
      * Cache generated modules and chunks to improve performance for multiple incremental builds.
@@ -50,7 +49,7 @@ module.exports = function(options) {
      *
      * See: http://webpack.github.io/docs/configuration.html#cache
      */
-     //cache: false,
+    //cache: false,
 
     /*
      * The entry point for the bundle
@@ -61,8 +60,8 @@ module.exports = function(options) {
     entry: {
 
       'polyfills': './src/polyfills.browser.ts',
-      'vendor':    './src/vendor.browser.ts',
-      'main':      './src/main.browser.ts'
+      'main':      AOT ? './src/main.browser.aot.ts' :
+                  './src/main.browser.ts'
 
     },
 
@@ -78,15 +77,10 @@ module.exports = function(options) {
        *
        * See: http://webpack.github.io/docs/configuration.html#resolve-extensions
        */
-      extensions: ['', '.ts', '.js', '.json'],
-      // Make sure root is src
-      root: helpers.root('src'),
-      /*  alias: {
-          'parchment': path.resolve(__dirname, 'node_modules/parchment/src/parchment.ts'),
-          'quill$': path.resolve(__dirname, 'node_modules/quill/dist/quill.js'),
-        },*/
-      // remove other default values
-      modulesDirectories: ['node_modules'],
+      extensions: ['.ts', '.js', '.json'],
+
+      // An array of directory names to be resolved to the current directory
+      modules: [helpers.root('src'), helpers.root('node_modules')],
 
     },
 
@@ -97,48 +91,48 @@ module.exports = function(options) {
      */
     module: {
 
-      /*
-       * An array of applied pre and post loaders.
-       *
-       * See: http://webpack.github.io/docs/configuration.html#module-preloaders-module-postloaders
-       */
-      preLoaders: [
-        {
-          test: /\.ts$/,
-          loader: 'string-replace-loader',
-          query: {
-            search: '(System|SystemJS)(.*[\\n\\r]\\s*\\.|\\.)import\\((.+)\\)',
-            replace: '$1.import($3).then(mod => (mod.__esModule && mod.default) ? mod.default : mod)',
-            flags: 'g'
-          },
-          include: [helpers.root('src')]
-        },
-
-      ],
-
-      /*
-       * An array of automatically applied loaders.
-       *
-       * IMPORTANT: The loaders here are resolved relative to the resource which they are applied to.
-       * This means they are not resolved relative to the configuration file.
-       *
-       * See: http://webpack.github.io/docs/configuration.html#module-loaders
-       */
-      loaders: [
+      rules: [
 
         /*
-         * Typescript loader support for .ts and Angular 2 async routes via .async.ts
-         * Replace templateUrl and stylesUrl with require()
+         * Typescript loader support for .ts
+         *
+         * Component Template/Style integration using `angular2-template-loader`
+         * Angular 2 lazy loading (async routes) via `ng-router-loader`
+         *
+         * `ng-router-loader` expects vanilla JavaScript code, not TypeScript code. This is why the
+         * order of the loader matter.
          *
          * See: https://github.com/s-panferov/awesome-typescript-loader
          * See: https://github.com/TheLarkInn/angular2-template-loader
+         * See: https://github.com/shlomiassaf/ng-router-loader
          */
         {
           test: /\.ts$/,
-          loaders: [
-            '@angularclass/hmr-loader?pretty=' + !isProd + '&prod=' + isProd,
-            'awesome-typescript-loader',
-            'angular2-template-loader'
+          use: [
+            {
+              loader: '@angularclass/hmr-loader',
+              options: {
+                pretty: !isProd,
+                prod: isProd
+              }
+            },
+            { // MAKE SURE TO CHAIN VANILLA JS CODE, I.E. TS COMPILATION OUTPUT.
+              loader: 'ng-router-loader',
+              options: {
+                loader: 'async-import',
+                genDir: 'compiled',
+                aot: AOT
+              }
+            },
+            {
+              loader: 'awesome-typescript-loader',
+              options: {
+                configFileName: 'tsconfig.webpack.json'
+              }
+            },
+            {
+              loader: 'angular2-template-loader'
+            }
           ],
           exclude: [/\.(spec|e2e)\.ts$/]
         },
@@ -150,19 +144,40 @@ module.exports = function(options) {
          */
         {
           test: /\.json$/,
-          loader: 'json-loader'
+          use: 'json-loader'
         },
 
         /*
-         * to string and css loader support for *.css files
+         * to string and css loader support for *.css files (from Angular components)
          * Returns file content as string
          *
          */
         {
           test: /\.css$/,
-          loaders: ['to-string-loader', 'css-loader']
+          use: ['to-string-loader', 'css-loader'],
+          exclude: [helpers.root('src', 'styles')]
         },
 
+        /*
+         * to string and sass loader support for *.scss files (from Angular components)
+         * Returns compiled css content as string
+         *
+         */
+        /*
+        {
+          test: /\.scss$/,
+          use: ['to-string-loader', 'css-loader', 'sass-loader'],
+         // exclude: [helpers.root('src', 'styles')]
+        },*/
+        { test: /\.scss$/, loaders: [
+              "style-loader",
+              ExtractTextPlugin.loader(),
+              "css-loader",
+              "autoprefixer-loader?browsers=last 2 version",
+              "resolve-url-loader",
+              "sass-loader?sourceMap"
+            ]
+         }, 
         /* Raw loader support for *.html
          * Returns file content as string
          *
@@ -170,37 +185,27 @@ module.exports = function(options) {
          */
         {
           test: /\.html$/,
-          loader: 'raw-loader',
+          use: 'raw-loader',
           exclude: [helpers.root('src/index.html')]
         },
-        { test: /\.scss$/, loaders: [
-              "style-loader",
-              ExtractTextPlugin.loader(),
-              "css-loader",
-              "autoprefixer-loader?browsers=last 2 version",
-              "resolve-url",
-              "sass?sourceMap"
-            ]
-         },  
-        /* File loader for supporting images, for example, in CSS files.
-        */
+
+        /* 
+         * File loader for supporting images, for example, in CSS files.
+         */
         {
-          test: /\.(png|jpg|svg|ttf|eot|woff|woff2|gif)$/,
-          loader: 'file'
-        }                     
+          test: /\.(jpg|png|gif)$/,
+          use: 'file-loader'
+        },
+
+        /* File loader for supporting fonts, for example, in CSS files.
+        */
+        { 
+          test: /\.(eot|woff2?|svg|ttf)([\?]?.*)$/,
+          use: 'file-loader'
+        }
+
       ],
 
-      postLoaders: [
-        {
-          test: /\.js$/,
-          loader: 'string-replace-loader',
-          query: {
-            search: 'var sourceMappingUrl = extractSourceMappingUrl\\(cssText\\);',
-            replace: 'var sourceMappingUrl = "";',
-            flags: 'g'
-          }
-        }
-      ]
     },
 
     /*
@@ -221,7 +226,7 @@ module.exports = function(options) {
        *
        * See: https://github.com/s-panferov/awesome-typescript-loader#forkchecker-boolean-defaultfalse
        */
-      new ForkCheckerPlugin(),
+      new CheckerPlugin(),
       /*
        * Plugin: CommonsChunkPlugin
        * Description: Shares common code between the pages.
@@ -230,21 +235,35 @@ module.exports = function(options) {
        * See: https://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin
        * See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
        */
-      new webpack.optimize.CommonsChunkPlugin({
+      new CommonsChunkPlugin({
+        name: 'polyfills',
+        chunks: ['polyfills']
+      }),
+      // This enables tree shaking of the vendor modules
+      new CommonsChunkPlugin({
+        name: 'vendor',
+        chunks: ['main'],
+        minChunks: module => /node_modules/.test(module.resource)
+      }),
+      // Specify the correct order the scripts will be injected in
+      new CommonsChunkPlugin({
         name: ['polyfills', 'vendor'].reverse()
       }),
 
       /**
        * Plugin: ContextReplacementPlugin
        * Description: Provides context to Angular's use of System.import
-       * 
+       *
        * See: https://webpack.github.io/docs/list-of-plugins.html#contextreplacementplugin
        * See: https://github.com/angular/angular/issues/11580
        */
       new ContextReplacementPlugin(
         // The (\\|\/) piece accounts for path separators in *nix and Windows
-        /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
-        helpers.root('src') // location of your src
+        /angular(\\|\/)core(\\|\/)src(\\|\/)linker/,
+        helpers.root('src'), // location of your src
+        {
+          // your Angular Async Route paths relative to this root directory
+        }
       ),
 
       /*
@@ -255,10 +274,11 @@ module.exports = function(options) {
        *
        * See: https://www.npmjs.com/package/copy-webpack-plugin
        */
-      new CopyWebpackPlugin([{
-        from: 'src/assets',
-        to: 'assets'
-      }]),
+      new CopyWebpackPlugin([
+      /*  { from: 'src/assets', to: 'assets' },
+        { from: 'src/meta'}*/
+      ]),
+
 
       /*
        * Plugin: HtmlWebpackPlugin
@@ -270,11 +290,25 @@ module.exports = function(options) {
        */
       new HtmlWebpackPlugin({
         template: 'src/index.html',
-        chunksSortMode: 'dependency'
+        title: METADATA.title,
+        chunksSortMode: 'dependency',
+        metadata: METADATA,
+        inject: 'head'
       }),
 
       /*
-       * Plugin: HtmlHeadConfigPlugin
+       * Plugin: ScriptExtHtmlWebpackPlugin
+       * Description: Enhances html-webpack-plugin functionality
+       * with different deployment options for your scripts including:
+       *
+       * See: https://github.com/numical/script-ext-html-webpack-plugin
+       */
+      new ScriptExtHtmlWebpackPlugin({
+        defaultAttribute: 'defer'
+      }),
+
+      /*
+       * Plugin: HtmlElementsPlugin
        * Description: Generate html tags based on javascript maps.
        *
        * If a publicPath is set in the webpack output configuration, it will be automatically added to
@@ -298,7 +332,43 @@ module.exports = function(options) {
       new HtmlElementsPlugin({
         headTags: require('./head-config.common')
       }),
+
+      /**
+       * Plugin LoaderOptionsPlugin (experimental)
+       *
+       * See: https://gist.github.com/sokra/27b24881210b56bbaff7
+       */
+      new LoaderOptionsPlugin({}),
+
+      // Fix Angular 2
+      new NormalModuleReplacementPlugin(
+        /facade(\\|\/)async/,
+        helpers.root('node_modules/@angular/core/src/facade/async.js')
+      ),
+      new NormalModuleReplacementPlugin(
+        /facade(\\|\/)collection/,
+        helpers.root('node_modules/@angular/core/src/facade/collection.js')
+      ),
+      new NormalModuleReplacementPlugin(
+        /facade(\\|\/)errors/,
+        helpers.root('node_modules/@angular/core/src/facade/errors.js')
+      ),
+      new NormalModuleReplacementPlugin(
+        /facade(\\|\/)lang/,
+        helpers.root('node_modules/@angular/core/src/facade/lang.js')
+      ),
+      new NormalModuleReplacementPlugin(
+        /facade(\\|\/)math/,
+        helpers.root('node_modules/@angular/core/src/facade/math.js')
+      ),
+
+      new ngcWebpack.NgcWebpackPlugin({
+        disabled: !AOT,
+        tsConfig: helpers.root('tsconfig.webpack.json'),
+        resourceOverride: helpers.root('config/resource-override.js')
+      }),
       new ExtractTextPlugin({allChunks: true,filename:'[name].css?hash=[contenthash]'})
+
     ],
 
     /*
@@ -308,7 +378,7 @@ module.exports = function(options) {
      * See: https://webpack.github.io/docs/configuration.html#node
      */
     node: {
-      global: 'window',
+      global: true,
       crypto: 'empty',
       process: true,
       module: false,

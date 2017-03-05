@@ -1,20 +1,30 @@
-import { NgModule, ApplicationRef } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { RouterModule } from '@angular/router';
-import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
-import  * as Primeng from 'primeng/primeng';
+import {
+  NgModule,
+  ApplicationRef
+} from '@angular/core';
+import {
+  removeNgStyles,
+  createNewHosts,
+  createInputTransfer
+} from '@angularclass/hmr';
+import {
+  RouterModule,
+  PreloadAllModules
+} from '@angular/router';
 
 /*
  * Platform and Environment providers/directives/pipes
  */
+import  * as Primeng from 'primeng/primeng';
 import { ENV_PROVIDERS } from './environment';
 import { ROUTES } from './app.routes';
 // App is our top level component
 import { App } from './app.component';
-//import { APP_RESOLVER_PROVIDERS } from './app.resolver';
-import { AppState, InteralStateType } from './app.service';
+import { APP_RESOLVER_PROVIDERS } from './app.resolver';
+import { AppState, InternalStateType } from './app.service';
 import { KanbanDesk,byColumns } from './kanbanDesk';
 import { DialogForm } from './dialogForm';
 import { DataManager,RestClient } from './dataManager';
@@ -23,15 +33,17 @@ import { MenuCommand,MenuCommandSub } from './menuCommand/menuCommand';
 import { AuthGuard } from './auth/authGuard';
 import { Login } from './auth/login.component';
 
+import '../scss/start.scss';
+
 
 // Application wide providers
 const APP_PROVIDERS = [
-//  ...APP_RESOLVER_PROVIDERS,
+  ...APP_RESOLVER_PROVIDERS,
   AppState
 ];
 
 type StoreType = {
-  state: InteralStateType,
+  state: InternalStateType,
   restoreInputValues: () => void,
   disposeOldHosts: () => void
 };
@@ -84,10 +96,16 @@ type StoreType = {
     ]
 })
 export class AppModule {
-  constructor(public appRef: ApplicationRef, public appState: AppState) {}
 
-  hmrOnInit(store: StoreType) {
-    if (!store || !store.state) return;
+  constructor(
+    public appRef: ApplicationRef,
+    public appState: AppState
+  ) {}
+
+  public hmrOnInit(store: StoreType) {
+    if (!store || !store.state) {
+      return;
+    }
     console.log('HMR store', JSON.stringify(store, null, 2));
     // set state
     this.appState._state = store.state;
@@ -102,8 +120,8 @@ export class AppModule {
     delete store.restoreInputValues;
   }
 
-  hmrOnDestroy(store: StoreType) {
-    const cmpLocation = this.appRef.components.map(cmp => cmp.location.nativeElement);
+  public hmrOnDestroy(store: StoreType) {
+    const cmpLocation = this.appRef.components.map((cmp) => cmp.location.nativeElement);
     // save state
     const state = this.appState._state;
     store.state = state;
@@ -115,11 +133,10 @@ export class AppModule {
     removeNgStyles();
   }
 
-  hmrAfterDestroy(store: StoreType) {
+  public hmrAfterDestroy(store: StoreType) {
     // display new elements
     store.disposeOldHosts();
     delete store.disposeOldHosts;
   }
 
 }
-

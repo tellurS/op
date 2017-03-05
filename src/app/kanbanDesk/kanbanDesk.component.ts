@@ -126,9 +126,6 @@ export class KanbanDesk extends Page{
         this.events.filter((e:MenuCommandItem)=>e.type==="paramsChange")
                    .subscribe(e=>this.changeUrl());       
           
-                   
-        this.selectedIdRecords           
-                       
         Observable.concat(this.logs, this.events,this.dialog.events).subscribe(e=>console.log(e));
           //start                                
         this.log('init');
