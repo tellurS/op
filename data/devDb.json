@@ -19,100 +19,68 @@
       "passwd_": ""
     }
   ],
-  "resources":{
-        "user":{
-            "src":"jsonserver",
-            "uri":"user",
-            "model":{
-                       "properties": {
-                           "id": {
-                               "caption": "Login",
-                               "type": "string",
-                               "minLength": 5,
-                               "maxLength": 25,
-                               "description": "Login"
-                           },
-                           "password": {
-                               "caption": "Password",
-                               "type": "string",
-                               "minLength": 5,
-                               "maxLength": 26,
-                               "description": "Password"
-                           },
-                           "password_": {
-                               "type": "string"
-                           },
-                           "roles":   { "type": "array", "items": { "type": "string" } }
-                       }           
-                   },      
-                "PUT":{   "properties":{
-                               "password_":{"sha256":"password"}
-                       },
-                       "required": ["username", "password"] 
-                },
-                "POST":{"properties":{
-                               "password_":{"sha256":"password"}
-                       },
-                       "required": ["username", "password"] 
-                },                 
-               "OUT":{
-                      "clear":["password","password_"]
-                   }                                     
-        },
-        "session":{
-            "parent":"user",
-            "client":{
-                    "required": ["username", "password"]     
-            },            
-            "POST":{
-                    "only":["username", "password"],
-                    "required": ["username", "password"]
-            },
-            "OUT":{
-                      "clear":["username","roles"]
-            },
-            "POST/":{"run":"auth"}
-        }           
-   },
+  "resources": [
+    {
+      "id": 1,
+      "caption": "big room",
+      "icon": "fa-big"
+    },
+    {
+      "id": 2,
+      "caption": "small room",
+      "icon": "fa-font-awesome"
+    }
+  ],
   "roles": [
     {
-       "id": "noauth",
-       "caption": "noauth",
-       "priority": 0,  
-       "acl":{"deny":{},
-              "allow":{
-                    "POST/session":{},
-                    "PUT/user":{"roles":["user"]}
-              }
-            }      
+      "id": "noauth",
+      "caption": "noauth",
+      "priority": 0,
+      "acl": {
+        "deny": {},
+        "allow": {
+          "POST/session": {},
+          "PUT/user": {
+            "roles": [
+              "user"
+            ]
+          }
+        }
+      }
     },
     {
-       "id": "user",
-       "caption": "user",
-       "priority": 1,  
-       "acl":{"deny":{},
-              "allow":{
-                    "DELETE/session":{"changeUrl":"POST/session","status":"false"},
-                    "POST/user":{"noChangeRoles":"true"}
-              }
-            }      
+      "id": "user",
+      "caption": "user",
+      "priority": 1,
+      "acl": {
+        "deny": {},
+        "allow": {
+          "DELETE/session": {
+            "changeUrl": "POST/session",
+            "status": "false"
+          },
+          "POST/user": {
+            "noChangeRoles": "true"
+          }
+        }
+      }
     },
     {
-       "id": "root",
-       "caption": "super user",
-       "priority": 2,  
-       "acl":{"deny":{},
-              "allow":{
-                    "GET/user":{},
-                    "POST/user":{},
-                    "DELETE/user":{},
-                    "PUT/user":{}
-              }
-            }      
+      "id": "root",
+      "caption": "super user",
+      "priority": 2,
+      "acl": {
+        "deny": {},
+        "allow": {
+          "GET/user": {},
+          "POST/user": {},
+          "DELETE/user": {},
+          "PUT/user": {}
+        }
+      }
     }
-    ],   
-  "sessions": [
-   ],
+  ],
+  "sessions": [],
   "columns": [
     {
       "id": 1,
@@ -167,22 +135,10 @@
       ]
     }
   ],
-  "resources": [
-    {
-      "id": 1,
-      "caption": "big room",
-      "icon": "fa-big"
-    },
-    {
-      "id": 2,
-      "caption": "small room",
-      "icon": "fa-font-awesome"
-    }
-  ],
   "issues": [
     {
       "id": 3,
-      "columnId": 2,
+      "columnId": 1,
       "caption": "!!!!super job2 fdsfsdaf dsf dsf dsf sadf dsf dsfa sd",
       "description": "super dsf dsf sdf dsf sdf sdfsfds",
       "tags": [
@@ -306,8 +262,7 @@
       "description": "sdfsdfsdfsdfdfs",
       "priority": 100,
       "tags": [
-        1,
-        3
+        2
       ],
       "id": 69,
       "peoples": [
@@ -333,6 +288,16 @@
         1
       ],
       "id": 72
+    },
+    {
+      "columnId": 3,
+      "caption": "1111111111111 sweds",
+      "description": 333333333333333300,
+      "priority": 500,
+      "tags": [
+        1
+      ],
+      "id": 73
     }
   ],
   "tags": [

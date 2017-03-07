@@ -163,21 +163,36 @@ module.exports = function (options) {
          * Returns compiled css content as string
          *
          */
-        /*
+        
         {
           test: /\.scss$/,
-          use: ['to-string-loader', 'css-loader', 'sass-loader'],
+          use: ['style-loader', ExtractTextPlugin.loader(),'css-loader', 'sass-loader'],
          // exclude: [helpers.root('src', 'styles')]
-        },*/
-        { test: /\.scss$/, loaders: [
+        },
+        /*{ test: /\.scss$/, 
+            /*loaders: [
               "style-loader",
-              ExtractTextPlugin.loader(),
+              //ExtractTextPlugin.loader(),
               "css-loader",
               "autoprefixer-loader?browsers=last 2 version",
-              "resolve-url-loader",
+              //"resolve-url-loader",
               "sass-loader?sourceMap"
-            ]
-         }, 
+            ],
+                    use: [{
+                            loader: "style-loader"
+                        }, {
+                            loader: "css-loader", /*options: {
+                             sourceMap: true
+                             }
+                        }, {
+                            loader: "resolve-url-loader"
+                        },{
+                            loader: "sass-loader", options: {
+                                sourceMap: true
+                            }
+                        }],            
+            include: [helpers.root('src', 'scss')]
+         }, */
         /* Raw loader support for *.html
          * Returns file content as string
          *
