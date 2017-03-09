@@ -9,37 +9,37 @@ export function isDate(obj: any): boolean {
 }
 
 export class CustValidators {
-    public static rangeLength(rangeLength: number[]): ValidatorFn {
+    public static rangeLength(rangeLengthP: number[]): ValidatorFn {
         return (control: AbstractControl): { [key: string]: any } => {
             if (isPresent(Validators.required(control))) { return null; }
 
             let v: string = control.value;
-            return v.length >= rangeLength[0] &&
-                v.length <= rangeLength[1] ? null : { 'rangeLength': true };
+            return v.length >= rangeLengthP[0] &&
+                v.length <= rangeLengthP[1] ? null : { 'rangeLength': true };
         };
     }
-    public static min(min: number): ValidatorFn {
+    public static min(minP: number): ValidatorFn {
         return (control: AbstractControl): { [key: string]: any } => {
             if (isPresent(Validators.required(control))) { return null; }
 
             let v: number = control.value;
-            return v >= min ? null : { 'min': true };
+            return v >= minP ? null : { 'min': true };
         };
     }
-    public static max(max: number): ValidatorFn {
+    public static max(maxP: number): ValidatorFn {
         return (control: AbstractControl): { [key: string]: any } => {
             if (isPresent(Validators.required(control))) { return null; }
 
             let v: number = control.value;
-            return v <= max ? null : { 'max': true };
+            return v <= maxP ? null : { 'max': true };
         };
     }
-    public static range(range: number[]): ValidatorFn {
+    public static range(rangeP: number[]): ValidatorFn {
         return (control: AbstractControl): { [key: string]: any } => {
             if (isPresent(Validators.required(control))) { return null; }
 
             let v: number = control.value;
-            return v >= range[0] && v <= range[1] ? null : { 'range': true };
+            return v >= rangeP[0] && v <= rangeP[1] ? null : { 'range': true };
         };
     }
     public static digits(control: AbstractControl): { [key: string]: boolean } {
@@ -66,7 +66,7 @@ export class CustValidators {
         if (isPresent(Validators.required(control))) { return null; }
 
         let v: string = control.value;
-        return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        return /^(([^<>()\[\]\\.,;:\s@']+(\.[^<>()\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
             .test(v) ? null : { 'email': true };
     }
     public static date(control: AbstractControl): { [key: string]: boolean } {
@@ -83,9 +83,9 @@ export class CustValidators {
             if (isPresent(Validators.required(control))) { return null; }
 
             let d: Date = new Date(control.value);
-            if (!isDate(d)) { return { minDate: true }; }
+            if (!isDate(d)) { return { 'minDate': true }; }
 
-            return d >= new Date(minDate) ? null : { minDate: true };
+            return d >= new Date(minDate) ? null : { 'minDate': true };
         };
     }
     public static maxDate(maxDate: any): ValidatorFn {
@@ -97,7 +97,7 @@ export class CustValidators {
 
             if (!isDate(d)) { return { maxDate: true }; }
 
-            return d <= new Date(maxDate) ? null : { maxDate: true };
+            return d <= new Date(maxDate) ? null : { 'axDate': true };
         };
     }
     public static dateISO(control: AbstractControl): { [key: string]: boolean } {

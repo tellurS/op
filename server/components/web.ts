@@ -1,4 +1,4 @@
-import { Component } from 'component';
+/*import { Component } from 'component';
 
 export default class Web extends Component{
     componentName="Web";
@@ -8,3 +8,4 @@ export default class Web extends Component{
     }
 }
 //export { Web as isComponent };
+*/

@@ -12,14 +12,14 @@ export class DataManager {
     public setDataset(data: Dataset[]) {
         Object.assign(this.datasets, Utils.array2index(data));
     }
-    public getRecords(name: string, param: Observable<any> | any = {}, options: { pooling: number } = { pooling: 0 }) {  //.share()
+    public getRecords(name: string, param: Observable<any> | any = {}, options: { pooling: number } = { pooling: 0 }) {  // .share()
         let source = [];
-        if (param.flatMap) {  //param - Observable
+        if (param.flatMap) {  // param - Observable
             source.push(param);
-        } else {              //param - simple 
+        } else {              // param - simple 
             source.push(Observable.of(param));
         }
-        if (options.pooling) { //repeat
+        if (options.pooling) { //r epeat
             source.push(Observable.interval(options.pooling).startWith(0));
         }
 
@@ -32,9 +32,10 @@ export class DataManager {
         if (params['id']) {
             options['id'] = params['id'];
         }
-        if (this.datasets[name].api === 'rest' && this.datasets[name].format === 'json')
+        if (this.datasets[name].api === 'rest' && this.datasets[name].format === 'json'){
             return this.rest.getRecords(this.datasets[name].src, params, options)
                 .share();
+        }
         throw { name: 'NotImplementedError', message: 'api' };
     }
     public saveRecord(name: string, record: any) {
@@ -43,21 +44,21 @@ export class DataManager {
         throw { name: 'NotImplementedError', message: 'api' };
     }
     public deleteRecord(name: string, idRecord: number) {
-        if (this.datasets[name].api === 'rest' && this.datasets[name].format === 'json')
+        if (this.datasets[name].api === 'rest' && this.datasets[name].format === 'json'){
             return this.rest.deleteRecord(this.datasets[name].src, {
                 retry: this.datasets[name].retry,
                 id: idRecord
             });
+        }
         throw { name: 'NotImplementedError', message: 'api' };
     }
     private datasets: { [name: string]: Dataset } = {};
 }
 
 export interface Dataset {
-    name: string,
-    src: string,
-    api: string,
-    format: string,
-    retry?: number
+    name: string;
+    src: string;
+    api: string;
+    format: string;
+    retry?: number;
 }
-
