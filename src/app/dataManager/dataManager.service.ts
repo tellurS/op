@@ -3,6 +3,7 @@ import { Http, Response, Headers, RequestOptions, URLSearchParams } from '@angul
 import { Utils } from './utils';
 import { Observable } from 'rxjs/Observable';
 import { RestClient } from './restClient.service';
+import { IComponentData,IPageEvent,ICommandItem,Dataset } from '../page/api';
 import './rxData';
 
 @Injectable()
@@ -55,10 +56,3 @@ export class DataManager {
     private datasets: { [name: string]: Dataset } = {};
 }
 
-export interface Dataset {
-    name: string;
-    src: string;
-    api: string;
-    format: string;
-    retry?: number;
-}

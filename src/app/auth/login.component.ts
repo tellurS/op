@@ -2,8 +2,9 @@ import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { Page } from '../page/page';
 import { DataManager, Utils } from '../dataManager';
-import { DialogForm, FormItem } from '../dialogForm';
+import { DialogForm } from '../dialogForm';
 import { Observable } from 'rxjs/Observable';
+import { FormItem } from '../page/api';
 import { AuthGuard } from './authGuard';
 
 @Component({

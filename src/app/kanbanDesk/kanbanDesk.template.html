@@ -26,7 +26,7 @@
             <template ngFor let-rec [ngForOf]="records|byColumns:col.id">
                 <div  pDraggable="rec" pDroppable="rec" dragEffect="move" (onDragStart)="dragDrop.dragStart($event,rec)" (onDragEnd)="dragDrop.dragEnd($event)" (onDrop)="dragDrop.drop($event,rec,'rec')">      
                     <br>
-                    <p-panel [toggleable]="true" (click)="run('select',{$event:$event,rec:rec})" [ngClass]="status2class(rec)">
+                    <p-panel [toggleable]="true" (click)="run('select',{$event:$event,src:rec})" [ngClass]="status2class(rec)">
                         <header class="ov-inline" >
                             {{rec.caption}} 
                             <i class="fa"  [ngClass]="tag2icon(tag)" aria-hidden="true" *ngFor="let tag of rec.tags" [pTooltip]="tag2text(tag)"></i>

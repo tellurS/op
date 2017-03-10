@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Validators, FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { MenuCommandItem } from '../menuCommand/menuCommand';
 import { CustValidators } from './custValidators';
+import { FormItem,ICommandItem } from '../page/api';
 
 @Component({
     selector: 'm-dialog',
@@ -16,7 +16,7 @@ export class DialogForm {
     @Input() public data: Object;
     @Input() public componentName = 'DialogForm';
     @Input() public models: FormItem[];
-    @Input() public buttons: MenuCommandItem;
+    @Input() public buttons: ICommandItem;
     @Input() public values: Object;
     public userform: FormGroup;
 
@@ -33,12 +33,12 @@ export class DialogForm {
         let d = Object.assign({}, { componentName: this.componentName, type }, ...data);
         this.events.emit(d);
     }
-    public click(item: MenuCommandItem) {
+    public click(item: ICommandItem) {
         this.visible = false;
         this.emit('run', this.data, { options: this.values }, item);
     }
     public alternative(header: string, body: string, data: Object,
-                       commandsItems: MenuCommandItem[]) {
+                       commandsItems: ICommandItem[]) {
         this.header = header;
         this.body = body;
         this.buttons = commandsItems;
@@ -137,7 +137,7 @@ export class DialogForm {
         return controlsConfig;
     }
     form(header: string, body: string, rec: Object, models: FormItem[],
-         commandsItems: MenuCommandItem[]): EventEmitter<any> {
+         commandsItems: ICommandItem[]): EventEmitter<any> {
         this.header = header;
         this.body = body;
         this.buttons = commandsItems;
@@ -155,43 +155,3 @@ export class DialogForm {
 
 }
 
-export interface FormItem {
-    name: string;
-    caption?: string;
-    description?: string;
-    type?: string;
-    value?: any;
-    placeholder?: string;
-    errorMsg?: string;
-    default?: any;
-    values?: Object[];
-    idValue?: string;
-    labelValue?: string;
-    labelsValues?: Object[];
-    icon?: string;
-    minLength?: number;
-    maxLength?: number;
-    min?: any;
-    max?: any;
-    custom?: any;
-    required?: boolean;
-    pattern?: string;
-    rangeLength?: number[];
-    range?: number[];
-    digits?: boolean;
-    number?: boolean;
-    url?: boolean;
-    email?: boolean;
-    date?: boolean;
-    minDate?: any;
-    maxDate?: any;
-    creditCard?: boolean;
-    json?: boolean;
-    uid?: boolean;
-    base64?: boolean;
-    phone?: string;
-    uuid?: boolean;
-    equal?: any;
-    equalTo?: string;
-    step?: string;
-}

@@ -1,12 +1,12 @@
 import { NgModule, Component, ElementRef, AfterViewInit, OnDestroy, Input, Output, Renderer, EventEmitter, trigger, state, transition, style, animate } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomHandler } from 'primeng/components/dom/domhandler';
-import { MenuItem } from 'primeng/components/common/api';
+import { IComponentData,IPageEvent,ICommandItem } from '../page/api';
 import { Router } from '@angular/router';
 
 export class BaseMenuCommand {
     public constructor(public router: Router) { }
-    public handleClick(event, item: MenuCommandItem) {
+    public handleClick(event, item: ICommandItem) {
         if (item.disabled) {
             event.preventDefault();
             return;
@@ -35,7 +35,7 @@ export class BaseMenuCommand {
         }
     }
 
-    public itemDrop(event, item: MenuCommandItem) {
+    public itemDrop(event, item: ICommandItem) {
 
         if (!item.url || item.routerLink) {
             event.preventDefault();
@@ -74,9 +74,7 @@ export class BaseMenuCommand {
     `
 })
 export class MenuCommandSub extends BaseMenuCommand {
-
-    @Input() item: MenuCommandItem;
-
+    @Input() item: ICommandItem;
     @Input() expanded: boolean;
     @Input() dropName: string = 'rec';
 
@@ -88,22 +86,22 @@ export class MenuCommandSub extends BaseMenuCommand {
 @Component({
     selector: 'm-menucommand',
     template: `
-        <div [class]='styleClass' [ngStyle]='style' [ngClass]=''ui-panelmenu ui-widget''>
-            <div *ngFor='let item of model;let f=first;let l=last;' class='ui-panelmenu-panel'>
-                <div tabindex='0' [ngClass]='{'ui-widget ui-panelmenu-header ui-state-default':true,'ui-corner-top':f,'ui-corner-bottom':l&&!item.expanded,
-                    'ui-state-disabled':item.disabled}'>
-                    <a [href]='item.url||'#'' [ngClass]='{'ui-panelmenu-headerlink-hasicon':item.icon}' (click)='handleClick($event,item)'
-                       pDroppable='{{dropName}}' (onDrop)='itemDrop($event, item)'
+        <div [class]="styleClass" [ngStyle]="style" [ngClass]="'ui-panelmenu ui-widget'">
+            <div *ngFor="let item of model;let f=first;let l=last;" class="ui-panelmenu-panel">
+                <div tabindex="0" [ngClass]="{'ui-widget ui-panelmenu-header ui-state-default':true,'ui-corner-top':f,'ui-corner-bottom':l&&!item.expanded,
+                    'ui-state-disabled':item.disabled}">
+                    <a [href]="item.url||'#'" [ngClass]="{'ui-panelmenu-headerlink-hasicon':item.icon}" (click)="handleClick($event,item)"
+                       pDroppable="{{dropName}}" (onDrop)="itemDrop($event, item)"
                     >
-                        <span *ngIf='item.items' class='ui-panelmenu-icon fa' [ngClass]='{'fa-caret-right':!item.expanded,'fa-caret-down':item.expanded}'></span
-                        ><span class='ui-menuitem-icon fa' [ngClass]='item.icon' *ngIf='item.icon'></span
-                        ><span class='ui-menuitem-text'>{{item.label}}</span>
+                        <span *ngIf="item.items" class="ui-panelmenu-icon fa" [ngClass]="{'fa-caret-right':!item.expanded,'fa-caret-down':item.expanded}"></span
+                        ><span class="ui-menuitem-icon fa" [ngClass]="item.icon" *ngIf="item.icon"></span
+                        ><span class="ui-menuitem-text">{{item.label}}</span>
                     </a>
                 </div>
-                <div *ngIf='item.items' class='ui-panelmenu-content-wrapper' [@rootItem]='item.expanded ? 'visible' : 'hidden'' 
-                    [ngClass]='{'ui-panelmenu-content-wrapper-overflown': !item.expanded||animating}'>
-                    <div class='ui-panelmenu-content ui-widget-content'>
-                        <m-menucommandSub [item]='item' [dropName]='dropName' [expanded]='true'></m-menucommandSub>
+                <div *ngIf="item.items" class="ui-panelmenu-content-wrapper" [@rootItem]="item.expanded ? 'visible' : 'hidden'" 
+                    [ngClass]="{'ui-panelmenu-content-wrapper-overflown': !item.expanded||animating}">
+                    <div class="ui-panelmenu-content ui-widget-content">
+                        <m-menucommandSub [item]="item" [dropName]="dropName" [expanded]="true"></m-menucommandSub>
                     </div>
                 </div>
             </div>
@@ -123,7 +121,7 @@ export class MenuCommandSub extends BaseMenuCommand {
     ]
 })
 export class MenuCommand extends BaseMenuCommand {
-    @Input() public model: MenuCommandItem[];
+    @Input() public model: ICommandItem[];
     @Input() public style: any;
     @Input() public styleClass: string;
     @Input() public dropName: string = 'rec';
@@ -159,17 +157,3 @@ export class MenuCommand extends BaseMenuCommand {
     }
 }
 
-export interface MenuCommandItem extends MenuItem {
-    options?: any;
-    run?: string;
-    multi?: boolean;
-    one?: boolean;
-    dst?: any;
-    formStatus?: any;
-    type?: string;
-    params?: any;
-    data?: any;
-    item?: any;
-    $event?: any;
-    rec?: any;
-}
